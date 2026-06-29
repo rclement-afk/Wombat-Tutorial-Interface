@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 1 · Big Idea 5 — The Pom Pusher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+  .grid code { font-size: 14px; }
+
+  /* field map sketch area */
+  .sketch { width: 100%; height: 300px; border: 2px dashed var(--navy); border-radius: 12px; background:
+      repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+      repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px), #fff;
+    position: relative; margin: 12px 0; }
+  .sketch .tag { position: absolute; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; color: var(--navy); background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); }
+  .sketch .startbox { position: absolute; right: 14px; bottom: 14px; width: 88px; height: 60px; border: 2px solid var(--red); border-radius: 6px; background: rgba(158,27,50,.07); display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; color: var(--red); }
+  .sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .sketch { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sketch { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 1 · Big Idea 5</p>
+    <h1>Complex Behaviors Are Built From Smaller Behaviors</h1>
+    <p class="sub">Student Lab · The Pom Pusher</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine understand and act within the world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Complex Behaviors Are Built From Smaller Behaviors</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems combine simple behaviors to accomplish complex goals.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Functions · Reuse · Modularity · Building Larger Systems</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Mission 4 — Push the orange pom off the line (right starting box)</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot kit · game field · this lab sheet · pencil for mapping</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>This is the capstone of Unit 1. Your robot starts in the <strong>right starting box</strong> and must push poms off the line — Mission 4. The poms are <strong>not</strong> in a neat row, and there are other objects on the field to work around. You won't write a brand-new command for every move. Instead, you'll build a few small, reliable behaviors and <strong>reuse</strong> them — in different combinations — to handle a messy, real layout.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>Big behaviors are built from small ones. A few reliable building blocks, combined in the right order, can solve a complex task — without writing anything new.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Write a <em>function prototype</em> and explain why it comes before <code>main()</code>.</li>
+      <li>Build a larger behavior by combining smaller functions (<em>composition</em>).</li>
+      <li>Reuse the same building blocks in different combinations to solve a non-uniform layout.</li>
+      <li>Connect modular code to the AI literacy idea that complex behavior is built from simple, reusable parts.</li>
+    </ul>
+
+    <!-- ===== NEW CS CONCEPT BOX ===== -->
+    <h3 class="sub">New This Time: Prototypes — Promise Now, Define Later</h3>
+    <p class="muted">You already build <code>void</code> functions. Today you learn the professional way to organize them: declare a <strong>prototype</strong> at the top, keep <code>main()</code> readable in the middle, and write the full <strong>definitions</strong> at the bottom.</p>
+    <div class="concept">
+      <div class="chead">A prototype is a promise</div>
+      <div class="cbody">
+        <p>A <em>prototype</em> tells the program "this function exists and here is its name" — <strong>before</strong> <code>main()</code> ever uses it. The full recipe (the <em>definition</em>) is written later, below <code>main()</code>. It's a promise now, kept later.</p>
+        <div class="code small">void push_off_line();   <span class="c">// PROTOTYPE — the promise (note the semicolon)</span></div>
+        <p>A prototype ends with a semicolon and has no body. It is just the promise — not the recipe.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Prototype, call, and definition working together</div>
+      <div class="cbody">
+        <p>Here is the whole pattern in one place: declare the promise at the top, <em>call</em> it inside <code>main()</code>, and <em>define</em> it at the bottom.</p>
+        <div class="code small">void push_off_line();        <span class="c">// 1. PROTOTYPE (promise, at the top)</span>
+
+int main() {
+    push_off_line();          <span class="c">// 2. CALL (use it here)</span>
+    return 0;
+}
+
+void push_off_line() {        <span class="c">// 3. DEFINITION (the recipe, at the bottom)</span>
+    drive_forward();
+    drive_forward();
+}</div>
+        <p>This keeps <code>main()</code> short and easy to read — it reads like a plan, while the details live out of the way below.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: One Move, Many Uses</h2>
+    <p>Think about a single dance move — say, a step-and-clap. On its own it's tiny. But a whole routine is just that move and a few others, combined in different orders. You don't invent a new body each time; you <strong>reuse</strong> moves you already have, arranged to fit the music.</p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>You know three small moves: <em>step forward</em>, <em>turn</em>, and <em>clap</em>. Using only those three, how many different short routines could you make?</p>
+      <p>If you wanted to add a "spin" to every routine, would you rather rewrite each routine, or build "spin" once and drop it in?</p>
+    </div>
+    <p class="q">Why is it powerful to have a few small moves you can reuse, instead of memorizing every full routine from scratch?</p>
+    <textarea class="answer" data-key="p1_reuse_power" aria-label="Power of reusable moves"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Modularity, Reuse, and Composition</h2>
+    <h3 class="sub">Modularity</h3>
+    <p>A program is <em>modular</em> when it's built from small, separate pieces — modules — that each do one job. Your <code>drive_forward()</code> and <code>turn_right()</code> are modules. Modular code is easier to read, easier to fix, and easier to grow, because each piece can be understood and tested on its own.</p>
+    <h3 class="sub">Reuse</h3>
+    <p>The whole point of a module is that you write it once and <em>reuse</em> it many times. Today you'll call <code>drive_forward()</code> and <code>turn_right()</code> over and over — sometimes straight from <code>main()</code>, sometimes from inside a bigger function. Same block, used again and again, in different places.</p>
+    <h3 class="sub">Composition</h3>
+    <p>When you build a bigger behavior out of smaller ones, that's <em>composition</em>. A function like <code>push_off_line()</code> doesn't contain new motor commands — it's <em>composed</em> of calls to building blocks you already trust. You stack the simple to make the complex.</p>
+    <div class="callout gold">
+      <p class="ctitle">Example</p>
+      <p>A music app's "play" button is composed of smaller behaviors: find the file, decode it, send sound to the speaker, update the screen. Nobody rewrites "send sound to the speaker" for every song — it's a reusable block, called whenever it's needed.</p>
+    </div>
+    <p class="q">In your own words: what is the difference between writing one giant function that does everything, and building the same behavior out of small reusable pieces?</p>
+    <textarea class="answer" data-key="p2_giant_vs_modular" aria-label="Giant versus modular"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan</h2>
+    <h3 class="sub">The Mission</h3>
+    <div class="callout">
+      <p class="ctitle">Mission 4 — Push the Pom Off the Line</p>
+      <p><strong>Start:</strong> your robot begins in the <strong>right starting box</strong>.</p>
+      <p><strong>Base:</strong> push the orange pom off the line.</p>
+      <p><strong>Watch out:</strong> the poms are scattered — not in a straight line — and there are other objects on the field you must drive around. The path from one pom to the next is different each time.</p>
+    </div>
+
+    <h3 class="sub">Step 1 — Map the Field</h3>
+    <p>Before any code, sketch what you see. Mark the right starting box (drawn for you), the poms (use a circle for each), and any obstacles (use an X). This map is what your plan is built on.</p>
+    <div class="sketch" aria-label="Field mapping sketch area">
+      <span class="tag" style="left:10px; top:8px;">Sketch your field here — poms = ◯, obstacles = ✕</span>
+      <div class="startbox">RIGHT<br>START BOX</div>
+    </div>
+    <p class="sketch-note no-print">Draw on the printed copy, or describe the layout in the box below.</p>
+    <textarea class="answer" data-key="p3_layout_description" aria-label="Field layout description" placeholder="Describe where the poms and obstacles are relative to the right starting box..."></textarea>
+
+    <h3 class="sub">Step 2 — Plan Your Reuse</h3>
+    <p>For each pom, plan which building blocks get the robot there and push it off the line. Notice you'll reuse the same blocks (<code>drive_forward</code>, <code>turn_right</code>) in a different order for each one — because each pom sits in a different place.</p>
+    <table class="grid">
+      <thead><tr><th style="width:14%">Pom</th><th style="width:50%">Building blocks to get there &amp; push (in order)</th><th>Obstacle to avoid?</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1 (orange)</div></td><td><input type="text" data-key="p3_pom1_blocks" aria-label="Pom 1 blocks" /></td><td><input type="text" data-key="p3_pom1_obstacle" aria-label="Pom 1 obstacle" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="p3_pom2_blocks" aria-label="Pom 2 blocks" /></td><td><input type="text" data-key="p3_pom2_obstacle" aria-label="Pom 2 obstacle" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><input type="text" data-key="p3_pom3_blocks" aria-label="Pom 3 blocks" /></td><td><input type="text" data-key="p3_pom3_obstacle" aria-label="Pom 3 obstacle" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 3 — Decide Your Building Blocks</h3>
+    <p>List the small functions you will build and reuse, and the one bigger behavior you'll compose from them.</p>
+    <table class="grid">
+      <thead><tr><th style="width:34%">Function name</th><th style="width:42%">What it does</th><th>Built from?</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">drive_forward()</div></td><td><div class="seed">Drive straight for a set time, then stop</div></td><td><div class="seed">motor, msleep, ao</div></td></tr>
+        <tr><td><input type="text" data-key="p3_fn2_name" /></td><td><input type="text" data-key="p3_fn2_does" /></td><td><input type="text" data-key="p3_fn2_from" /></td></tr>
+        <tr><td><input type="text" data-key="p3_fn3_name" /></td><td><input type="text" data-key="p3_fn3_does" /></td><td><input type="text" data-key="p3_fn3_from" /></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build &amp; Run</h2>
+    <h3 class="sub">Example Program — A Pattern to Learn From</h3>
+    <div class="callout gold">
+      <p class="ctitle">This is an example, not a copy-me template</p>
+      <p>The program below shows the <em>pattern</em>: prototypes at the top, a readable <code>main()</code> in the middle, definitions at the bottom, and building blocks reused in different combinations. Your poms are in different places than this example, so <strong>your</strong> <code>main()</code> will have a different order of moves. Use this to learn the shape — then write your own from your Phase 3 plan.</p>
+    </div>
+    <div class="code">// Unit 1 · Big Idea 5 — Pom Pusher  (EXAMPLE — yours will differ)
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+int DRIVE_SPEED = 50;
+
+<span class="c">// ── FUNCTION PROTOTYPES — the promises, before main() uses them ──</span>
+void drive_forward();
+void turn_right();
+void push_off_line();
+
+<span class="c">// ── MAIN — your plan. The poms are NOT in a line, so the path</span>
+<span class="c">//    between them is different every time. You decide how to reuse</span>
+<span class="c">//    your building blocks to get from one pom to the next. ──</span>
+int main() {
+
+    push_off_line();   <span class="c">// first pom</span>
+
+    turn_right();      <span class="c">// next pom is not straight ahead —</span>
+    drive_forward();   <span class="c">// reuse the building blocks to reach it</span>
+    push_off_line();   <span class="c">// second pom</span>
+
+    drive_forward();   <span class="c">// a different path again to the third</span>
+    push_off_line();   <span class="c">// third pom</span>
+
+    return 0;
+}
+
+<span class="c">// ── DEFINITIONS — the full recipe for each promise above ──</span>
+void drive_forward() {
+    motor(0, DRIVE_SPEED);
+    motor(1, DRIVE_SPEED);
+    msleep(1000);
+    ao();
+}
+
+void turn_right() {
+    motor(0, DRIVE_SPEED);
+    motor(1, -DRIVE_SPEED);
+    msleep(600);
+    ao();
+}
+
+<span class="c">// push_off_line is a BIGGER behavior built from a SMALLER one:</span>
+void push_off_line() {
+    drive_forward();   <span class="c">// drive into the pom, pushing it off the line</span>
+    drive_forward();   <span class="c">// keep going to clear it fully</span>
+}</div>
+
+    <h3 class="sub">Count Your Reuse</h3>
+    <p>After you write your own program, count how many times you used each building block. Reuse is the whole point — high numbers are good here.</p>
+    <table class="grid">
+      <thead><tr><th style="width:40%">Building block</th><th style="width:30%">Times called in main()</th><th>Times called inside other functions</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">drive_forward()</div></td><td><input type="text" data-key="p4_df_main" aria-label="drive_forward in main" /></td><td><input type="text" data-key="p4_df_inside" aria-label="drive_forward inside" /></td></tr>
+        <tr><td><div class="seed">turn_right()</div></td><td><input type="text" data-key="p4_tr_main" aria-label="turn_right in main" /></td><td><input type="text" data-key="p4_tr_inside" aria-label="turn_right inside" /></td></tr>
+        <tr><td><input type="text" data-key="p4_fn3_name" aria-label="third block name" /></td><td><input type="text" data-key="p4_fn3_main" aria-label="third in main" /></td><td><input type="text" data-key="p4_fn3_inside" aria-label="third inside" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Checklist</h3>
+    <ul>
+      <li>Every prototype at the top ends with a semicolon and has no body</li>
+      <li>Every prototype has a matching definition below <code>main()</code></li>
+      <li><code>main()</code> reads like a plan — mostly function calls, not raw motor commands</li>
+      <li>At least one building block is reused in more than one place</li>
+      <li>Your <code>main()</code> matches the path you mapped in Phase 3 (it is not a copy of the example)</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Debug &amp; Integrate</h2>
+    <p>When you reuse one building block everywhere, a single weak block causes failures all over the run. The flip side: fix that one block, and every place that uses it improves at once. That is the power — and the risk — of reuse.</p>
+    <div class="callout gold">
+      <p class="ctitle">Common reuse bugs</p>
+      <p><strong>One block is slightly off:</strong> if <code>drive_forward()</code> goes a little too far, every pom is reached a little too far. Fix the block, not each call.</p>
+      <p><strong>Prototype without a definition:</strong> you promised a function at the top but never wrote its recipe below — the program won't build.</p>
+      <p><strong>Right blocks, wrong order:</strong> the robot does real moves but ends up in the wrong place. Re-check the order in <code>main()</code> against your map.</p>
+    </div>
+    <h3 class="sub">Debugging Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:32%">What went wrong</th><th style="width:30%">Was it the block, or the order?</th><th>How you fixed it</th></tr></thead>
+      <tbody id="debugBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Did fixing one building block fix problems in more than one place? Describe what happened.</p>
+    <textarea class="answer" data-key="p5_one_fix_many" aria-label="One fix, many places"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea 5 — AI Literacy Thread</p>
+      <p>Intelligent systems combine simple behaviors to accomplish complex goals.</p>
+    </div>
+    <p>Your pom-pushing run looked complex, but it was built from two or three simple behaviors reused in different orders. Every large intelligent system works this way: a self-driving car combines "stay in lane," "keep distance," and "obey signals" into a full trip; a warehouse robot combines "navigate," "grab," and "place" into an entire shift. No one writes a single giant behavior for "drive across the country." They compose it from small, tested parts.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Name a complex task a robot or app does, and break it into at least three smaller behaviors it is probably built from.</p>
+    <textarea class="answer tall" data-key="p6_decompose_complex" aria-label="Decompose a complex task"></textarea>
+    <p class="q">You reused one building block many times. Why does building from small, tested parts make a big system more reliable than writing it all as one piece?</p>
+    <textarea class="answer" data-key="p6_why_reliable" aria-label="Why reuse is reliable"></textarea>
+    <p class="q">If one small behavior in a self-driving car (say, "detect a stop sign") is slightly wrong, it affects the whole system. How is that the same lesson you saw when one of your building blocks was off?</p>
+    <textarea class="answer" data-key="p6_shared_weakness" aria-label="Shared weakness from reuse"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a function prototype, and why is it written above <code>main()</code>?</p>
+    <textarea class="answer" data-key="p7_q1_prototype" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain <em>composition</em> in your own words. Give one example of a bigger behavior you built from smaller ones today.</p>
+    <textarea class="answer" data-key="p7_q2_composition" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> The poms were not in a line. How did reusing the same building blocks in different orders help you handle a messy layout?</p>
+    <textarea class="answer" data-key="p7_q3_reuse_layout" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems combine simple behaviors to accomplish complex goals. This means that to build something complex, a programmer should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Go for the Bonus (Blue Pom)</h3>
+    <ul>
+      <li>Mission 4's bonus is to also get a blue pom off the line at the same time.</li>
+      <li>Where is the blue pom on your map? Plan which building blocks reach it, and where that fits in your sequence.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — A Higher-Level Behavior</h3>
+    <ul>
+      <li>Build one more "big" function that composes several pushes and moves — for example, <code>clear_left_side()</code>.</li>
+      <li>Rewrite part of <code>main()</code> to call your new high-level function. Does <code>main()</code> read more clearly now?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Name It Better</h3>
+    <ul>
+      <li>Look at your function names. Could someone read your <code>main()</code> and understand the plan without seeing the definitions?</li>
+      <li>Rename any function whose name doesn't clearly say what it does. Why do good names make reuse easier?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Looking Ahead: A Shared Library</h3>
+    <ul>
+      <li>Imagine your <code>drive_forward()</code> and <code>turn_right()</code> were saved in a separate file you could load into any mission.</li>
+      <li>Which of your functions would you put in that shared file, and which are specific to just this pom mission? Why?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 1 Big Idea 5 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit1_bigidea5";
+
+  (function buildRows() {
+    const debug = document.getElementById("debugBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="debug' + i + '_wrong" aria-label="Debug ' + i + ' wrong"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_blockorder" aria-label="Debug ' + i + ' block or order"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_fix" aria-label="Debug ' + i + ' fix"></td>';
+      debug.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 1 · Big Idea 5 — The Pom Pusher",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    // Always download the results JSON to the student's device,
+    // then open the print dialog for the PDF.
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

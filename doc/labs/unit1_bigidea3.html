@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 1 · Big Idea 3 — The Freight Sorter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+  .grid code { font-size: 14px; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 1 · Big Idea 3</p>
+    <h1>Computers Make Decisions Using Rules</h1>
+    <p class="sub">Student Lab · The Freight Sorter</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine understand and act within the world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Computers Make Decisions Using Rules</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems identify patterns and use rules to make decisions.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Classification · Logic · Pattern Recognition · Decision Making</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Freight Objects — sorting by type</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot kit · game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>So far, your robot has done exactly what you told it, in exactly the order you wrote it. Today that changes. You'll write a program that <strong>makes a choice</strong> — it looks at a value and decides what to do based on a rule. The robot will sort freight: one action for one kind, a different action for another.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A decision is a rule the computer follows: "IF this is true, do one thing; OTHERWISE, do something else."</p>
+      <p>The robot doesn't "know" anything. It checks a value against a rule you wrote — and that is what makes it look intelligent.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain what a <em>condition</em> is and how an <code>if</code> statement uses one to make a decision.</li>
+      <li>Use <code>if</code> / <code>else</code> to make a robot take different actions for different values.</li>
+      <li>Predict what a program will do by reading its rule before you run it.</li>
+      <li>Connect rule-based decisions to how intelligent systems classify and respond to the world.</li>
+    </ul>
+
+    <!-- ===== NEW CS CONCEPT BOX ===== -->
+    <h3 class="sub">New This Time: Making a Decision</h3>
+    <p class="muted">You already know <code>int</code>, functions, and the commands <code>motor()</code>, <code>msleep()</code>, and <code>ao()</code>. Today you add one new tool: the <code>if</code> statement.</p>
+    <div class="concept">
+      <div class="chead">An if statement — a rule the computer checks</div>
+      <div class="cbody">
+        <p>An <code>if</code> statement checks whether something is true. If it is, the computer runs the code inside the curly braces. If it is not, it can run a different block after <code>else</code> instead.</p>
+        <div class="code small">int freight_type = 1;       <span class="c">// a number YOU set</span>
+
+if (freight_type == 1) {    <span class="c">// IF freight_type is 1...</span>
+    drive_forward();         <span class="c">// ...do this</span>
+} else {                    <span class="c">// OTHERWISE...</span>
+    turn_right();            <span class="c">// ...do this instead</span>
+}</div>
+        <p>Change <code>freight_type</code> to a different number, and the robot makes a different choice — without you rewriting the rule.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">== means "is it equal?"</div>
+      <div class="cbody">
+        <p>Watch the symbol carefully. There are <strong>two</strong> equals signs in a rule, not one:</p>
+        <div class="code small">int freight_type = 1;    <span class="c">// ONE equals  =   SETS the value to 1</span>
+
+if (freight_type == 1)   <span class="c">// TWO equals  ==  ASKS "is it equal to 1?"</span></div>
+        <p>A single <code>=</code> <em>sets</em> a value. A double <code>==</code> <em>asks a question</em>. Using one when you mean the other is one of the most common bugs in all of programming — so check it every time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: The Bouncer at the Door</h2>
+    <p>Imagine you are a bouncer at the door of an event. You have exactly one rule: <strong>if a person's ticket says "VIP," send them left; otherwise, send them right.</strong> You don't know these people. You don't judge them. You just check the ticket against the rule and act.</p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>You see 5 people in a row. Their tickets say: VIP, General, VIP, General, General. Which way does each person go?</p>
+      <p>Did you have to "think" about each person, or did you just apply the rule?</p>
+    </div>
+    <p class="group-label">Send each person left or right by your rule:</p>
+    <table class="grid">
+      <thead><tr><th style="width:20%">Person</th><th style="width:40%">Ticket says</th><th>Left or Right?</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><div class="seed">VIP</div></td><td><input type="text" data-key="p1_person1" aria-label="Person 1 direction" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><div class="seed">General</div></td><td><input type="text" data-key="p1_person2" aria-label="Person 2 direction" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><div class="seed">VIP</div></td><td><input type="text" data-key="p1_person3" aria-label="Person 3 direction" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><div class="seed">General</div></td><td><input type="text" data-key="p1_person4" aria-label="Person 4 direction" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><div class="seed">General</div></td><td><input type="text" data-key="p1_person5" aria-label="Person 5 direction" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">A bouncer follows a rule without deciding who "deserves" what. How is that like the way a computer makes a decision?</p>
+    <textarea class="answer" data-key="p1_bouncer_like_computer" aria-label="Bouncer like a computer"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Conditions, Rules, and Classification</h2>
+    <h3 class="sub">A Condition Is a True/False Question</h3>
+    <p>Every decision a computer makes starts with a <em>condition</em> — a question that is either true or false. <code>freight_type == 1</code> is a condition. Right now it is either true (the value really is 1) or false (it is anything else). There is no "maybe." This is called <strong>Boolean</strong> thinking: every condition is true or false, nothing in between.</p>
+    <h3 class="sub">Classification</h3>
+    <p>When a computer sorts things into groups using rules, that is <em>classification</em>. A mail machine reads a ZIP code and sends each letter to the right bin. Your program reads a freight value and sends the robot in the right direction. Same idea: a rule turns information into an action.</p>
+    <h3 class="sub">Pattern Recognition</h3>
+    <p>Rules let a system respond to a <em>pattern</em> instead of a single fixed case. Your one rule — "if type 1, go straight; else turn" — handles every freight value you could ever set, not just one. Write the rule once, and it works for the whole pattern of cases.</p>
+    <div class="callout gold">
+      <p class="ctitle">Example</p>
+      <p>"If the light is red, stop; otherwise, go." That one rule covers every red light and every non-red light in the world. You don't write a new rule for each intersection — the pattern is handled by a single condition.</p>
+    </div>
+    <p class="q">In your own words: what is the difference between a program that follows a fixed list of steps and one that makes a decision?</p>
+    <textarea class="answer" data-key="p2_fixed_vs_decision" aria-label="Fixed steps versus decision"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan</h2>
+    <h3 class="sub">The Sorting Task</h3>
+    <div class="callout">
+      <p class="ctitle">Your Goal</p>
+      <p>Your robot is a freight sorter. A freight value is set at the top of the program. Your robot must take <strong>one action</strong> if the freight is type 1, and a <strong>different action</strong> if it is anything else.</p>
+      <p>You choose what "type 1" and "anything else" mean for the robot — for example, drive straight to one bin, or turn toward another.</p>
+    </div>
+
+    <h3 class="sub">Step 1 — Write Your Rule in Plain English</h3>
+    <p>Before any code, write your sorting rule as a sentence in the form "IF ... THEN ... OTHERWISE ...".</p>
+    <textarea class="answer" data-key="p3_rule_plain_english" aria-label="Rule in plain English"></textarea>
+
+    <h3 class="sub">Step 2 — Predict the Two Outcomes</h3>
+    <p>Fill in what the robot should do for each freight value.</p>
+    <table class="grid">
+      <thead><tr><th style="width:34%">If <code>freight_type</code> is...</th><th>...the robot should</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="p3_outcome_type1" aria-label="Outcome for type 1" /></td></tr>
+        <tr><td><div class="seed">anything else (2, 3, ...)</div></td><td><input type="text" data-key="p3_outcome_else" aria-label="Outcome for else" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 3 — Trace the Rule by Hand</h3>
+    <p>Before you run anything, predict the robot's action for each value. This is called <em>tracing</em> — following the rule the way the computer will.</p>
+    <table class="grid">
+      <thead><tr><th style="width:34%"><code>freight_type</code> set to</th><th style="width:30%">Condition true or false?</th><th>What the robot does</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="p3_trace1_tf" aria-label="Trace 1 true/false" /></td><td><input type="text" data-key="p3_trace1_action" aria-label="Trace 1 action" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="p3_trace2_tf" aria-label="Trace 2 true/false" /></td><td><input type="text" data-key="p3_trace2_action" aria-label="Trace 2 action" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><input type="text" data-key="p3_trace3_tf" aria-label="Trace 3 true/false" /></td><td><input type="text" data-key="p3_trace3_action" aria-label="Trace 3 action" /></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build &amp; Run</h2>
+    <h3 class="sub">Starting Code Template</h3>
+    <p>Type this program into your robot controller. The rule lives inside <code>main()</code>. Change <code>freight_type</code> at the top to test both paths. Fill in the actions to match your Phase 3 plan.</p>
+    <div class="code">// Unit 1 · Big Idea 3 — Freight Sorter
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+int DRIVE_SPEED = 50;
+
+<span class="c">// A number YOU set. Think of it as the freight you're sorting.</span>
+<span class="c">// Change this value and the robot makes a different decision.</span>
+int freight_type = 1;     <span class="c">// try 1, then try 2</span>
+
+void drive_forward() {
+    motor(0, DRIVE_SPEED);
+    motor(1, DRIVE_SPEED);
+    msleep(1000);
+    ao();
+}
+
+void turn_right() {
+    motor(0, DRIVE_SPEED);
+    motor(1, -DRIVE_SPEED);
+    msleep(600);
+    ao();
+}
+
+int main() {
+
+    if (freight_type == 1) {   <span class="c">// IF the freight is type 1...</span>
+        drive_forward();        <span class="c">// ...send it straight ahead</span>
+    } else {                    <span class="c">// OTHERWISE (it's not type 1)...</span>
+        turn_right();           <span class="c">// ...send it to the right instead</span>
+    }
+
+    return 0;
+}</div>
+
+    <h3 class="sub">Run It Both Ways — Results</h3>
+    <p>Run the program with <code>freight_type = 1</code>, then change it to <code>2</code> and run again. Record what the robot actually did.</p>
+    <table class="grid">
+      <thead><tr><th style="width:30%"><code>freight_type</code> value</th><th style="width:35%">What you predicted</th><th>What actually happened</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="p4_run1_predict" /></td><td><input type="text" data-key="p4_run1_actual" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="p4_run2_predict" /></td><td><input type="text" data-key="p4_run2_actual" /></td></tr>
+      </tbody>
+    </table>
+    <h3 class="sub">Checklist</h3>
+    <ul>
+      <li>You used <code>==</code> (two equals) inside the <code>if</code>, not a single <code>=</code></li>
+      <li>Every <code>{</code> has a matching <code>}</code></li>
+      <li>You tested BOTH values, not just one</li>
+      <li>The robot did something different for each value</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Debug</h2>
+    <p>Decisions create a brand-new kind of bug: the robot does the <em>wrong</em> action, even though it runs without an error. That means the rule ran fine — but it was the wrong rule, or the value was not what you thought.</p>
+    <div class="callout gold">
+      <p class="ctitle">The most common decision bugs</p>
+      <p><strong>Single = instead of ==:</strong> writing <code>if (freight_type = 1)</code> sets the value instead of asking the question. Always use <code>==</code> in a rule.</p>
+      <p><strong>Wrong value:</strong> the robot turned when you expected straight? Check what <code>freight_type</code> is actually set to at the top.</p>
+      <p><strong>Mismatched braces:</strong> a missing <code>}</code> makes the program refuse to build. Count them.</p>
+    </div>
+    <h3 class="sub">Debugging Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:30%">What went wrong</th><th style="width:30%">Why (your best guess)</th><th>How you fixed it</th></tr></thead>
+      <tbody id="debugBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Describe one decision bug you hit. Did the robot do the wrong thing, or refuse to run? How did you find the cause?</p>
+    <textarea class="answer" data-key="p5_bug" aria-label="Bug description"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea 3 — AI Literacy Thread</p>
+      <p>Intelligent systems identify patterns and use rules to make decisions.</p>
+    </div>
+    <p>Your robot did not "understand" the freight. It checked a value against a rule you wrote and acted. Almost every intelligent system works this way underneath: an email app checks features of a message against rules and decides "spam or not spam." A photo app checks patterns and decides "face or not a face." The system is not judging — it is classifying with rules. The intelligence is in the rules, and a human wrote them.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">A self-checkout machine decides whether the item you scanned matches its weight. What is the rule it is checking? What happens when the rule is wrong?</p>
+    <textarea class="answer" data-key="p6_self_checkout" aria-label="Self-checkout scenario"></textarea>
+    <p class="q">Your freight sorter only knows two outcomes: type 1, or everything else. A real sorting system might have ten kinds of freight. What is one problem with a rule that lumps everything that isn't type 1 into a single "else"?</p>
+    <textarea class="answer" data-key="p6_else_problem" aria-label="Problem with a broad else"></textarea>
+    <p class="q">Who is responsible when an automated system classifies something wrong — sends the wrong freight, flags the wrong email? Connect this to the fact that a person wrote the rule.</p>
+    <textarea class="answer" data-key="p6_responsibility" aria-label="Responsibility for misclassification"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a condition? Write a definition in your own words.</p>
+    <textarea class="answer" data-key="p7_q1_condition" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain the difference between <code>=</code> and <code>==</code>. Why does it matter inside an <code>if</code> statement?</p>
+    <textarea class="answer" data-key="p7_q2_equals" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Today your robot took different actions for different values without you rewriting the rule. Why is making a decision more powerful than a fixed list of steps?</p>
+    <textarea class="answer" data-key="p7_q3_why_powerful" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems identify patterns and use rules to make decisions. This means that when an AI system classifies something wrong..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — A Third Choice</h3>
+    <ul>
+      <li>Right now your rule has two outcomes. Add a middle case using <code>else if</code>: type 1 does one thing, type 2 does another, everything else does a third.</li>
+      <li>Trace your new rule by hand for <code>freight_type</code> = 1, 2, and 9 before you run it.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Flip the Rule</h3>
+    <ul>
+      <li>Change your condition so the robot does the OPPOSITE — drives straight for everything <em>except</em> type 1.</li>
+      <li>What did you change? Did you change the condition, the actions, or both?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Greater Than</h3>
+    <ul>
+      <li><code>==</code> is not the only test. Try <code>if (freight_type &gt; 3)</code> — "is the value greater than 3?"</li>
+      <li>Predict, then test: what does the robot do for values 1, 3, and 7?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Two Rules in a Row</h3>
+    <ul>
+      <li>What happens if you write two separate <code>if</code> statements one after another, each checking <code>freight_type</code>?</li>
+      <li>Could the robot ever do two actions in one run? When would that be useful, and when would it be a bug?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 1 Big Idea 3 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit1_bigidea3";
+
+  (function buildRows() {
+    const debug = document.getElementById("debugBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="debug' + i + '_wrong" aria-label="Debug ' + i + ' wrong"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_why" aria-label="Debug ' + i + ' why"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_fix" aria-label="Debug ' + i + ' fix"></td>';
+      debug.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 1 · Big Idea 3 — The Freight Sorter",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    // Always download the results JSON to the student's device,
+    // then open the print dialog for the PDF.
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

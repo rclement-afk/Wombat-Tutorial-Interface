@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 1 · Big Idea 4 — The Position Keeper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+  .grid code { font-size: 14px; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 1 · Big Idea 4</p>
+    <h1>Computers Store Information</h1>
+    <p class="sub">Student Lab · The Position Keeper</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine understand and act within the world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Computers Store Information</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems build and update models of the world using data.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Data · Variables · Coordinates · State · Representation</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Field Maps &amp; Objects — tracking position</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot kit · game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Your robot has followed instructions, broken problems apart, and made decisions. But it has had no <strong>memory</strong> — once a command finished, the robot forgot it ever happened. Today the robot starts keeping track. It will store its own position in variables and update them as it moves, so at any moment it can answer: "Where am I now?"</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A robot doesn't magically know where it is. It knows only what it has <em>stored</em> — and that is only correct if it started from a known zero and updated honestly after every move.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain what it means for a program to <em>store</em> information in a variable.</li>
+      <li>Set a starting <em>origin</em> (zero) and update stored values as the robot moves.</li>
+      <li>Use coordinates (x, y) to represent the robot's position on the field.</li>
+      <li>Connect stored variables to the AI literacy idea that systems build and update a model of the world.</li>
+    </ul>
+
+    <!-- ===== NEW CS CONCEPT BOX ===== -->
+    <h3 class="sub">New This Time: Memory That Changes</h3>
+    <p class="muted">You already know how to create an <code>int</code> and set it once. Today the variable becomes a <strong>running record</strong> — the program changes it as it goes.</p>
+    <div class="concept">
+      <div class="chead">Set a zero before you start — the origin</div>
+      <div class="cbody">
+        <p>You can't track position without a starting point to measure from. Before the robot moves, set its position to zero. This is the <strong>origin</strong> — "I am here, and everywhere else is measured from this spot."</p>
+        <div class="code small">int x_position = 0;   <span class="c">// start at the origin</span>
+int y_position = 0;   <span class="c">// both zero before the first move</span></div>
+        <p>The robot doesn't know where it is on the planet. It only knows where it is <em>compared to this zero</em>.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Updating a variable using itself</div>
+      <div class="cbody">
+        <p>To remember a move, you change a variable based on its <em>own</em> current value:</p>
+        <div class="code small">y_position = y_position + 1;</div>
+        <p>Read it right to left: take what's stored in <code>y_position</code>, add 1, and store the result back into <code>y_position</code>. If it held 2, now it holds 3. The variable remembers its new position.</p>
+        <p class="muted">It looks strange at first — how can something equal itself plus one? The trick is that the right side is calculated <em>first</em>, then the answer is stored back on the left.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: Eyes Closed</h2>
+    <p>Picture walking across a room with your eyes closed. You can't see where you are — but if you started at a known spot and counted every step, you could still say roughly where you've ended up. That counting <em>is</em> memory. It's the only way you know your position without looking.</p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>You start at a doorway (your zero). You take 3 steps forward, then 2 steps forward. How many steps from the door are you now?</p>
+      <p>If you forgot to count one step, would your answer still be right? What does that tell you about keeping a record?</p>
+    </div>
+    <p class="group-label">Track the steps from your zero:</p>
+    <table class="grid">
+      <thead><tr><th style="width:50%">Move</th><th>Total steps from the door (your stored position)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Start at the doorway</div></td><td><div class="seed">0</div></td></tr>
+        <tr><td><div class="seed">Take 3 steps forward</div></td><td><input type="text" data-key="p1_after_3" aria-label="Position after 3 steps" /></td></tr>
+        <tr><td><div class="seed">Take 2 more steps forward</div></td><td><input type="text" data-key="p1_after_2_more" aria-label="Position after 2 more steps" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">You knew your position the whole time without seeing it. How did you do that? How is it like what a robot must do?</p>
+    <textarea class="answer" data-key="p1_how_you_knew" aria-label="How you knew your position"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Variables, State, and Representation</h2>
+    <h3 class="sub">A Variable Stores Information</h3>
+    <p>A variable is a named box that holds a value. Until now, you set the box once and left it alone. Today the box is alive — the program reads it, changes it, and stores a new value back. What a variable holds <em>right now</em> is part of the program's <strong>state</strong>: everything the program currently remembers.</p>
+    <h3 class="sub">Coordinates Represent Position</h3>
+    <p>To describe where something is on a flat field, we use two numbers: <code>x</code> (how far across) and <code>y</code> (how far forward). Together, <code>(x, y)</code> is a coordinate. Starting at the origin, <code>(0, 0)</code> means "right where I began."</p>
+    <h3 class="sub">Representation</h3>
+    <p>The robot's real position is out there on the field. The two numbers in memory are a <em>representation</em> of it — a model. If the model is updated correctly, it matches reality. If the robot slips or you forget to update, the model and reality drift apart, and the robot "believes" something false about where it is.</p>
+    <div class="callout gold">
+      <p class="ctitle">Example</p>
+      <p>A phone's map shows a blue dot for "you are here." That dot is a <em>representation</em> stored in the phone. When it's updated well, it tracks you. When the signal drops, the dot keeps showing the last stored spot — the model, not reality.</p>
+    </div>
+    <p class="q">In your own words: what is the difference between where the robot really is and what the robot has <em>stored</em> about where it is?</p>
+    <textarea class="answer" data-key="p2_real_vs_stored" aria-label="Real versus stored position"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan</h2>
+    <h3 class="sub">The Tracking Task</h3>
+    <div class="callout">
+      <p class="ctitle">Your Goal</p>
+      <p>Your robot will drive forward two times. It starts at the origin <code>(0, 0)</code>. After each forward move, it updates <code>y_position</code> so its stored memory always matches how far it has gone.</p>
+      <p>Each <code>drive_forward()</code> counts as one step in <code>y</code>. We are only moving forward this time, so <code>x_position</code> stays at 0.</p>
+    </div>
+
+    <h3 class="sub">Step 1 — Set Your Zero</h3>
+    <p>Before anything moves, what are the robot's stored coordinates? Write them in.</p>
+    <table class="grid">
+      <thead><tr><th style="width:50%">Variable</th><th>Starting value (the origin)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">x_position</div></td><td><input type="text" data-key="p3_x_zero" aria-label="x starting value" /></td></tr>
+        <tr><td><div class="seed">y_position</div></td><td><input type="text" data-key="p3_y_zero" aria-label="y starting value" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 2 — Trace the Memory by Hand</h3>
+    <p>Before you run anything, predict what is stored after each move. Each forward move adds 1 to <code>y_position</code>.</p>
+    <table class="grid">
+      <thead><tr><th style="width:46%">After this happens...</th><th style="width:27%">x_position</th><th style="width:27%">y_position</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Start (origin)</div></td><td><div class="seed">0</div></td><td><div class="seed">0</div></td></tr>
+        <tr><td><div class="seed">drive_forward() once</div></td><td><input type="text" data-key="p3_trace1_x" /></td><td><input type="text" data-key="p3_trace1_y" /></td></tr>
+        <tr><td><div class="seed">drive_forward() again</div></td><td><input type="text" data-key="p3_trace2_x" /></td><td><input type="text" data-key="p3_trace2_y" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">What is the robot's final stored coordinate after both moves? Write it as (x, y).</p>
+    <textarea class="answer" data-key="p3_final_coord" aria-label="Final stored coordinate"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build &amp; Run</h2>
+    <h3 class="sub">Starting Code Template</h3>
+    <p>Type this program into your robot controller. Notice the two position variables set to zero at the top, and how each move updates <code>y_position</code> right after it happens. The <code>printf</code> line shows you what the robot has stored.</p>
+    <div class="code">// Unit 1 · Big Idea 4 — Position Keeper
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+int DRIVE_SPEED = 50;
+
+<span class="c">// The robot's stored position. We set BOTH to zero before we start.</span>
+<span class="c">// This is our "origin" — every move is measured from here.</span>
+int x_position = 0;
+int y_position = 0;
+
+void drive_forward() {
+    motor(0, DRIVE_SPEED);
+    motor(1, DRIVE_SPEED);
+    msleep(1000);
+    ao();
+}
+
+int main() {
+
+    drive_forward();              <span class="c">// move the robot one step forward</span>
+    y_position = y_position + 1;  <span class="c">// update memory: we moved +1 in y</span>
+
+    drive_forward();              <span class="c">// move again</span>
+    y_position = y_position + 1;  <span class="c">// update memory again</span>
+
+    <span class="c">// Show what the robot has stored about where it is now</span>
+    printf("x = %d, y = %d\n", x_position, y_position);
+
+    return 0;
+}</div>
+
+    <h3 class="sub">Run It — Measure the Real Distance</h3>
+    <p>Your program drives the same way every time, so it should travel the same distance every time. Let's find out if it really does. Line the robot up against a wall at the start. Run the program <strong>5 times</strong>. After each run, measure the <strong>exact distance from the wall</strong> to the front of the robot, in inches.</p>
+    <div class="callout navy">
+      <p class="ctitle">How to use this table</p>
+      <p>Trial 1 is your <strong>expected distance</strong> — the first result you got. For trials 2–5, write the measured distance, then the difference from Trial 1 (how far off it was). A difference of 0 means it matched exactly.</p>
+    </div>
+    <table class="grid">
+      <thead><tr><th style="width:14%">Trial</th><th style="width:43%">Measured distance from wall (inches)</th><th>Difference from Trial 1 (inches)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1 (expected)</div></td><td><input type="text" data-key="p4_trial1_dist" aria-label="Trial 1 distance" /></td><td><div class="seed">0 (this is the baseline)</div></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="p4_trial2_dist" aria-label="Trial 2 distance" /></td><td><input type="text" data-key="p4_trial2_diff" aria-label="Trial 2 difference" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><input type="text" data-key="p4_trial3_dist" aria-label="Trial 3 distance" /></td><td><input type="text" data-key="p4_trial3_diff" aria-label="Trial 3 difference" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><input type="text" data-key="p4_trial4_dist" aria-label="Trial 4 distance" /></td><td><input type="text" data-key="p4_trial4_diff" aria-label="Trial 4 difference" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><input type="text" data-key="p4_trial5_dist" aria-label="Trial 5 distance" /></td><td><input type="text" data-key="p4_trial5_diff" aria-label="Trial 5 difference" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Did all 5 trials travel the exact same distance? What was the biggest difference you measured between any two trials?</p>
+    <textarea class="answer" data-key="p4_variation_observed" aria-label="Variation observed"></textarea>
+    <p class="q">Your robot stored <code>y = 2</code> in memory every single run — its memory said the same thing each time. But the real distance changed. What does that tell you about trusting stored numbers over real measurement?</p>
+    <textarea class="answer" data-key="p4_memory_vs_reality" aria-label="Memory versus real measurement"></textarea>
+    <p class="q">Why might the same program drive a slightly different distance each time? List as many reasons as you can think of.</p>
+    <textarea class="answer" data-key="p4_why_variation" aria-label="Why variation happens"></textarea>
+    <h3 class="sub">Checklist</h3>
+    <ul>
+      <li>Both position variables are set to <code>0</code> before <code>main()</code> does anything</li>
+      <li>There is one update line for each <code>drive_forward()</code></li>
+      <li>The update uses <code>y_position = y_position + 1</code> (the variable on both sides)</li>
+      <li>You lined the robot up at the same starting spot for all 5 trials</li>
+      <li>You measured to the same point on the robot each time (its front edge)</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Debug</h2>
+    <p>Memory bugs are sneaky: the robot moves perfectly, but its stored position is wrong. The wheels and the memory got out of sync. The program runs with no error — the numbers just don't match reality.</p>
+    <div class="callout gold">
+      <p class="ctitle">The most common memory bugs</p>
+      <p><strong>Forgot to update:</strong> the robot drove but you didn't add to <code>y_position</code>. It moved in real life but not in memory.</p>
+      <p><strong>Updated twice:</strong> two update lines for one move means the memory counts a step that never happened.</p>
+      <p><strong>Never set the zero:</strong> if you don't start the variables at 0, every stored number is off from the very first move.</p>
+    </div>
+    <h3 class="sub">Debugging Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:34%">Stored number that was wrong</th><th style="width:28%">Why (your best guess)</th><th>How you fixed it</th></tr></thead>
+      <tbody id="debugBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Describe one time your robot's stored position did not match where it really was. What caused the mismatch?</p>
+    <textarea class="answer" data-key="p5_bug" aria-label="Memory mismatch description"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea 4 — AI Literacy Thread</p>
+      <p>Intelligent systems build and update models of the world using data.</p>
+    </div>
+    <p>Your robot built a tiny model of the world — two numbers that say where it is. Every move, it updated that model. Big intelligent systems do exactly this at a huge scale: a delivery app stores where every driver is and updates it constantly; a game stores where every character is; a self-driving car keeps a live model of every nearby vehicle. The system acts on its stored model — so when the model is wrong, the system is wrong, even if every other part works perfectly.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">A delivery app shows your driver two streets away, but they are actually at your door. The app's stored model is wrong. List two things that could have caused the stored position to drift from reality.</p>
+    <textarea class="answer" data-key="p6_delivery_drift" aria-label="Delivery app drift"></textarea>
+    <p class="q">Your robot never "sees" the field — it only trusts its stored numbers. What is the danger of acting on stored information without ever checking it against the real world?</p>
+    <textarea class="answer" data-key="p6_danger_trust" aria-label="Danger of trusting stored data"></textarea>
+    <p class="q">Why does setting a correct zero at the start matter so much? Connect it to the idea that everything the system stores afterward is measured from that origin.</p>
+    <textarea class="answer" data-key="p6_why_zero_matters" aria-label="Why the zero matters"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What does it mean for a program to "store" information? Use the word <em>variable</em> in your answer.</p>
+    <textarea class="answer" data-key="p7_q1_store" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain what <code>y_position = y_position + 1</code> does, step by step, as if teaching a classmate.</p>
+    <textarea class="answer" data-key="p7_q2_update" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Why must you set the origin to zero <em>before</em> the robot moves? What goes wrong if you don't?</p>
+    <textarea class="answer" data-key="p7_q3_origin" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems build and update models of the world using data. This means that when a system's stored model is wrong..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Track X Too</h3>
+    <ul>
+      <li>Add a sideways move and update <code>x_position</code> the same way you updated <code>y_position</code>.</li>
+      <li>Trace the new path by hand first: what (x, y) should the robot store at the end?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Going Backward</h3>
+    <ul>
+      <li>If driving forward adds 1 to <code>y_position</code>, what should driving backward do to it?</li>
+      <li>Write the update line for a backward move, then test that the stored number goes the right direction.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Bigger Steps</h3>
+    <ul>
+      <li>What if one <code>drive_forward()</code> actually covers 2 grid squares, not 1? Change your update line to match.</li>
+      <li>Why is it important that the number you add matches what the robot really does?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Print After Every Move</h3>
+    <ul>
+      <li>Add a <code>printf</code> line after each update so you can watch the stored position change step by step.</li>
+      <li>How does seeing the memory update after every move help you find a mistake faster?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 1 Big Idea 4 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit1_bigidea4";
+
+  (function buildRows() {
+    const debug = document.getElementById("debugBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="debug' + i + '_wrong" aria-label="Debug ' + i + ' wrong"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_why" aria-label="Debug ' + i + ' why"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_fix" aria-label="Debug ' + i + ' fix"></td>';
+      debug.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 1 · Big Idea 4 — The Position Keeper",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    // Always download the results JSON to the student's device,
+    // then open the print dialog for the PDF.
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

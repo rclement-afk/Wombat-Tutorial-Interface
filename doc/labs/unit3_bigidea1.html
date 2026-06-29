@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 3 · Big Idea 1 — Meet the Servos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety, .widget-step { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 3 · Big Idea 1</p>
+    <h1>Meet the Servos</h1>
+    <p class="sub">Student Lab · Calibrating an Arm and Claw</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine act on the world, not just move through it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Machines Act on the World Through Controlled Motion</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems must know the limits of their own bodies to act safely.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Servos · Position Values · Safe Ranges · Measurement</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Preparing to lift and stack the green and yellow cubes</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · demobot arm + claw servos · a cube · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Your robot can drive, sense, and follow lines — but it can't yet <em>touch</em> the world. To stack cubes, it needs an arm and a claw. Those are run by <strong>servos</strong>: motors that move to an exact position and hold it. Today you'll build a demobot arm and claw, learn to move each servo to a precise spot, and — most important — find the <strong>safe limits</strong> of your servos so you never damage them. Then you'll try your first pick-up.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A servo doesn't spin like a wheel — it goes to a <em>position</em> and holds. That precision is what lets a robot grab, lift, and place objects exactly.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Enable and move a servo to an exact position with <code>enable_servo</code> and <code>set_servo_position</code>.</li>
+      <li>Use the servo widget to find your arm and claw's safe minimum and maximum.</li>
+      <li>Explain why staying inside the safe range protects the servo from burning out.</li>
+      <li>Write a sequence that opens, lowers, closes, and lifts — a first cube pick-up.</li>
+    </ul>
+
+    <h3 class="sub">Build &amp; Plug In the Servos</h3>
+    <div class="callout navy">
+      <p class="ctitle">Wiring — get this right before powering on</p>
+      <p>Plug the <strong>arm</strong> servo into <strong>servo port 0</strong> and the <strong>claw</strong> servo into <strong>servo port 1</strong>.</p>
+      <p>On each servo cord, the <strong>orange wire must be closest to the screen</strong>. Plugging it in backward can damage the servo or the controller — double-check before you power on.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1: Concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Concept: How a Servo Works</h2>
+    <div class="concept">
+      <div class="chead">A servo goes to a position, like a protractor</div>
+      <div class="cbody">
+        <p>A motor spins freely. A <strong>servo</strong> is different: it turns to a specific <em>position</em> in its range and holds there. Think of a protractor — its arm can point to any angle and stay. A servo's range is divided into numbered positions from <strong>0 to 2047</strong>.</p>
+        <div class="code small">enable_servo(0);              <span class="c">// turn on the servo on port 0</span>
+set_servo_position(0, 1024);  <span class="c">// send it to position 1024 (the center)</span></div>
+        <p>The bigger the number, the farther it turns one way; the smaller, the farther the other way.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Enabling sends servos to 1024</div>
+      <div class="cbody">
+        <p>The moment you call <code>enable_servo</code>, that servo jumps to position <strong>1024</strong> (the center) — unless you've already told it to go somewhere else. So when your code first runs, expect the arm and claw to snap to their middle position. Plan for that, so the arm doesn't swing into something.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Position is a measurement</div>
+      <div class="cbody">
+        <p>Here's the powerful part: a servo's position number <em>is</em> a measurement. A bigger arm number means the arm is raised higher. A bigger claw number means the claw is open a different amount. Instead of measuring how far the robot drove, today you measure <strong>how high the arm lifts</strong> and <strong>how far the claw opens</strong> — all by position value.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 2: SAFETY + Calibrate the arm ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Find the Arm's Safe Range</h2>
+    <div class="safety no-print">
+      <p class="ctitle">⚠ This step protects your servo — do it carefully</p>
+      <p>A servo can only turn so far before it hits a hard mechanical stop. If you command it <em>past</em> that stop, the motor keeps straining against the wall and can <strong>burn out</strong>. You must find the highest and lowest positions your arm can reach <em>without</em> forcing it, and never command outside them.</p>
+    </div>
+    <div class="widget-step no-print">
+      <p class="ctitle">Use the servo widget</p>
+      <p>Open the <strong>Motors and Sensors</strong> widget and find the <strong>servo</strong> page. Select <strong>port 0</strong> (the arm). Slowly move the position up and down. <strong>Watch and listen:</strong> stop the moment the arm reaches its physical limit — do not push it into a strain or buzzing sound.</p>
+      <p>Record the lowest safe position (arm all the way down) and the highest safe position (arm all the way up).</p>
+    </div>
+    <table class="grid">
+      <caption>Arm (port 0) safe range</caption>
+      <thead><tr><th style="width:55%">Arm position</th><th>Value (0–2047)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Lowest safe position (arm down) — your ARM_MIN</div></td><td><input type="text" data-key="arm_min" aria-label="Arm min" /></td></tr>
+        <tr><td><div class="seed">Highest safe position (arm up) — your ARM_MAX</div></td><td><input type="text" data-key="arm_max" aria-label="Arm max" /></td></tr>
+        <tr><td><div class="seed">Resting / centered position</div></td><td><input type="text" data-key="arm_rest" aria-label="Arm rest" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">How did you know you'd reached the arm's limit? What did you see or hear that told you to stop before forcing it?</p>
+    <textarea class="answer" data-key="p2_arm_limit" aria-label="How you found the arm limit"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: Calibrate the claw ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Find the Claw's Safe Range</h2>
+    <div class="widget-step no-print">
+      <p class="ctitle">Same careful process, port 1</p>
+      <p>Select <strong>port 1</strong> (the claw) in the servo widget. Slowly open and close it. Find the position where it's <strong>open</strong> wide enough to fit around a cube, and the position where it's <strong>closed</strong> snugly on the cube — without straining past either stop.</p>
+    </div>
+    <table class="grid">
+      <caption>Claw (port 1) safe range</caption>
+      <thead><tr><th style="width:55%">Claw position</th><th>Value (0–2047)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Open wide (fits around cube) — your CLAW_OPEN</div></td><td><input type="text" data-key="claw_open" aria-label="Claw open" /></td></tr>
+        <tr><td><div class="seed">Closed on the cube — your CLAW_SHUT</div></td><td><input type="text" data-key="claw_shut" aria-label="Claw shut" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">A servo position is a measurement. In your own words, what does a bigger claw number mean physically? What does a bigger arm number mean?</p>
+    <textarea class="answer" data-key="p3_position_meaning" aria-label="Position as measurement"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: Build the pick-up ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build: Your First Pick-Up</h2>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Never command past your safe values</p>
+      <p>Every <code>set_servo_position</code> in your code must use a number between the safe values you found. If you type a number outside them, you risk burning out the servo. Use your <code>ARM_MIN</code>, <code>ARM_MAX</code>, <code>CLAW_OPEN</code>, and <code>CLAW_SHUT</code> — not random numbers.</p>
+    </div>
+
+    <p>Type your four safe values at the top, then build the grab sequence: open the claw, lower the arm, close on the cube, and lift. Each move gets a pause so the servo has time to arrive.</p>
+    <div class="code">// Unit 3 · Big Idea 1 — Meet the Servos
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+<span class="c">// YOUR safe values from the widget — never command past these,</span>
+<span class="c">// or you can BURN OUT the servo by forcing it into a hard stop.</span>
+int ARM_MIN   = <span class="hl">____</span>;   <span class="c">// lowest safe arm position (down)</span>
+int ARM_MAX   = <span class="hl">____</span>;   <span class="c">// highest safe arm position (up)</span>
+int CLAW_OPEN = <span class="hl">____</span>;   <span class="c">// safe open claw position</span>
+int CLAW_SHUT = <span class="hl">____</span>;   <span class="c">// safe closed-on-cube claw position</span>
+
+int main() {
+    enable_servo(0);    <span class="c">// arm servo on port 0</span>
+    enable_servo(1);    <span class="c">// claw servo on port 1</span>
+    <span class="c">// (enabling sends each servo to 1024 unless told otherwise)</span>
+
+    set_servo_position(1, CLAW_OPEN);   <span class="c">// 1. open the claw</span>
+    msleep(1000);                       <span class="c">// give the servo time to get there</span>
+
+    set_servo_position(0, ARM_MIN);     <span class="c">// 2. lower the arm to the cube</span>
+    msleep(1000);
+
+    set_servo_position(1, CLAW_SHUT);   <span class="c">// 3. close on the cube</span>
+    msleep(1000);
+
+    set_servo_position(0, ARM_MAX);     <span class="c">// 4. raise the cube up</span>
+    msleep(1000);
+
+    return 0;
+}</div>
+    <p class="muted">About the <code>msleep(1000)</code>: servos don't move instantly, so you wait for each one to arrive before the next command. We use a full second for safety while you're learning — once you know your servos, you can shorten it.</p>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Hold the robot and watch the first run</p>
+      <p>Run this with the robot held still on a table, cube in reach. Watch each move happen. If anything strains, buzzes, or pushes against a stop, <strong>stop the program immediately</strong> and re-check your values.</p>
+    </div>
+
+    <h3 class="sub">Pick-Up Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:46%">What happened at each step (open / lower / close / lift)</th><th>What you adjusted</th></tr></thead>
+      <tbody id="tryBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Did your robot pick up the cube? If a step didn't work (claw missed, arm too low/high), which safe value did you adjust, and why?</p>
+    <textarea class="answer" data-key="p4_pickup_result" aria-label="Pick-up result"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: Measure ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Measure the Motion</h2>
+    <p>Servo positions are numbers, so you can measure your robot's reach the same way you measured driving distance. Use your values to answer these.</p>
+    <table class="grid">
+      <thead><tr><th style="width:60%">Measurement</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Arm travel = ARM_MAX − ARM_MIN (how far the arm swings)</div></td><td><input type="text" data-key="p5_arm_travel" aria-label="Arm travel" /></td></tr>
+        <tr><td><div class="seed">Claw travel = CLAW_OPEN − CLAW_SHUT (how far the claw moves)</div></td><td><input type="text" data-key="p5_claw_travel" aria-label="Claw travel" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Which has more travel — your arm or your claw? Why might one need a bigger range of motion than the other?</p>
+    <textarea class="answer" data-key="p5_compare_travel" aria-label="Compare travel"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: Connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Intelligent systems must know the limits of their own bodies to act safely.</p>
+    </div>
+    <p>Before your robot could safely lift anything, you had to teach it the limits of its own arm and claw — how far they can go before they break. Every robot that acts on the world has this problem. A factory arm knows exactly how far each joint can bend; a surgical robot has hard limits built in so it can never over-extend. Knowing your own physical limits isn't a weakness — it's what makes safe, precise action possible. A system that doesn't know its limits will eventually destroy itself.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Why is commanding a servo past its hard stop dangerous? Connect this to why a robot must "know its own body."</p>
+    <textarea class="answer" data-key="p6_know_limits" aria-label="Knowing limits"></textarea>
+    <p class="q">Your safe values are probably a little different from a neighbor's, even with the same parts. Why must each robot find its own limits rather than sharing one set of numbers?</p>
+    <textarea class="answer" data-key="p6_own_limits" aria-label="Own limits"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: Reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> How is a servo different from a regular motor? What does <code>set_servo_position</code> do?</p>
+    <textarea class="answer" data-key="p7_q1_servo" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What happens the moment you call <code>enable_servo</code>, and why do you need to plan for it?</p>
+    <textarea class="answer" data-key="p7_q2_enable" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Why is finding the safe minimum and maximum so important? What can happen if you ignore them?</p>
+    <textarea class="answer" data-key="p7_q3_safe_range" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems must know the limits of their own bodies to act safely. This means that before a robot uses an arm, it must..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Set It Down Gently</h3>
+    <ul>
+      <li>Add steps to lower the arm and open the claw to place the cube back down. Does the order matter? Test it.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — How Slow Can the Pause Go?</h3>
+    <ul>
+      <li>Shorten the <code>msleep</code> after each move (try 700, then 500). What's the shortest pause where the servo still fully arrives before the next move? What happens if it's too short?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — A Middle Height</h3>
+    <ul>
+      <li>Find an arm value <em>between</em> your min and max that holds the cube at a useful "carry" height. Why might you want to carry a cube partway up instead of fully raised?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Looking Ahead: Reusing These Moves</h3>
+    <ul>
+      <li>You'll use "open," "close," "raise," and "lower" over and over in future missions. How could turning each into its own function make stacking cubes easier later? (We'll build toward a shared library.)</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 3 Big Idea 1 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit3_bigidea1";
+
+  (function buildRows() {
+    const t = document.getElementById("tryBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="try' + i + '_what" aria-label="Try ' + i + ' what"></td>' +
+        '<td><input type="text" data-key="try' + i + '_adjust" aria-label="Try ' + i + ' adjust"></td>';
+      t.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 3 · Big Idea 1 — Meet the Servos",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

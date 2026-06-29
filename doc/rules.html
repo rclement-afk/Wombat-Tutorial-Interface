@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competition Rules | KIPR Botball 2026</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { background: #F0F0F0; }
+
+    /* ── Page hero (matches 2026-missions) ── */
+    .page-hero {
+      background: linear-gradient(135deg, var(--deep-red) 0%, var(--dark-red) 50%, var(--red) 100%);
+      padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden;
+    }
+    .page-hero::after {
+      content: 'RULES'; position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%);
+      font-family: var(--font-display); font-size: min(7rem, 16vw); font-weight: 800;
+      color: rgba(255,255,255,0.07); line-height: 1; pointer-events: none; letter-spacing: 0.02em;
+    }
+    .ph-inner { max-width: 1080px; margin: 0 auto; position: relative; z-index: 1; display: flex; align-items: center; gap: 2rem; }
+    .ph-botguy { height: 104px; opacity: 0.9; filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4)); flex-shrink: 0; }
+    .ph-eyebrow { font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.5rem; }
+    .ph-title { font-family: var(--font-display); font-size: clamp(2rem,6vw,3.5rem); font-weight: 800; color: var(--white); line-height: 1; }
+    .ph-sub { font-size: 0.95rem; color: rgba(255,255,255,0.6); margin-top: 0.75rem; max-width: 52ch; }
+    .ph-stats { display: flex; gap: 2rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .ph-stat .v { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: var(--white); line-height: 1; }
+    .ph-stat .l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.45); }
+
+    /* breadcrumb strip */
+    .crumb { max-width: 1080px; margin: 0 auto; padding: 0.75rem 2rem 0; font-size: 0.78rem; color: var(--gray-500); }
+    .crumb a { color: var(--gray-500); text-decoration: none; }
+    .crumb a:hover { color: var(--dark-red); }
+    .crumb .here { color: var(--dark-red); font-weight: 600; }
+
+    /* ── Two-column shell ── */
+    .r-shell { max-width: 1080px; margin: 0 auto; padding: 1.5rem 2rem 3rem; display: grid; grid-template-columns: 232px 1fr; gap: 2.5rem; align-items: start; }
+    @media (max-width: 880px){ .r-shell { grid-template-columns: 1fr; gap: 0; } }
+
+    /* sticky side-nav (light theme) */
+    .r-nav { position: sticky; top: 72px; align-self: start; }
+    .r-nav .rn-title { font-family: var(--font-display); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 0.5rem; padding-left: 0.85rem; }
+    .r-nav ol { list-style: none; }
+    .r-nav a { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.4rem 0.85rem; border-left: 2px solid transparent; color: var(--gray-700); text-decoration: none; font-size: 0.85rem; transition: all 0.15s; border-radius: 0 2px 2px 0; }
+    .r-nav a .rn-no { font-family: var(--font-display); font-size: 0.7rem; font-weight: 700; color: var(--gray-300); }
+    .r-nav a:hover { background: var(--pale-red); color: var(--dark-red); }
+    .r-nav a.active { background: var(--pale-red); color: var(--dark-red); border-left-color: var(--red); font-weight: 600; }
+    .r-nav a.active .rn-no { color: var(--red); }
+    @media (max-width: 880px){
+      .r-nav { position: static; margin-bottom: 1.25rem; }
+      .r-nav details { background: var(--white); border: 1px solid var(--gray-300); border-radius: 2px; }
+      .r-nav summary { padding: 0.75rem 1rem; font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem; color: var(--dark-red); cursor: pointer; list-style: none; }
+      .r-nav summary::-webkit-details-marker { display: none; }
+      .r-nav summary::after { content: '⌄'; float: right; }
+      .r-nav ol { padding: 0.4rem; }
+    }
+    .rn-desktop{display:block} .rn-mobile{display:none}
+    @media (max-width:880px){ .rn-desktop{display:none} .rn-mobile{display:block} }
+
+    /* ── Sections ── */
+    .r-content { min-width: 0; }
+    .r-section { padding: 0.5rem 0 2rem; scroll-margin-top: 72px; }
+    .r-section + .r-section { border-top: 1px solid var(--gray-300); padding-top: 2rem; }
+    .r-sec-eyebrow { font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); display: flex; align-items: center; gap: 0.5rem; }
+    .r-sec-no { background: var(--dark-red); color: var(--white); font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 2px; }
+    .r-sec-title { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 800; color: var(--dark); line-height: 1.05; margin: 0.25rem 0 1rem; }
+    .r-section p { font-size: 0.925rem; color: var(--gray-700); line-height: 1.6; margin-bottom: 0.75rem; }
+    .r-section p.r-sub { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.78rem; color: var(--gray-500); margin: 1.25rem 0 0.5rem; }
+    .r-section strong { color: var(--dark); }
+
+    .r-list { list-style: none; margin: 0 0 1rem; }
+    .r-list li { position: relative; padding: 0.25rem 0 0.25rem 1.25rem; font-size: 0.925rem; color: var(--gray-700); line-height: 1.55; }
+    .r-list li::before { content: ''; position: absolute; left: 0.1rem; top: 0.7rem; width: 6px; height: 6px; background: var(--red); border-radius: 1px; }
+    .r-ol { list-style: none; counter-reset: r; margin: 0 0 1rem; }
+    .r-ol li { counter-increment: r; position: relative; padding: 0.25rem 0 0.25rem 1.9rem; font-size: 0.925rem; color: var(--gray-700); line-height: 1.55; }
+    .r-ol li::before { content: counter(r); position: absolute; left: 0; top: 0.2rem; font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; color: var(--red); background: var(--pale-red); width: 1.3rem; height: 1.3rem; border-radius: 2px; display: grid; place-items: center; }
+
+    /* callouts reuse section-head color language */
+    .r-callout { background: var(--white); border-left: 4px solid var(--red); padding: 0.7rem 1rem; margin: 0.75rem 0; font-size: 0.9rem; color: var(--gray-700); line-height: 1.55; border-radius: 0 2px 2px 0; }
+    .r-callout strong { color: var(--dark-red); }
+    .r-callout.r-warn { background: var(--pale-red); border-left-color: var(--dark-red); }
+
+    /* definition blocks */
+    .def-block { border: 1px solid var(--gray-300); border-radius: 2px; overflow: hidden; margin: 0.85rem 0; background: var(--white); }
+    .def-bar { display: flex; align-items: center; gap: 0.6rem; background: var(--dark-red); padding: 0.5rem 0.85rem; }
+    .def-bar .def-n { font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; color: var(--white); background: rgba(0,0,0,0.25); padding: 0.1rem 0.4rem; border-radius: 2px; }
+    .def-bar .def-t { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); font-size: 0.95rem; }
+    .def-body { padding: 0.85rem; }
+    .def-body > p { margin-bottom: 0.5rem; }
+    .examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin: 0.5rem 0; }
+    @media (max-width: 560px){ .examples-grid { grid-template-columns: 1fr; } }
+    .ex-col { border: 1px solid var(--gray-100); border-radius: 2px; overflow: hidden; }
+    .ex-head { padding: 0.4rem 0.7rem; font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); }
+    .ex-head.scores { background: var(--green); }
+    .ex-head.no-scores { background: var(--red); }
+    .ex-col ul { padding: 0.6rem 0.7rem 0.6rem 1.5rem; list-style: disc; }
+    .ex-col ul li { font-size: 0.85rem; color: var(--gray-700); padding: 0.15rem 0; line-height: 1.4; }
+    .notes-list { background: var(--off-white); border-left: 3px solid var(--gray-300); padding: 0.6rem 0.7rem 0.6rem 1.5rem; list-style: disc; margin-top: 0.5rem; }
+    .notes-list li { font-size: 0.85rem; color: var(--gray-700); padding: 0.15rem 0; line-height: 1.45; }
+
+    /* mission cross-reference chips */
+    .mref-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin: 0.4rem 0; }
+    .mref { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; color: var(--dark-red); background: var(--pale-red); border: 1px solid var(--light-red); padding: 0.2rem 0.5rem; border-radius: 2px; text-decoration: none; transition: all 0.15s; }
+    .mref:hover { background: var(--red); color: var(--white); border-color: var(--red); }
+    .mref-tag { font-size: 0.8rem; color: var(--gray-500); font-style: italic; }
+
+    /* back to top */
+    .totop { position: fixed; right: 18px; bottom: 18px; z-index: 50; width: 40px; height: 40px; border-radius: 2px; background: var(--dark-red); color: #fff; border: none; cursor: pointer; font-size: 18px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: all 0.2s; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+    .totop.show { opacity: 1; pointer-events: auto; transform: none; }
+
+    .r-foot { background: var(--deep-red); color: rgba(255,255,255,0.6); text-align: center; padding: 1rem; font-size: 0.75rem; letter-spacing: 0.04em; }
+    .r-foot a { color: rgba(255,255,255,0.85); text-decoration: none; }
+    .r-foot a:hover { color: var(--white); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">
+      <img src="kipr-logo.png" alt="KIPR">
+      <span>Botball 2026</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="2026-missions.html" class="active">2026 Missions</a>
+      <a href="telemetry.html">Telemetry</a>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="ph-inner">
+      <img src="botguy.png" alt="Botguy" class="ph-botguy">
+      <div>
+        <p class="ph-eyebrow">KIPR Botball — 2026 Missions · Stack Attack</p>
+        <h1 class="ph-title">Competition Rules</h1>
+        <p class="ph-sub">The complete rulebook for the 2026 season — divisions, match structure, robot requirements, scoring framework, and judging definitions.</p>
+        <div class="ph-stats">
+          <div class="ph-stat"><div class="v">150s</div><div class="l">Match Length</div></div>
+          <div class="ph-stat"><div class="v">9</div><div class="l">Rule Sections</div></div>
+          <div class="ph-stat"><div class="v">9</div><div class="l">Definitions</div></div>
+          <div class="ph-stat"><div class="v">5 → 4</div><div class="l">Matches Counted</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="crumb"><a href="index.html">Home</a> · <a href="2026-missions.html">2026 Missions</a> · <span class="here">Competition Rules</span></div>
+
+  <div class="r-shell">
+    <aside class="r-nav">
+      <nav class="rn-desktop" aria-label="Rule sections">
+        <p class="rn-title">Rule Sections</p>
+        <ol>
+          <li><a href="#overview" data-target="overview"><span class="rn-no">01</span><span class="rn-lab">Competition Overview</span></a></li>
+          <li><a href="#format" data-target="format"><span class="rn-no">02</span><span class="rn-lab">Game Format &amp; Match Structure</span></a></li>
+          <li><a href="#robots" data-target="robots"><span class="rn-no">03</span><span class="rn-lab">Robots &amp; Equipment</span></a></li>
+          <li><a href="#procedures" data-target="procedures"><span class="rn-no">04</span><span class="rn-lab">Match Procedures &amp; Recovery</span></a></li>
+          <li><a href="#scoring" data-target="scoring"><span class="rn-no">05</span><span class="rn-lab">Scoring Framework</span></a></li>
+          <li><a href="#definitions" data-target="definitions"><span class="rn-no">06</span><span class="rn-lab">Definitions &amp; Interpretations</span></a></li>
+          <li><a href="#field" data-target="field"><span class="rn-no">07</span><span class="rn-lab">Field Elements &amp; Setup</span></a></li>
+          <li><a href="#inspection" data-target="inspection"><span class="rn-no">08</span><span class="rn-lab">Inspection &amp; Operations</span></a></li>
+          <li><a href="#governance" data-target="governance"><span class="rn-no">09</span><span class="rn-lab">Governance &amp; Authority</span></a></li>
+        </ol>
+      </nav>
+      <nav class="rn-mobile" aria-label="Rule sections">
+        <details>
+          <summary>Jump to section</summary>
+          <ol>
+          <li><a href="#overview" data-target="overview"><span class="rn-no">01</span><span class="rn-lab">Competition Overview</span></a></li>
+          <li><a href="#format" data-target="format"><span class="rn-no">02</span><span class="rn-lab">Game Format &amp; Match Structure</span></a></li>
+          <li><a href="#robots" data-target="robots"><span class="rn-no">03</span><span class="rn-lab">Robots &amp; Equipment</span></a></li>
+          <li><a href="#procedures" data-target="procedures"><span class="rn-no">04</span><span class="rn-lab">Match Procedures &amp; Recovery</span></a></li>
+          <li><a href="#scoring" data-target="scoring"><span class="rn-no">05</span><span class="rn-lab">Scoring Framework</span></a></li>
+          <li><a href="#definitions" data-target="definitions"><span class="rn-no">06</span><span class="rn-lab">Definitions &amp; Interpretations</span></a></li>
+          <li><a href="#field" data-target="field"><span class="rn-no">07</span><span class="rn-lab">Field Elements &amp; Setup</span></a></li>
+          <li><a href="#inspection" data-target="inspection"><span class="rn-no">08</span><span class="rn-lab">Inspection &amp; Operations</span></a></li>
+          <li><a href="#governance" data-target="governance"><span class="rn-no">09</span><span class="rn-lab">Governance &amp; Authority</span></a></li>
+          </ol>
+        </details>
+      </nav>
+    </aside>
+
+    <main class="r-content">
+        <section class="r-section" id="overview">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">01</span> Section 1</div>
+          <h2 class="r-sec-title">Competition Overview</h2>
+          <div class="section-head">Competition Divisions</div><p><strong>Level 1.</strong> Students in Grade 6 and below are eligible for Level 1 competition. Eligible students may compete in either Level 1 or Open.</p>
+   <p><strong>Open.</strong> Any student currently enrolled in a K–12 educational program is eligible to compete in Open.</p>
+   <div class="r-callout"><strong>Play-Up Rule —</strong> Students may compete in a higher division than their grade level would otherwise require.</div>
+   <div class="r-callout"><strong>Play-Down Rule —</strong> Students may not compete in a division below their eligibility level.</div><div class="section-head">Philosophy</div><p>The game is designed to reward autonomy, allow recovery from failures, preserve earned accomplishments, and encourage skill progression. It functions as both a robotics competition and a curriculum assessment system.</p><div class="section-head">Tournament Format</div><ul class="r-list"><li>Each team receives five (5) matches.</li><li>The best four (4) match scores count toward final ranking.</li><li>The lowest score is discarded.</li><li>Teams are ranked by the sum of their four highest match scores.</li><li>The highest-ranked team is the winner.</li></ul><div class="section-head">Awards</div><ul class="r-list"><li><strong>Level 1 Champion</strong></li><li><strong>Open Champion</strong></li><li><strong>Overall Champion</strong> — highest-ranked team regardless of division.</li></ul><div class="section-head">Tie Breakers</div><p>Applied in order until the tie is resolved:</p><ol class="r-ol"><li>Fewest Touches / Timeout Cards used</li><li>Highest raw score before penalties</li><li>Most distinct missions scored</li><li>Tie-break match</li><li>Coin flip</li></ol><div class="section-head">Spirit of Botball</div><p>This competition promotes creativity, engineering, teamwork, problem solving, and gracious competition. Teams compete with honesty, integrity, and respect for competitors, judges, volunteers, and spectators. Winning matters, but learning, innovation, and teamwork are valued equally.</p>
+   <p><strong>Teams may not</strong> intentionally damage the field, game objects, or another team's equipment; interfere with another team's match; use abusive or inappropriate behavior; or gain an unfair advantage through deception.</p>
+   <div class="r-callout r-warn"><strong>Violations</strong> may result in a verbal warning, score adjustment, match forfeiture, or disqualification, as determined by tournament officials based on severity.</div>
+        </section>
+        <section class="r-section" id="format">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">02</span> Section 2</div>
+          <h2 class="r-sec-title">Game Format &amp; Match Structure</h2>
+          <div class="r-callout"><strong>Match duration</strong> Each match lasts <strong>150 seconds</strong>. Open Division Timeout periods do not count toward this duration.</div><div class="section-head">Official Playing Area</div><ul class="r-list"><li>Interior dimensions: 93 in × 45 in.</li><li>Official grid spacing: 2 in × 2 in.</li><li>Origin (0,0) at the lower-left corner; X-axis along the long side (0–93), Y-axis along the short side (0–45).</li></ul><div class="section-head">Mission Types</div><p>Every mission component is one of two types:</p>
+   <div class="r-callout"><strong>Live Judged —</strong> the judge must observe the action occur (e.g. touching Botguy, stacking cubes, moving cones off tape).</div>
+   <div class="r-callout"><strong>Final Position Judged —</strong> the judge determines success from the final board state after time expires (e.g. poms in baskets, objects on platforms or in loading zones).</div><div class="section-head">Progressive Mission Logic</div><p>Missions may contain a Base, a Bonus, and an Advanced Bonus task. Completing one stage unlocks eligibility for the next.</p><div class="section-head">Match Flow</div><p><strong>Pre-match —</strong> teams declare intended missions. <strong>Live match —</strong> only active live-scoring items are displayed; when a live mission is completed the judge checks it, it leaves the active list, and associated bonuses become available. <strong>Final scoring —</strong> the judge evaluates all final-position missions. <strong>Review —</strong> before submission the judge may modify items and correct mistakes.</p><div class="section-head">Match End</div><p>At 150 seconds the match immediately ends. No additional robot movement, settling time, or task completion is permitted afterward. Scoring is based on the condition of the field at the moment the match ends.</p>
+        </section>
+        <section class="r-section" id="robots">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">03</span> Section 3</div>
+          <h2 class="r-sec-title">Robots &amp; Equipment</h2>
+          <div class="section-head">Robots</div><ul class="r-list"><li>Teams may operate up to two robots, working independently or cooperatively.</li><li>Any robot platform capable of autonomous operation is permitted.</li></ul><div class="section-head">3D Printed Components</div><div class="r-callout"><strong>Level 1 —</strong> 3D printed robot components are prohibited.</div>
+   <div class="r-callout"><strong>Open —</strong> 3D printed robot components are permitted, with no current restriction on quantity or size. Additional restrictions may be published in future updates.</div><div class="section-head">Starting Conditions</div><p>At the start of a match, all robots and independent structures must be fully contained within the vertical projection of a starting box, with a maximum starting height of 15 inches. The <strong>Starting Volume</strong> is the starting-box vertical projection up to that 15-inch height. Robots may expand beyond their starting dimensions after the match begins.</p><div class="section-head">Independent Structures</div><ul class="r-list"><li>No more than two detached independent structures on the field at any time.</li><li>All must begin within the Starting Volume and may only enter the field through deployment by a robot after the start.</li><li>They remain part of the team's robot system.</li></ul><div class="r-callout r-warn"><strong>An independent structure may not contain</strong> an active controller, a battery, or a powered actuator.</div><div class="section-head">Communication &amp; Autonomy</div><p>After the match begins, robots must operate autonomously — no wireless control, remote control, teleoperation, or human communication. Programs and configurations may be modified between matches only; recompiling is permitted between matches only. During authorized Touch or Timeout periods teams may adjust mechanical issues but may not modify software.</p><div class="section-head">Safety</div><p>Robots may not contain components intended to damage the field, field elements, or game objects, or to create unsafe conditions. The Head Judge may prohibit any robot or component deemed unsafe, and that determination is final.</p>
+        </section>
+        <section class="r-section" id="procedures">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">04</span> Section 4</div>
+          <h2 class="r-sec-title">Match Procedures &amp; Recovery</h2>
+          <div class="r-callout"><strong>Legal recovery opportunity</strong> A legal recovery opportunity is any Touch (Level 1) or Timeout Card (Open).</div><div class="section-head">Level 1 Touches</div><ul class="r-list"><li>A Touch may only occur after the robot is returned completely within a legal starting position.</li><li>The match clock continues to run during all Touches; there is no limit to the number permitted.</li><li>Touches are tracked at the team level and shared across all robots.</li></ul><div class="r-callout r-warn"><strong>Touch penalty</strong> Each Touch reduces the team's final match score by <strong>5%</strong>. Penalties are additive and applied after all mission scoring is complete. Final score is never reduced below zero.</div><div class="section-head">Open Timeout Cards</div><ul class="r-list"><li>Each Open team receives two (2) Timeout Cards per tournament.</li><li>Any robot continuing in the match must be returned to a legal starting position before play resumes; independent structures need not be returned.</li><li>The match timer stops during a Timeout and resumes when play restarts. Activation consumes one card regardless of duration.</li></ul><p>If a robot is controlling a scoring object when a Timeout Card is played, the controlled object (or full controlled assembly) is removed from the field, becomes ineligible for scoring, and remains removed for the rest of the match. During a Timeout, teams may not reposition game pieces or field elements or alter field setup.</p><div class="section-head">Independent Structures During Recovery</div><p>If an accidental detachment causes a team to exceed two independent structures, one or more must be removed during the team's next legal recovery opportunity. The removal may not cause a mission to score or become unscored, reposition game objects or field elements, or otherwise alter the field. Judges may deny or modify a removal that would affect scoring or gameplay.</p>
+        </section>
+        <section class="r-section" id="scoring">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">05</span> Section 5</div>
+          <h2 class="r-sec-title">Scoring Framework</h2>
+          <div class="r-callout">Mission-specific scoring requirements supersede general definitions when a conflict exists.</div><div class="section-head">Multi-Scoring Policy</div><p>The game rewards efficient design and task integration. A single robot action, object movement, placement, delivery, or final configuration may satisfy multiple missions simultaneously unless a rule specifically prohibits it. If all requirements of multiple missions are satisfied, all applicable points are awarded.</p>
+   <p class="r-sub">Valid multi-scoring combinations</p>
+   <div class="mref-row"><a class="mref" href="missions/mission-02.html">M2 · Relocate the Red Cube</a><a class="mref" href="missions/mission-05.html">M5 · Top Shelf Delivery</a><a class="mref" href="missions/mission-08.html">M8 · Deliver the Red Cube</a><span class="mref-tag">same palletized red-cube assembly</span></div>
+   <div class="mref-row"><a class="mref" href="missions/mission-12.html">M12 · Restack the Freight</a><a class="mref" href="missions/mission-16.html">M16 · Freight Shelving</a><span class="mref-tag">spilled-cube stack on the Green Cube</span></div>
+   <div class="mref-row"><a class="mref" href="missions/mission-13.html">M13 · Rebuild the Shipment</a><a class="mref" href="missions/mission-17.html">M17 · Freight Racking</a><span class="mref-tag">unstraight-cube stack on the Brown Cube</span></div>
+   <div class="mref-row"><a class="mref" href="missions/mission-09.html">M9 · Recover Botguy</a><a class="mref" href="missions/mission-18.html">M18 · Safety First, All Hands on Deck</a><span class="mref-tag">Botguy</span></div>
+   <div class="mref-row"><a class="mref" href="missions/mission-14.html">M14 · Traffic Control</a><a class="mref" href="missions/mission-18.html">M18 · Safety First, All Hands on Deck</a><span class="mref-tag">Traffic Cones</span></div><div class="section-head">Scoring Restrictions</div><div class="r-callout r-warn"><strong>Basket Exclusivity</strong> If a team attempts both Hazard Disposal and Hazard Disposal #2, the basket used for each must be different. A single basket may not score both.</div>
+   <div class="r-callout r-warn"><strong>Waypoint Independence</strong> Waypoint Alpha and Waypoint Bravo are completed independently. A single return to a starting box may not satisfy the Bonus requirements of both.</div><div class="section-head">Live &amp; Final Scoring</div><p><strong>Live Judged —</strong> the judge must observe the scoring condition occur; once awarded it remains earned unless the mission specifies otherwise. <strong>Final Position Judged —</strong> only the final state of the field is considered. Before submission, judges may modify scores and correct scoring or data-entry errors.</p>
+        </section>
+        <section class="r-section" id="definitions">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">06</span> Section 6</div>
+          <h2 class="r-sec-title">Definitions &amp; Interpretations</h2>
+          <p>These definitions apply throughout unless an individual mission specifies otherwise. Mission-specific requirements take precedence when a conflict exists.</p><div class="def-block">
+    <div class="def-bar"><span class="def-n">#1</span><span class="def-t">Touching</span></div>
+    <div class="def-body"><p>Two objects are TOUCHING only when in direct physical contact. Contact through a robot, attachment, field element, or another game object does not count.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>A robot physically touching Botguy.</li><li>A cube physically touching another cube.</li><li>A cone physically touching a game object.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>Objects connected only through a robot.</li><li>Objects connected only through another game object.</li><li>Objects connected only through a field element.</li></ul></div>
+    </div>
+    
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#2</span><span class="def-t">On Top Of</span></div>
+    <div class="def-body"><p>An object is ON TOP OF another when in direct contact with the uppermost surface of the target. If there is no horizontal upper surface, the surface closest to horizontal is used. Additional support from a robot, field element, or structure is permitted unless a mission says otherwise.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>A cube resting on another cube.</li><li>A cube touching the upper surface of the Large Red Cube.</li><li>A cube touching the Green Cube while leaning against a wall.</li><li>A cube touching the Brown Cube while also supported by a robot.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>A cube touching only the side or a vertical face.</li><li>A cube hovering above without direct contact.</li></ul></div>
+    </div>
+    
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#3</span><span class="def-t">In</span></div>
+    <div class="def-body"><p>An object is IN a container, enclosure, basket, or zone when any portion extends into its interior space, unless a mission says otherwise.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>A pom partially inside a basket or PVC enclosure.</li><li>A cube or cone partially inside a loading zone.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>An object completely outside the container.</li><li>An object touching only the exterior.</li><li>An object resting on a basket rim without entering it.</li></ul></div>
+    </div>
+    
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#4</span><span class="def-t">Off</span></div>
+    <div class="def-body"><p>An object is OFF a line, tape, boundary, or zone edge when no portion is touching it.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>A cube, pom, or cone completely clear of black tape.</li><li>A robot completely clear of a boundary tape.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>Any portion touching, resting on, or leaning onto black tape.</li></ul></div>
+    </div>
+    
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#5</span><span class="def-t">In a Zone</span></div>
+    <div class="def-body"><p>A robot is IN A ZONE when touching the specified zone and not touching any black tape boundary or adjacent zone.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>A robot touching only the intended zone.</li><li>A robot extending over a tape boundary or adjacent zone without touching it.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>A robot touching a black tape boundary or an adjacent zone.</li><li>A robot resting on any boundary tape.</li></ul></div>
+    </div>
+    
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#6</span><span class="def-t">Simultaneously</span></div>
+    <div class="def-body"><p>Two or more conditions are SIMULTANEOUS if all are true at the same moment. No minimum duration is required unless a mission specifies one.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>An orange and a blue pom both off the line at the same moment.</li><li>Two required objects touching the same target at the same moment.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>Conditions satisfied sequentially rather than concurrently.</li></ul></div>
+    </div>
+    <ul class="notes-list"><li>Judges need not measure time — only observe a single instant where all required conditions are true.</li></ul>
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#7</span><span class="def-t">Fully Within</span></div>
+    <div class="def-body"><p>An object or robot is FULLY WITHIN an area when every part lies inside the interior vertical projection of that area's boundaries.</p>
+    <div class="examples-grid">
+      <div class="ex-col"><div class="ex-head scores">✓ Scores</div><ul><li>A robot entirely within a starting box, loading area, or parking area.</li><li>All attachments contained within the area's vertical projection.</li></ul></div>
+      <div class="ex-col"><div class="ex-head no-scores">✗ Does Not Score</div><ul><li>A wheel, attachment, or cable extending beyond the boundary.</li><li>Any portion crossing outside the vertical projection.</li></ul></div>
+    </div>
+    <ul class="notes-list"><li>When uncertain, the robot is not fully within until judges are satisfied all portions are contained.</li></ul>
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#8</span><span class="def-t">Controlled Object</span></div>
+    <div class="def-body"><p>A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control.</p>
+    
+    
+    </div></div><div class="def-block">
+    <div class="def-bar"><span class="def-n">#9</span><span class="def-t">Legal Starting Position</span></div>
+    <div class="def-body"><p>A robot is in a LEGAL STARTING POSITION when fully within the vertical projection of any starting box and otherwise compliant with all starting requirements.</p>
+    
+    
+    </div></div><div class="r-callout"><strong>Stack interpretation</strong> “Stack” is used for readability only. Scoring is determined solely by the ON TOP OF and TOUCHING definitions — traditional, pyramid, or mixed arrangements all score as long as the required relationships exist. Side-by-side, touching-only, or separated arrangements do not.</div><div class="r-callout r-warn"><strong>Mission-specific exceptions</strong> <strong>Warehouse Zone Pom —</strong> a pom is not IN the Warehouse Zone if any portion touches a black tape boundary. <strong>Traffic Cone OFF-Tape —</strong> a cone is not OFF the tape if any portion touches the tape.</div>
+        </section>
+        <section class="r-section" id="field">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">07</span> Section 7</div>
+          <h2 class="r-sec-title">Field Elements &amp; Setup</h2>
+          <div class="section-head">Fixed Field Elements</div><p>Not intended to move during a match: PVC enclosures, the loading dock, field walls, starting-box walls, field tape, and any permanently attached structure. Teams may not intentionally reposition fixed elements for advantage.</p><div class="section-head">Movable Objects</div><p>Intended to move during a match: baskets, pallets, cubes, poms, traffic cones, Botguy, and any mission-specific object. These may be pushed, pulled, carried, lifted, transported, stacked, or relocated unless a mission prohibits it. Baskets may be freely moved anywhere on the field.</p><div class="section-head">Field Setup &amp; Reset</div><p>Before each match the field is reset per the official setup guide; the Head Judge verifies readiness. Pallet orientation and basket placement may be chosen by teams provided each stays within its designated location. Once a match begins, the setup is official.</p>
+   <div class="r-callout"><strong>After match start</strong> Minor setup variations are not grounds for replay or adjustment. The only exception is a setup error that directly causes a team to receive points that would not otherwise be earned — in which case the Head Judge may make scoring adjustments. The Head Judge's decision is final.</div><div class="section-head">Displaced or Damaged Elements</div><p>If a fixed element is accidentally displaced, judges may restore it when doing so gives no advantage or disadvantage. If a robot intentionally repositions a fixed element, judges may restore it, disallow resulting score, require corrective action, or apply penalties. If an element becomes damaged, the Head Judge decides whether to continue, restore, or replay.</p>
+        </section>
+        <section class="r-section" id="inspection">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">08</span> Section 8</div>
+          <h2 class="r-sec-title">Inspection &amp; Operations</h2>
+          <div class="section-head">Robot Inspection</div><p>Inspection verifies that robots are safe, autonomous, and rules-compliant. It does not evaluate quality, engineering approach, programming language, sensor selection, or design choices. A robot that passes inspection is legal unless subsequently modified.</p>
+   <p>Inspection verifies starting-configuration legality, autonomous operation, power-system safety, and general field compatibility. At the start of a match no game objects may be possessed, held, supported, or controlled by a robot or independent structure. Teams may be reinspected after modifications or whenever officials determine it necessary.</p><div class="section-head">Judge Review &amp; Appeals</div><p>A scoring review may be requested by a designated student representative or a coach, immediately after scoring and before the field is reset. Reviews are limited to scoring errors, data-entry errors, and mission-interpretation errors — not robot performance, programming, mechanical failures, or in-match strategy.</p>
+   <div class="r-callout"><strong>Review procedure</strong> Each team may request one scoring review per match. The Head Judge may increase, decrease, or leave a score unchanged. The decision is final and no additional appeals are permitted.</div>
+        </section>
+        <section class="r-section" id="governance">
+          <div class="r-sec-eyebrow"><span class="r-sec-no">09</span> Section 9</div>
+          <h2 class="r-sec-title">Governance &amp; Authority</h2>
+          <div class="section-head">Official Clarifications</div><p>Tournament organizers may issue official clarifications carrying the same authority as published rules. They may explain rules, resolve ambiguities, correct errors, and provide guidance, and are enforced as part of the competition rules.</p><div class="section-head">Rule Precedence</div><p>If a conflict exists, the higher item takes precedence:</p><ol class="r-ol"><li>Official Clarifications</li><li>Written Rules</li><li>Setup Diagrams</li><li>Photographs</li></ol><div class="section-head">Head Judge Authority</div><p>The Head Judge interprets and enforces the rules — resolving disputes, interpreting ambiguity, determining scoring when required, and directing corrective action. The Head Judge does not create new rules but may interpret existing rules and clarifications.</p>
+   <div class="r-callout r-warn"><strong>Final authority</strong> Tournament officials may take any action necessary to preserve the safety, fairness, and integrity of the competition. Such decisions should be limited to circumstances not adequately addressed by existing rules. The Head Judge's decision is final.</div>
+        </section>
+      <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <a href="2026-missions.html" class="mref" style="font-size:0.85rem; padding:0.4rem 0.8rem;">← Back to 2026 Missions</a>
+        <a href="missions/mission-01.html" class="mref" style="font-size:0.85rem; padding:0.4rem 0.8rem;">View Mission Guide →</a>
+      </div>
+    </main>
+  </div>
+
+  <button class="totop" id="totop" aria-label="Back to top">↑</button>
+  <div class="r-foot">KIPR Botball © 2026 · <a href="2026-missions.html">2026 Missions</a> · <a href="index.html">Home</a></div>
+
+  <script>
+  (function(){
+    var links=[].slice.call(document.querySelectorAll('.rn-desktop a'));
+    var map={}; links.forEach(function(a){map[a.dataset.target]=a;});
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){
+        links.forEach(function(l){l.classList.remove('active');});
+        var a=map[e.target.id]; if(a)a.classList.add('active');
+      }});
+    },{rootMargin:'-40% 0px -55% 0px',threshold:0});
+    [].slice.call(document.querySelectorAll('.r-section')).forEach(function(s){obs.observe(s);});
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click',function(){var d=document.querySelector('.rn-mobile details'); if(d)d.open=false;});
+    });
+    var top=document.getElementById('totop');
+    window.addEventListener('scroll',function(){ if(window.scrollY>500)top.classList.add('show'); else top.classList.remove('show'); },{passive:true});
+    top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 4 · Big Idea 1 — The Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+  .calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+  .calc .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+  .calc .eq input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 15px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; text-align: center; }
+  .calc .eq input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); }
+  .calc .eq .op { font-weight: 700; color: var(--navy); font-size: 18px; }
+  .calc .eq .lbl { font-size: 13px; color: var(--grey); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .warn, .calc { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input, .calc .eq input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 4 · Big Idea 1</p>
+    <h1>The Model</h1>
+    <p class="sub">Student Lab · Teaching the Robot to Predict Distance</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine know where it is and where it is going?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Models Can Predict Outcomes</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems use models to predict what should happen next.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>The double Type · Mathematical Models · Calibration · Prediction</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Driving an exact distance in inches</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · calibrated Tophat (analog 0) · right starting box with the black line · ruler · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Up to now, when you wanted the robot to drive somewhere, you guessed at a tick count and tested until it looked right. That works, but it's slow — and the ticks mean nothing to a human. Today you'll teach your robot something powerful: the <strong>relationship</strong> between ticks and inches. Once it knows that, you can tell it to drive "12 inches" and it will <em>predict</em> the right number of ticks on its own. You're building a <strong>model</strong> — and that's one of the most important ideas in all of robotics and AI.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A model is a relationship the robot can use to predict. If it knows how many ticks make one inch, it can predict the ticks for <em>any</em> distance — without guessing.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Use the <code>double</code> type to store numbers with decimals.</li>
+      <li>Explain what <code>ticks_per_inch</code> is and why it's a model.</li>
+      <li>Build a calibration function that measures your robot's <code>ticks_per_inch</code>.</li>
+      <li>Write a <code>Drive(double inches)</code> function that predicts ticks from inches.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: double ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — New Tool: The double Type</h2>
+    <div class="concept">
+      <div class="chead">int throws away decimals — double keeps them</div>
+      <div class="cbody">
+        <p>You've always used <code>int</code> for whole numbers. But the relationship between ticks and inches won't be a whole number — it might be <strong>41.7</strong> ticks per inch. And you might want to drive <strong>6.5</strong> inches. An <code>int</code> can't hold those — it would chop off the decimals and ruin your accuracy.</p>
+        <div class="code small">int    a = 41.7;   <span class="c">// becomes 41 — decimal LOST</span>
+double b = 41.7;   <span class="c">// stays 41.7 — decimal KEPT</span></div>
+        <p>A <code>double</code> is just a number that can have a decimal point. You use it exactly like an <code>int</code>, but it remembers the fractional part. For measurements and math, that precision matters.</p>
+      </div>
+    </div>
+    <p class="q">Why would using an <code>int</code> for <code>ticks_per_inch</code> make your robot's driving less accurate? Use the 41.7 example.</p>
+    <textarea class="answer" data-key="p1_why_double" aria-label="Why double"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: the model concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: A Model Is a Relationship</h2>
+    <div class="concept">
+      <div class="chead">ticks_per_inch — the bridge between ticks and inches</div>
+      <div class="cbody">
+        <p>Your encoder counts <strong>ticks</strong>. You measure the world in <strong>inches</strong>. A model connects the two with a single number: how many ticks happen in one inch.</p>
+        <div class="code small">double ticks_per_inch;   <span class="c">// the MODEL: ticks in a single inch</span></div>
+        <p>If you drive a known distance and count the ticks, you can <em>compute</em> that number:</p>
+      </div>
+    </div>
+    <div class="calc">
+      <p class="ctitle">The model is built by dividing</p>
+      <div class="formula">ticks_per_inch = ticks measured &divide; inches traveled</div>
+      <p class="muted" style="margin:6px 0 0;">Example: if the robot counted 250 ticks while traveling 6 inches, then ticks_per_inch = 250 &divide; 6 = 41.7</p>
+    </div>
+    <div class="concept">
+      <div class="chead">Once you have the model, you can predict</div>
+      <div class="cbody">
+        <p>Flip the math around, and the model <em>predicts</em> ticks for any distance you want:</p>
+        <div class="code small">ticks = inches &times; ticks_per_inch;   <span class="c">// predict ticks for ANY distance</span></div>
+        <p>Want to drive 12 inches? Predict: 12 &times; 41.7 = 500 ticks. No more guessing — the model does the work.</p>
+      </div>
+    </div>
+    <p class="q">In your own words, what does <code>ticks_per_inch</code> let the robot do that a plain tick count never could?</p>
+    <textarea class="answer" data-key="p2_model_meaning" aria-label="Model meaning"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: build the calibration function ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build: The Calibration Function</h2>
+    <p>To find <em>your</em> robot's <code>ticks_per_inch</code>, you let the robot measure itself. Set the robot against the <strong>back wall of the right starting box</strong>, with the black line ahead of it. The robot drives straight forward until its Tophat sensor reaches the black line, counting ticks the whole way. You measure the real distance it traveled, in inches, and the function does the division.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Measure first</p>
+      <p>Before running, use your ruler to measure the distance from where the <strong>Tophat sensor starts</strong> (robot against the back wall) to the <strong>black line</strong>. That real-world distance, in inches, is what you'll pass into the function.</p>
+    </div>
+
+    <div class="code">// Unit 4 · Big Idea 1 — The Model
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+int    MIDPOINT = <span class="hl">____</span>;   <span class="c">// your Tophat threshold from before</span>
+double ticks_per_inch;       <span class="c">// the MODEL — calibration will set this</span>
+
+void calibrate_ticks_per_inch(double inches);   <span class="c">// PROTOTYPE</span>
+
+int main() {
+    <span class="c">// robot starts against the back wall of the right starting box</span>
+    calibrate_ticks_per_inch(<span class="hl">____</span>);   <span class="c">// pass in YOUR measured inches to the line</span>
+    printf("ticks_per_inch = %f\n", ticks_per_inch);  <span class="c">// see your model</span>
+    return 0;
+}
+
+void calibrate_ticks_per_inch(double inches) {
+    cmpc(0);                          <span class="c">// clear the tick counter</span>
+    while (analog(0) &lt; MIDPOINT) {     <span class="c">// drive while sensor sees WHITE (low)...</span>
+        motor(0, 50);                 <span class="c">// ...straight forward...</span>
+        motor(1, 50);
+    }                                 <span class="c">// ...stops when it hits BLACK (high)</span>
+    motor(0, 0); motor(1, 0); msleep(50);   <span class="c">// brake</span>
+
+    ticks_per_inch = gmpc(0) / inches;      <span class="c">// MODEL = ticks measured / inches known</span>
+}</div>
+    <p class="muted">Remember your convention: black reads <em>higher</em> than white, so <code>analog(0) &lt; MIDPOINT</code> is true on white and the robot keeps driving — then stops the instant it crosses onto black.</p>
+
+    <h3 class="sub">Record Your Calibration</h3>
+    <table class="grid">
+      <thead><tr><th style="width:60%">Measurement</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Inches you measured (sensor start → black line)</div></td><td><input type="text" data-key="cal_inches" /></td></tr>
+        <tr><td><div class="seed">Ticks the robot counted (gmpc 0)</div></td><td><input type="text" data-key="cal_ticks" /></td></tr>
+        <tr><td><div class="seed">ticks_per_inch the program printed</div></td><td><input type="text" data-key="cal_tpi" /></td></tr>
+      </tbody>
+    </table>
+
+    <div class="calc">
+      <p class="ctitle">Check the math yourself</p>
+      <div class="eq">
+        <input type="text" data-key="cal_check_ticks" placeholder="ticks" aria-label="ticks" />
+        <span class="op">&divide;</span>
+        <input type="text" data-key="cal_check_inches" placeholder="inches" aria-label="inches" />
+        <span class="op">=</span>
+        <input type="text" data-key="cal_check_result" placeholder="ticks_per_inch" aria-label="result" />
+      </div>
+      <p class="muted" style="margin:4px 0 0;">Does your hand calculation match what the program printed? It should.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 4: build Drive ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build: The Drive Function</h2>
+    <p>Now the payoff. With <code>ticks_per_inch</code> known, <code>Drive</code> takes a distance in <strong>inches</strong> (a <code>double</code>), predicts the ticks, and drives. You command in human units; the model handles the rest.</p>
+    <div class="code">void Drive(double inches);   <span class="c">// PROTOTYPE (add near your others)</span>
+
+void Drive(double inches) {
+    int ticks = inches * ticks_per_inch;   <span class="c">// PREDICT ticks from the model</span>
+    cmpc(0);                               <span class="c">// clear the counter</span>
+    while (gmpc(0) &lt; ticks) {               <span class="c">// drive until we reach the predicted ticks</span>
+        motor(0, 50);
+        motor(1, 50);
+    }
+    motor(0, 0); motor(1, 0); msleep(50);  <span class="c">// brake</span>
+}</div>
+    <p>Test it: after calibrating, call <code>Drive(12.0);</code> and measure how far the robot actually went. Then try a few more distances.</p>
+    <table class="grid">
+      <caption>Predict, drive, measure</caption>
+      <thead><tr><th style="width:14%">Try</th><th style="width:30%">You asked for (inches)</th><th>Actual distance traveled (inches)</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td><div class="seed">12.0</div></td><td><input type="text" data-key="d_t1" /></td></tr>
+        <tr><td class="num">2</td><td><input type="text" data-key="d_t2_ask" /></td><td><input type="text" data-key="d_t2_act" /></td></tr>
+        <tr><td class="num">3</td><td><input type="text" data-key="d_t3_ask" /></td><td><input type="text" data-key="d_t3_act" /></td></tr>
+        <tr><td class="num">4</td><td><input type="text" data-key="d_t4_ask" /></td><td><input type="text" data-key="d_t4_act" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">How close was the actual distance to what you asked for? If it was off, what might make the prediction imperfect?</p>
+    <textarea class="answer" data-key="p4_accuracy" aria-label="Drive accuracy"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: recalibration warning ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — A Model Can Go Stale</h2>
+    <div class="warn">
+      <p class="ctitle">⚠ Your ticks_per_inch will change over time</p>
+      <p>The number you just measured is true <em>right now</em> — but it won't stay true forever. Your <code>ticks_per_inch</code> can drift as your robot changes:</p>
+      <ul style="margin:6px 0 4px;">
+        <li><strong>Battery level</strong> — a fresh battery drives stronger than a low one, changing how far each tick carries.</li>
+        <li><strong>Grease and wear in the motors</strong> — a freshly greased or broken-in motor behaves differently than a dry or stiff one.</li>
+        <li><strong>Motor aging</strong> — over weeks and months, motors simply change.</li>
+      </ul>
+      <p>So if your driving starts going long or short for no obvious reason, <strong>recalibrate</strong>. Running your calibration function again rebuilds the model for your robot's condition <em>today</em>.</p>
+    </div>
+    <p class="q">Your robot was driving perfectly last week, but today it always stops a little short. Nothing in your code changed. What probably happened, and what should you do?</p>
+    <textarea class="answer" data-key="p5_stale_model" aria-label="Stale model"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: add to library + connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Add to Library &amp; Connect</h2>
+    <p>Add <code>ticks_per_inch</code>, <code>calibrate_ticks_per_inch</code>, and <code>Drive</code> to your library, fully commented. From now on you can drive in inches in any mission.</p>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Intelligent systems use models to predict what should happen next.</p>
+    </div>
+    <p>You just built a model and used it to predict. This is everywhere in intelligent systems: a weather model predicts tomorrow's temperature; a self-driving car models how far it travels at a given speed; an AI predicts the next word from patterns it measured. And like your <code>ticks_per_inch</code>, real models must be <strong>recalibrated</strong> when the world changes — a model trained on old data slowly stops matching reality. Measuring a relationship, using it to predict, and refreshing it when conditions shift is the heartbeat of how machines reason about the world.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">A plain tick count only works for one exact distance. Why is a <em>model</em> like <code>ticks_per_inch</code> more powerful than memorizing tick counts for each distance?</p>
+    <textarea class="answer" data-key="p6_model_power" aria-label="Model power"></textarea>
+    <p class="q">Real AI models also go stale and need retraining when the world changes. How is that like recalibrating your <code>ticks_per_inch</code>?</p>
+    <textarea class="answer" data-key="p6_retraining" aria-label="Retraining parallel"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: Reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a <code>double</code>, and why did this lab need one instead of an <code>int</code>?</p>
+    <textarea class="answer" data-key="p7_q1_double" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain how the calibration function builds the <code>ticks_per_inch</code> model.</p>
+    <textarea class="answer" data-key="p7_q2_calibration" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> How does <code>Drive</code> use the model to predict ticks from inches?</p>
+    <textarea class="answer" data-key="p7_q3_drive" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Intelligent systems use models to predict what should happen next. This means a robot can plan its actions by..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Calibrate Twice</h3>
+    <ul>
+      <li>Run your calibration two or three times and compare the <code>ticks_per_inch</code> values. Are they identical? What does the spread tell you about measurement?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Low Battery Test</h3>
+    <ul>
+      <li>If you can, calibrate with a full battery and again with a lower one. Did <code>ticks_per_inch</code> change? By how much?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — A Turn Model</h3>
+    <ul>
+      <li>Your turns still use raw ticks. Could you build a <code>ticks_per_degree</code> model the same way, so you could call <code>Turn(90.0)</code>? Sketch how you'd measure it.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Rewrite a Mission in Inches</h3>
+    <ul>
+      <li>Take your double-stack mission and replace the raw <code>Tick_Drive</code> calls with <code>Drive</code> in inches. Is the mission easier to read and plan now? Why?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 4 Big Idea 1 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit4_bigidea1";
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 4 · Big Idea 1 — The Model",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

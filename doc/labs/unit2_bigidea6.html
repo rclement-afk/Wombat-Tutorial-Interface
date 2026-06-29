@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 2 · Big Idea 6 — Two Sensors, One Decision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+  .grid tr.blind td .label { background: #fdeaea; color: var(--red-dark); }
+  .grid tr.blind td { background: #fdf3f3; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+  .calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+  .calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .calc-line input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 16px; text-align: center; padding: 6px 8px; border: 1.5px solid #b7dcb7; border-radius: 6px; background: #fff; }
+  .calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety, .widget-step, .calc-box { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .grid tr.blind td, .grid tr.blind td .label { background: #fdeaea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input, .calc-line input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 2 · Big Idea 6</p>
+    <h1>Two Sensors, One Decision</h1>
+    <p class="sub">Student Lab · Follow the Line, Stop at the Object</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine sense and respond to the world around it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Complex Behavior Emerges From Multiple Inputs</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems combine multiple sources of information to make decisions.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Multi-Sensor Logic · ET Distance Sensor · Sensor Fusion · Non-linear Data</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Follow the line until an object is just ahead, then stop</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · Tophat (analog 0) · ET sensor (analog 1) · ruler · object · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>So far, each behavior used one sensor. Your line-follow watches the Tophat. Your touch-stop watched the button. Today the robot uses <strong>two sensors at the same time</strong>: the Tophat to stay on the line, and a new <strong>ET distance sensor</strong> to watch for an object ahead. The robot will follow the line — and the moment something appears in front of it, stop. Neither sensor could do this alone. Together, they can.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>The smartest behavior comes from combining sensors. One answers "which way?" The other answers "stop yet?" Put together, the robot does something neither sensor could do by itself.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Read an <strong>ET distance sensor</strong> with <code>analog(1)</code> and explain what its values mean.</li>
+      <li>Map the ET's value-to-distance relationship, and find its close-range blind spot.</li>
+      <li>Combine two sensors in one loop — one to steer, one to decide when to stop.</li>
+      <li>Connect multi-sensor decisions to how intelligent systems fuse many inputs.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: Mount ET ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Meet the ET Sensor</h2>
+    <div class="callout navy">
+      <p class="ctitle">Setup</p>
+      <p>Mount the <strong>ET distance sensor</strong> on the <strong>front</strong> of your robot, facing <strong>forward</strong> (looking out ahead, not down at the floor like the Tophat).</p>
+      <p>Plug it into <strong>analog port 1</strong>. In code, <code>analog(1)</code> reads the ET. Your Tophat is still on <code>analog(0)</code>.</p>
+    </div>
+    <div class="concept">
+      <div class="chead">The ET is a distance sensor — and it works backwards from what you'd guess</div>
+      <div class="cbody">
+        <p>The ET shines infrared light forward and measures how much bounces back off an object. The key rule:</p>
+        <p style="text-align:center;font-weight:600;color:var(--navy)">The CLOSER the object, the HIGHER the value.</p>
+        <p>So a far-away object gives a low number, and as it gets nearer the number climbs. It's not a neat straight line, either — the value changes faster up close than far away. That's why you have to measure it yourself.</p>
+      </div>
+    </div>
+    <div class="widget-step no-print">
+      <p class="ctitle">Watch it on the controller</p>
+      <p>Open the <strong>Motors and Sensors</strong> widget, then the <strong>sensor list</strong>, and find <strong>analog port 1</strong>. Move your hand toward and away from the sensor and watch the number rise as you get closer, fall as you back away.</p>
+    </div>
+    <p class="q">Move an object from far to near while watching analog(1). Describe what the number did. Did it climb steadily, or faster at some distances than others?</p>
+    <textarea class="answer" data-key="p1_et_behavior" aria-label="ET behavior"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: ET value vs distance table + blind spot ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Map Value vs. Distance</h2>
+    <p>Place an object squarely in front of the sensor at each distance and record the ET value (pick the middle of the bounce). This table is your map from "value" to "real distance."</p>
+    <table class="grid">
+      <caption>ET value at each distance</caption>
+      <thead><tr><th style="width:34%">Distance to object</th><th style="width:40%">ET value (analog 1)</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seedmono">12 in</div></td><td><input type="text" data-key="et_12in" /></td><td><input type="text" data-key="et_12in_note" /></td></tr>
+        <tr><td><div class="seedmono">10 in</div></td><td><input type="text" data-key="et_10in" /></td><td><input type="text" data-key="et_10in_note" /></td></tr>
+        <tr><td><div class="seedmono">8 in</div></td><td><input type="text" data-key="et_8in" /></td><td><input type="text" data-key="et_8in_note" /></td></tr>
+        <tr><td><div class="seedmono">6 in</div></td><td><input type="text" data-key="et_6in" /></td><td><input type="text" data-key="et_6in_note" /></td></tr>
+        <tr><td><div class="seedmono">4 in</div></td><td><input type="text" data-key="et_4in" /></td><td><input type="text" data-key="et_4in_note" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Now Investigate the Close Range</h3>
+    <div class="safety">
+      <p class="ctitle">⚠ The blind spot — read this</p>
+      <p>The ET sensor stops behaving below about <strong>3 inches</strong>. Get closer than that and the reading does something strange — it can <em>drop</em> or bounce even as the object gets nearer. The sensor has a close-range <strong>blind spot</strong> where its numbers can't be trusted.</p>
+    </div>
+    <p>Carefully push the object in past 3 inches and watch what the value does. Record it — this is real data about where the sensor fails.</p>
+    <table class="grid">
+      <caption>Close range — the blind spot</caption>
+      <thead><tr><th style="width:34%">Distance to object</th><th style="width:40%">ET value (analog 1)</th><th>Acting normal?</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seedmono">3 in</div></td><td><input type="text" data-key="et_3in" /></td><td><input type="text" data-key="et_3in_ok" /></td></tr>
+        <tr class="blind"><td><div class="label">2 in (blind spot)</div></td><td><input type="text" data-key="et_2in" /></td><td><input type="text" data-key="et_2in_ok" /></td></tr>
+        <tr class="blind"><td><div class="label">1 in (blind spot)</div></td><td><input type="text" data-key="et_1in" /></td><td><input type="text" data-key="et_1in_ok" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">What happened to the value when you went closer than 3 inches? Why is it dangerous to trust the sensor in that range?</p>
+    <textarea class="answer" data-key="p2_blind_spot" aria-label="Blind spot observations"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: Choose stop value ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Choose Your Stop Value</h2>
+    <p>You want the robot to stop with the object close — but <strong>before</strong> it enters the untrustworthy blind spot. A safe target is around <strong>4 inches</strong>: close enough to count as "reached the object," but safely outside the bad zone under 3 inches.</p>
+    <div class="calc-box no-print">
+      <p class="ctitle">My stop value</p>
+      <p>From your Phase 2 table, copy the ET value you measured at about 4 inches. That's the value your loop will watch for.</p>
+      <div class="calc-line">
+        ET value at ~4 in =
+        <input type="text" data-key="stop_value" aria-label="stop value" placeholder="stop_value" />
+      </div>
+    </div>
+    <div class="callout gold">
+      <p class="ctitle">Why outside the blind spot</p>
+      <p>If you set your stop value too high (too close), the robot would have to drive into the blind spot to reach it — where the reading misbehaves and the robot might never see the right number. Stopping around 4 inches keeps you on the part of the curve you can trust.</p>
+    </div>
+    <p class="q">Why did you pick a stop value from around 4 inches instead of 1 or 2 inches, even though closer would "reach" the object more?</p>
+    <textarea class="answer" data-key="p3_why_4in" aria-label="Why 4 inches"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: Concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Concept: Two Sensors in One Loop</h2>
+    <div class="concept">
+      <div class="chead">Each sensor answers a different question</div>
+      <div class="cbody">
+        <p>Your loop will now read two sensors, each with its own job:</p>
+        <ul>
+          <li><strong>Tophat</strong> (<code>analog(0)</code>) → <em>"Which way do I steer to stay on the line?"</em></li>
+          <li><strong>ET</strong> (<code>analog(1)</code>) → <em>"Is there an object close enough to stop?"</em></li>
+        </ul>
+        <p>Combining sensors like this is called <strong>sensor fusion</strong> — using more than one input together to make a decision neither could make alone.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">The loop checks the ET; the body steers with the Tophat</div>
+      <div class="cbody">
+        <p>The <code>while</code> condition watches the ET: keep going while the object is still far (the value is still <em>below</em> your stop value). Inside the loop, the same <code>if/else</code> steering you tuned before keeps the robot on the line.</p>
+        <div class="code small">while (analog(1) &lt; STOP_VALUE) {   <span class="c">// ET: still far? keep going</span>
+    if (analog(0) &gt; MIDPOINT) {     <span class="c">// Tophat: steer on the line</span>
+        ...
+    } else {
+        ...
+    }
+    msleep(10);                     <span class="c">// tiny pause (like the touch-sensor lab)</span>
+}</div>
+        <p class="muted">That <code>msleep(10)</code> is the same idea you used with the touch sensor: the loop checks the sensors hundreds of times a second, and a small pause keeps it from overworking the controller.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 5: Build ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Build line_follow_until_object</h2>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Test in your hands first</p>
+      <p>Hold the robot up. Pass the line under the Tophat and watch it steer. Then move your hand toward the ET and watch the wheels brake when your hand gets close. Only put it on the board once both reactions look right.</p>
+    </div>
+
+    <p>Start from your tuned line-follow. Add an ET check to the loop condition and your stop value at the top. Use <strong>your own</strong> <code>MIDPOINT</code>, <code>STOP_VALUE</code>, and the <code>mav</code> speeds you found best. Prototype above <code>main()</code>, definition below.</p>
+    <div class="code">// Unit 2 · Big Idea 6 — Two Sensors, One Decision
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+int MIDPOINT   = <span class="hl">____</span>;   <span class="c">// your Tophat threshold (from BI4)</span>
+int STOP_VALUE = <span class="hl">____</span>;   <span class="c">// your ET value at ~4 inches (from Phase 3)</span>
+int FAST       = <span class="hl">____</span>;   <span class="c">// your best mav fast speed (from BI5)</span>
+int SLOW       = <span class="hl">____</span>;   <span class="c">// your best mav slow speed (from BI5)</span>
+
+void line_follow_until_object();   <span class="c">// PROTOTYPE</span>
+
+int main() {
+    line_follow_until_object();    <span class="c">// follow the line, stop at the object</span>
+    return 0;
+}
+
+void line_follow_until_object() {
+    while (analog(1) &lt; STOP_VALUE) {   <span class="c">// ET: object still far? keep going</span>
+        if (analog(0) &gt; MIDPOINT) {    <span class="c">// Tophat: on black, steer right</span>
+            mav(0, FAST);
+            mav(1, SLOW);
+        } else {                       <span class="c">// on white, steer left</span>
+            mav(0, SLOW);
+            mav(1, FAST);
+        }
+        msleep(10);                    <span class="c">// tiny pause so we don't overwork the controller</span>
+    }
+
+    motor(0, 0);                       <span class="c">// object is close — brake</span>
+    motor(1, 0);
+    msleep(50);                        <span class="c">// let the brake settle</span>
+}</div>
+
+    <div class="callout gold">
+      <p class="ctitle">Reminders from earlier labs</p>
+      <p>If the steering goes the wrong way, flip the two <code>mav</code> blocks (from Big Idea 4). The brake-and-settle at the end is from Big Idea 2. The <code>msleep(10)</code> in the loop is from Big Idea 1.</p>
+    </div>
+
+    <h3 class="sub">Test Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:30%">What you changed</th><th>Did it follow the line AND stop at the object?</th></tr></thead>
+      <tbody id="testBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Checklist</h3>
+    <ul>
+      <li>The loop condition reads the ET: <code>analog(1) &lt; STOP_VALUE</code></li>
+      <li>The <code>if/else</code> inside reads the Tophat: <code>analog(0) &gt; MIDPOINT</code></li>
+      <li>There is an <code>msleep(10)</code> inside the loop</li>
+      <li>Your <code>STOP_VALUE</code> is a ~4 inch reading — outside the blind spot</li>
+      <li>The robot brakes after the loop</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 6: Connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea — AI Literacy Thread</p>
+      <p>Intelligent systems combine multiple sources of information to make decisions.</p>
+    </div>
+    <p>Your robot just did something it never could with one sensor: it stayed on a path <em>and</em> watched for an obstacle, at the same time. This is called <strong>sensor fusion</strong>, and it's how every advanced intelligent system works. A self-driving car blends cameras, radar, and GPS at once — no single one is enough. Your phone blends the touchscreen, the accelerometer, and the light sensor to decide what to show. Intelligence grows when a system stops relying on one input and starts combining many.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Your robot used the Tophat AND the ET together. Describe a task that needs <em>both</em> — something neither sensor could accomplish alone.</p>
+    <textarea class="answer" data-key="p6_both_needed" aria-label="Both sensors needed"></textarea>
+    <p class="q">You learned the ET can't be trusted closer than ~3 inches. Why is it important for an intelligent system to know not just what its sensors say, but <em>when not to trust them</em>?</p>
+    <textarea class="answer" data-key="p6_trust_limits" aria-label="Knowing sensor limits"></textarea>
+    <p class="q">A self-driving car combines cameras, radar, and GPS. Why is combining several sensors safer than relying on the single "best" one?</p>
+    <textarea class="answer" data-key="p6_why_combine" aria-label="Why combine sensors"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: Reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> How does the ET sensor's value relate to distance? What's surprising about it compared to "bigger number means farther"?</p>
+    <textarea class="answer" data-key="p7_q1_et_relation" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What is the ET's blind spot, and how did it affect the stop value you chose?</p>
+    <textarea class="answer" data-key="p7_q2_blind_spot" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> In your loop, what question did the Tophat answer, and what question did the ET answer? Why did you need both?</p>
+    <textarea class="answer" data-key="p7_q3_two_questions" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems combine multiple sources of information to make decisions. This means that the more a system can sense, the better it can..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Back Off to a Safe Distance</h3>
+    <ul>
+      <li>After stopping, what if the object is a little too close? Add a short backward move so the robot ends at a consistent distance. How does this avoid the blind spot entirely?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Report the Distance</h3>
+    <ul>
+      <li>Use your Phase 2 table to turn the stopping ET value back into an approximate distance, and <code>printf</code> it. Roughly how far away did the robot actually stop?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Two Conditions to Keep Going</h3>
+    <ul>
+      <li>What if you wanted the robot to also stop after a maximum number of ticks, even if it never sees an object? How could the loop check the ET <em>and</em> the encoder? (Think about combining conditions.)</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Add a Third Sensor</h3>
+    <ul>
+      <li>Imagine adding the touch sensor from Big Idea 1 as a backup bumper. How would three sensors together make the robot even more reliable? Sketch the idea in words.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 2 Big Idea 6 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit2_bigidea6";
+
+  (function buildRows() {
+    const test = document.getElementById("testBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="test' + i + '_changed" aria-label="Test ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="test' + i + '_result" aria-label="Test ' + i + ' result"></td>';
+      test.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 2 · Big Idea 6 — Two Sensors, One Decision",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIPR Botball 2026 — Telemetry</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      background: var(--dark);
+      color: var(--off-white);
+      min-height: 100vh;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem 3rem;
+    }
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 1;
+      margin: 0;
+      color: var(--white);
+    }
+    .head-meta {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .refresh-btn {
+      background: var(--red);
+      border: 1px solid var(--red);
+      color: var(--white);
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+    }
+    .refresh-btn:hover { background: var(--dark-red); border-color: var(--dark-red); }
+    .status {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .panel h2 {
+      margin: 0;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.06);
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 0.5rem 0.75rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: rgba(255,255,255,0.7); font-weight: 600; }
+    td { color: var(--white); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .footer-strip {
+      background: rgba(0,0,0,0.4);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.05em;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav-brand" href="index.html">
+      <img src="kipr-logo.png" alt="KIPR">
+      <span>Botball 2026</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="2026-missions.html">2026 Missions</a>
+      <a href="telemetry.html" class="active">Telemetry</a>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="page-head">
+      <div>
+        <h1>Telemetry Dashboard</h1>
+        <p class="head-meta">For setup/diagnostics use when the robot is not actively running.</p>
+      </div>
+      <div class="controls">
+        <button id="refreshBtn" class="refresh-btn" type="button">Refresh</button>
+      </div>
+    </div>
+    <p id="status" class="status">Loading telemetry…</p>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Battery</h2>
+        <table>
+          <tbody id="batteryBody"></tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>IMU</h2>
+        <table>
+          <tbody id="imuBody"></tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>Motors</h2>
+        <table>
+          <thead>
+            <tr><th>Port</th><th>Label</th><th>PWM</th><th>Position</th></tr>
+          </thead>
+          <tbody id="motorsBody"></tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>Servos</h2>
+        <table>
+          <thead>
+            <tr><th>Port</th><th>Label</th><th>Position</th></tr>
+          </thead>
+          <tbody id="servosBody"></tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>Analog Sensors</h2>
+        <table>
+          <thead>
+            <tr><th>Port</th><th>Label</th><th>Value</th></tr>
+          </thead>
+          <tbody id="analogBody"></tbody>
+        </table>
+      </article>
+
+      <article class="panel">
+        <h2>Digital Sensors</h2>
+        <table>
+          <thead>
+            <tr><th>Port</th><th>Label</th><th>Value</th></tr>
+          </thead>
+          <tbody id="digitalBody"></tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <div class="footer-strip">KIPR Botball © 2026 — Telemetry</div>
+
+  <script>
+    const statusEl = document.getElementById('status');
+
+    const setRows = (tbodyId, rows) => {
+      document.getElementById(tbodyId).innerHTML = rows.join('');
+    };
+
+    const row = (cells) => `<tr>${cells.map((c) => `<td>${c}</td>`).join('')}</tr>`;
+    const safe = (v) => (v === null || v === undefined || v === '' ? '—' : v);
+
+    function renderTelemetry(data) {
+      const battery = data.battery || {};
+      const imu = data.imu || {};
+
+      setRows('batteryBody', [
+        row([`Voltage`, `<span class="mono">${safe(battery.voltage)}</span>`]),
+        row([`Percent`, `<span class="mono">${safe(battery.pct)}</span>`])
+      ]);
+
+      setRows('imuBody', [
+        row([`Accel X (g)`, `<span class="mono">${safe(imu.ax)}</span>`]),
+        row([`Accel Y (g)`, `<span class="mono">${safe(imu.ay)}</span>`]),
+        row([`Accel Z (g)`, `<span class="mono">${safe(imu.az)}</span>`]),
+        row([`Gyro X`, `<span class="mono">${safe(imu.gx)}</span>`]),
+        row([`Gyro Y`, `<span class="mono">${safe(imu.gy)}</span>`]),
+        row([`Gyro Z`, `<span class="mono">${safe(imu.gz)}</span>`])
+      ]);
+
+      setRows(
+        'motorsBody',
+        (data.motors || []).map((m) => row([
+          `<span class="mono">${safe(m.port)}</span>`,
+          safe(m.label),
+          `<span class="mono">${safe(m.pwm)}</span>`,
+          `<span class="mono">${safe(m.pos)}</span>`
+        ]))
+      );
+
+      setRows(
+        'servosBody',
+        (data.servos || []).map((s) => row([
+          `<span class="mono">${safe(s.port)}</span>`,
+          safe(s.label),
+          `<span class="mono">${safe(s.pos)}</span>`
+        ]))
+      );
+
+      setRows(
+        'analogBody',
+        (data.analog || []).map((a) => row([
+          `<span class="mono">${safe(a.port)}</span>`,
+          safe(a.label),
+          `<span class="mono">${safe(a.value)}</span>`
+        ]))
+      );
+
+      setRows(
+        'digitalBody',
+        (data.digital || []).map((d) => row([
+          `<span class="mono">${safe(d.port)}</span>`,
+          safe(d.label),
+          `<span class="mono">${safe(d.value)}</span>`
+        ]))
+      );
+    }
+
+    async function loadTelemetry() {
+      statusEl.textContent = 'Loading telemetry…';
+      try {
+        const response = await fetch(`telemetry.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        renderTelemetry(data);
+        statusEl.textContent = `Last refreshed: ${new Date().toLocaleTimeString()}`;
+      } catch (error) {
+        statusEl.textContent = `Telemetry unavailable (${error.message}). Verify telemetry.json is being written.`;
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadTelemetry);
+    loadTelemetry();
+  </script>
+</body>
+</html>
