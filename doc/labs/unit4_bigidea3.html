@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 4 · Big Idea 3 — The Turn Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+  .calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety, .calc { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 4 · Big Idea 3</p>
+    <h1>The Turn Model</h1>
+    <p class="sub">Student Lab · Turn Any Angle, in Either Direction</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine know where it is and where it is going?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>One Smart Function Can Handle Many Cases</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Models are best-fit approximations — never perfect, but good enough to act on.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>char Type · for Loops · Multiple Parameters · Return Values · Defensive Code</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>One Turn function for every angle your missions need</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · open floor · protractor or angle marks · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Your turns right now are stuck at 90°. But missions need all kinds of angles — 45°, 180°, whatever the field demands. Today you'll build one flexible function, <code>Turn</code>, that takes a <strong>direction</strong> and an <strong>angle</strong> and handles them all. Along the way you'll meet four new tools: a new variable type for letters, a new kind of loop, functions that take more than one input, and functions that hand a value back. And you'll discover something real engineers live with every day: a model is never perfect — it's the best fit you can find.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A model like "ticks per degree" lets one function turn <em>any</em> angle. But the real world fights back — inertia and friction mean no single number is perfect. You find the one that fits <em>best</em>.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Use a <code>char</code> to store a single letter like <code>'R'</code> or <code>'L'</code>.</li>
+      <li>Use a <code>for</code> loop to repeat an action a set number of times.</li>
+      <li>Write a function that takes two parameters and <em>returns</em> a value.</li>
+      <li>Build a <code>ticks_per_degree</code> model and a flexible <code>Turn</code> function.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: char ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — New Tool: The char Type</h2>
+    <div class="concept">
+      <div class="chead">A char holds one single character</div>
+      <div class="cbody">
+        <p>You've used <code>int</code> and <code>double</code> for numbers. A <code>char</code> holds a single <strong>character</strong> — one letter, written in <strong>single quotes</strong>:</p>
+        <div class="code small">char direction = 'R';   <span class="c">// one character, in SINGLE quotes</span></div>
+        <p>This is perfect for telling the robot which way to turn: <code>'R'</code> for right, <code>'L'</code> for left.</p>
+      </div>
+    </div>
+    <div class="callout navy">
+      <p class="ctitle">Single quotes, not double</p>
+      <p><code>'R'</code> (single quotes) is a <code>char</code> — one character. <code>"R"</code> (double quotes) is a <em>string</em> — a whole different, more complicated type. For one letter, always use single quotes. And remember: <code>'R'</code> and <code>'r'</code> are <em>different</em> characters to the computer.</p>
+    </div>
+    <p class="q">What is a <code>char</code>, and how is <code>'R'</code> different from <code>"R"</code>? Why is a <code>char</code> a good fit for a turn direction?</p>
+    <textarea class="answer" data-key="p1_char" aria-label="char meaning"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: for loop + calibration concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — New Tool: The for Loop</h2>
+    <div class="concept">
+      <div class="chead">A for loop repeats a set number of times</div>
+      <div class="cbody">
+        <p>You've used <code>while</code> loops that run until something changes. A <code>for</code> loop is for when you know <em>exactly how many times</em> to repeat. It counts for you:</p>
+        <div class="code small">for (int i = 0; i &lt; 4; i++) {   <span class="c">// run 4 times: i = 0, 1, 2, 3</span>
+    <span class="c">// ...do this each time...</span>
+}</div>
+        <p>Three parts in the parentheses: <strong>start</strong> (<code>int i = 0</code>), <strong>keep going while</strong> (<code>i &lt; 4</code>), and <strong>each time, do this</strong> (<code>i++</code>, which adds 1 to <code>i</code>). When <code>i</code> reaches 4, it stops — so the body ran exactly 4 times.</p>
+      </div>
+    </div>
+    <p class="q">How is a <code>for</code> loop different from the <code>while</code> loops you've used? When would you reach for a <code>for</code> loop instead?</p>
+    <textarea class="answer" data-key="p2_for" aria-label="for loop"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: calibration with for ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Calibrate: Find ticks_per_degree</h2>
+    <p>Just like <code>ticks_per_inch</code> told you ticks-to-inches, you now need <strong>ticks_per_degree</strong>: how many encoder ticks make one degree of turning. The clever way to measure it: make the robot spin all the way around — a full <strong>360°</strong> — counting ticks, then divide.</p>
+    <div class="calc">
+      <p class="ctitle">The turning model</p>
+      <div class="formula">ticks_per_degree = total ticks for a full spin &divide; 360</div>
+    </div>
+    <p>Here's where the <code>for</code> loop shines. A full 360° spin can be built three different ways — and they should all equal 360°:</p>
+    <table class="grid">
+      <thead><tr><th style="width:10%"></th><th style="width:45%">The for loop</th><th>Total turn</th></tr></thead>
+      <tbody>
+        <tr><td class="num">A</td><td><div class="seedmono" style="padding:9px 10px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px;color:var(--navy)">for (i=0; i&lt;4; i++) → 90° each</div></td><td><div class="seed">4 × 90° = 360°</div></td></tr>
+        <tr><td class="num">B</td><td><div class="seedmono" style="padding:9px 10px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px;color:var(--navy)">for (i=0; i&lt;8; i++) → 45° each</div></td><td><div class="seed">8 × 45° = 360°</div></td></tr>
+        <tr><td class="num">C</td><td><div class="seedmono" style="padding:9px 10px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px;color:var(--navy)">for (i=0; i&lt;2; i++) → 180° each</div></td><td><div class="seed">2 × 180° = 360°</div></td></tr>
+      </tbody>
+    </table>
+
+    <div class="concept">
+      <div class="chead">A test spin built with a for loop (uses mav)</div>
+      <div class="cbody">
+        <p>This example pivots in chunks using a <code>for</code> loop. Notice it uses <strong><code>mav</code></strong>, not <code>motor</code> — velocity control is smoother for turning. Use a <strong>slow</strong> speed so the robot doesn't overshoot from its own momentum.</p>
+        <div class="code small">cmpc(0);                          <span class="c">// clear the counter once, before the spin</span>
+for (int i = 0; i &lt; 4; i++) {     <span class="c">// four chunks = one full 360° spin</span>
+    long target = (i + 1) * CHUNK_TICKS;   <span class="c">// how far we should be after this chunk</span>
+    while (gmpc(0) &lt; target) {
+        mav(0, 300);              <span class="c">// SLOW velocity — left wheel forward</span>
+        mav(1, -300);             <span class="c">// right wheel backward (pivot right)</span>
+    }
+}
+motor(0,0); motor(1,0); msleep(50);   <span class="c">// brake-settle</span>
+printf("total ticks = %d\n", gmpc(0));</div>
+        <p>Run all three versions (A, B, C). After each full spin, read the total ticks and compute <code>ticks_per_degree</code>. Mark the robot's start so you can see how close it lands to a true 360°.</p>
+      </div>
+    </div>
+
+    <h3 class="sub">Calibration Data</h3>
+    <table class="grid">
+      <caption>Run each version — all should be 360°</caption>
+      <thead><tr><th style="width:34%">Version</th><th style="width:33%">Total ticks for 360°</th><th>ticks ÷ 360 = ticks_per_degree</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">A — four 90° turns</div></td><td><input type="text" data-key="cal_a_ticks" /></td><td><input type="text" data-key="cal_a_tpd" /></td></tr>
+        <tr><td><div class="seed">B — eight 45° turns</div></td><td><input type="text" data-key="cal_b_ticks" /></td><td><input type="text" data-key="cal_b_tpd" /></td></tr>
+        <tr><td><div class="seed">C — two 180° turns</div></td><td><input type="text" data-key="cal_c_ticks" /></td><td><input type="text" data-key="cal_c_tpd" /></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout gold">
+      <p class="ctitle">They won't perfectly agree — and that's the lesson</p>
+      <p>You'll find it's <em>incredibly hard</em> to make all three land on a perfect 360°. Every time the robot starts and stops a chunk, <strong>inertia</strong> carries it a little extra, and friction varies. More chunks (eight 45s) means more start-stops and more error pile-up. There is no single perfect <code>ticks_per_degree</code> — your job is to find the value that fits your robot <strong>best across the cases you care about</strong>.</p>
+    </div>
+    <p class="q">Did your three <code>ticks_per_degree</code> values come out the same? Why might the eight-turn version (B) drift more than the two-turn version (C)?</p>
+    <textarea class="answer" data-key="p3_disagree" aria-label="Why they disagree"></textarea>
+    <p class="q">Which <code>ticks_per_degree</code> value will you use as your model, and why did you pick it?</p>
+    <textarea class="answer" data-key="p3_chosen" aria-label="Chosen model"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: multi-param + return Turn ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build: The Turn Function</h2>
+    <p>Now build <code>Turn</code> — and it introduces two more new ideas at once: it takes <strong>two parameters</strong> (a <code>char</code> and a <code>double</code>), and it <strong>returns a value</strong> to report whether it worked.</p>
+
+    <div class="concept">
+      <div class="chead">Two parameters, two different types</div>
+      <div class="cbody">
+        <p>Until now your functions took one input (or none). <code>Turn</code> takes two, separated by a comma — a direction <em>and</em> an angle:</p>
+        <div class="code small">Turn('R', 90.0);    <span class="c">// turn right 90 degrees</span>
+Turn('L', 45.0);    <span class="c">// turn left 45 degrees</span></div>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">An int function that returns success or failure</div>
+      <div class="cbody">
+        <p>Every function you've built has been <code>void</code> — it did something but handed nothing back. <code>Turn</code> is an <code>int</code> function: it <strong>returns</strong> a number that reports what happened. We'll use <strong>1 for success</strong> and <strong>0 for failure</strong> (a bad direction). <code>return</code> also <em>immediately exits</em> the function — so a bad input never reaches the turning code.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Defensive: forgive upper OR lower case</div>
+      <div class="cbody">
+        <p>A good function is easy to use and hard to break. Instead of demanding a capital <code>'R'</code>, accept either case with the <strong>OR</strong> operator <code>||</code> — true if <em>either</em> side is true. That way a user who types <code>'r'</code> still succeeds — one less thing to remember.</p>
+        <div class="code small">if (direction == 'R' || direction == 'r') { <span class="c">// either capital or lowercase</span> }</div>
+      </div>
+    </div>
+
+    <div class="code">// Unit 4 · Big Idea 3 — The Turn Model
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+#include &lt;<span class="hl">yourname</span>.h&gt;
+
+double ticks_per_degree = <span class="hl">____</span>;   <span class="c">// YOUR best value from Phase 3</span>
+
+int Turn(char direction, double angle);   <span class="c">// PROTOTYPE (note: returns an int)</span>
+
+int main() {
+    Turn('R', 90.0);      <span class="c">// right 90</span>
+    Turn('l', 45.0);      <span class="c">// left 45 — lowercase works too!</span>
+    return 0;
+}
+
+int Turn(char direction, double angle) {
+    int ticks = angle * ticks_per_degree;   <span class="c">// PREDICT ticks from the model</span>
+
+    if (direction == 'R' || direction == 'r') {     <span class="c">// RIGHT (either case)</span>
+        cmpc(0);                                    <span class="c">// right pivot watches left wheel</span>
+        while (gmpc(0) &lt; ticks) {
+            mav(0, 300);                            <span class="c">// slow velocity, left forward</span>
+            mav(1, -300);                           <span class="c">// right backward</span>
+        }
+    } else if (direction == 'L' || direction == 'l') {  <span class="c">// LEFT (either case)</span>
+        cmpc(1);                                    <span class="c">// left pivot watches right wheel</span>
+        while (gmpc(1) &lt; ticks) {
+            mav(0, -300);
+            mav(1, 300);
+        }
+    } else {                                        <span class="c">// not R/r or L/l — bad input!</span>
+        printf("Invalid direction! Use 'R' or 'L'.\n");
+        return 0;                                   <span class="c">// report FAILURE and stop here</span>
+    }
+
+    motor(0, 0); motor(1, 0); msleep(50);           <span class="c">// brake-settle (your usual stop)</span>
+    return 1;                                       <span class="c">// report SUCCESS</span>
+}</div>
+    <p class="q">Test <code>Turn('R', 90.0)</code> and <code>Turn('l', 90.0)</code>. Did both work, even with the lowercase L? Why does accepting both cases make your function easier for someone else to use?</p>
+    <textarea class="answer" data-key="p4_defensive_test" aria-label="Defensive test"></textarea>
+    <p class="q">Now try a bad input like <code>Turn('X', 90.0)</code>. What did the robot do, what got printed, and what did the function return?</p>
+    <textarea class="answer" data-key="p4_bad_input" aria-label="Bad input test"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: test angles ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test Your Model on Real Angles</h2>
+    <p>Your model should now turn any angle. Test a range, both directions, and measure how close each lands. Remember: it's a best-fit, so expect small errors — especially on bigger angles.</p>
+    <table class="grid">
+      <caption>Ask for an angle, measure what you got</caption>
+      <thead><tr><th style="width:10%">Try</th><th style="width:34%">Turn call</th><th>Actual angle turned (degrees)</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td><div class="seed">Turn('R', 90.0)</div></td><td><input type="text" data-key="ang_t1" /></td></tr>
+        <tr><td class="num">2</td><td><div class="seed">Turn('L', 45.0)</div></td><td><input type="text" data-key="ang_t2" /></td></tr>
+        <tr><td class="num">3</td><td><input type="text" data-key="ang_t3_call" /></td><td><input type="text" data-key="ang_t3_act" /></td></tr>
+        <tr><td class="num">4</td><td><input type="text" data-key="ang_t4_call" /></td><td><input type="text" data-key="ang_t4_act" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">How close were your turns to the angles you asked for? Were small angles or big angles more accurate? Why might that be?</p>
+    <textarea class="answer" data-key="p5_accuracy" aria-label="Angle accuracy"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: library + connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Add to Library &amp; Connect</h2>
+    <p>Add <code>ticks_per_degree</code> and your <code>Turn</code> function to your library. Now any mission can turn any angle, either direction, with one readable call — and you can retire the old fixed 90° turns.</p>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Models are best-fit approximations — never perfect, but good enough to act on.</p>
+    </div>
+    <p>Your three calibration runs disagreed, and no single <code>ticks_per_degree</code> was perfect. That's not failure — that's how models work everywhere in AI. A weather model, a self-driving car's physics, a language model's predictions: none are exactly right. They're the <em>best fit</em> to messy real-world data, good enough to act on while never being flawless. The skill isn't finding a perfect model — it's finding one that fits well enough and knowing its limits.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Why is it impossible to find one <code>ticks_per_degree</code> that turns every angle perfectly? Connect this to why real AI models are never 100% accurate.</p>
+    <textarea class="answer" data-key="p6_bestfit" aria-label="Best fit"></textarea>
+    <p class="q">Your <code>Turn</code> function returns 1 for success and 0 for failure. Why is it useful for a function to report back whether it worked?</p>
+    <textarea class="answer" data-key="p6_return" aria-label="Return value use"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a <code>char</code>, and why must <code>'R'</code> use single quotes?</p>
+    <textarea class="answer" data-key="p7_q1_char" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain the three parts of a <code>for</code> loop, using your calibration spin as the example.</p>
+    <textarea class="answer" data-key="p7_q2_for" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Your <code>Turn</code> takes two parameters and returns a value. What are the two inputs, and what does the return value tell you?</p>
+    <textarea class="answer" data-key="p7_q3_function" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Models are best-fit approximations, never perfect. This means that when my robot turns, I should expect..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Slow vs. Fast</h3>
+    <ul>
+      <li>Recalibrate at a faster <code>mav</code> speed. Does the robot overshoot more from inertia? How does that change your best <code>ticks_per_degree</code>?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — A Full Circle Test</h3>
+    <ul>
+      <li>Use a <code>for</code> loop to call <code>Turn('R', 90.0)</code> four times. Does the robot return to its start? Compare to your old fixed turns.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Check the Return Value</h3>
+    <ul>
+      <li>Store the return: <code>int ok = Turn('X', 90.0);</code> then <code>printf</code> whether it succeeded. How could a mission use that to react to a failed turn?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Retire the Old Turns</h3>
+    <ul>
+      <li>Find an old program that used <code>turn_left()</code>/<code>turn_right()</code> and replace them with <code>Turn</code>. Is the new version easier to read and change?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — The Recursive Version</h3>
+    <ul>
+      <li>Extension B used a <code>for</code> loop to call <code>Turn('R', 90.0)</code> four times. A <strong>recursive</strong> function could do the same thing by calling itself: a function that turns once, then calls itself again with one fewer turn remaining, until it hits zero.</li>
+      <li>Sketch (in words or pseudocode) what that recursive version would look like. Why might a loop be the more natural choice than recursion for this particular task?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 4 Big Idea 3 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit4_bigidea3";
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 4 · Big Idea 3 — The Turn Model",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

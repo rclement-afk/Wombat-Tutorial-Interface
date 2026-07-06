@@ -451,6 +451,13 @@ void back_until_pressed() {  <span class="c">// DEFINITION — the recipe, below
       <li>If backing straight into the wall sets a known spot, should <code>x_position</code> reset too? Decide what makes sense for your robot's path and explain your reasoning.</li>
     </ul>
     <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — What If It Were Event-Driven?</h3>
+    <ul>
+      <li>Everything you've built waits and checks in a loop (polling) — repeatedly asking "are we there yet?" An <strong>event-driven</strong> system instead sits idle until something happens, then a designated function runs automatically.</li>
+      <li>In words (not code), rewrite how <code>back_until_pressed()</code> could work if it were event-driven instead of polling: what would the "event" be, and what function would run when it fires?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
   </section>
 
   <div class="bottom-submit no-print">

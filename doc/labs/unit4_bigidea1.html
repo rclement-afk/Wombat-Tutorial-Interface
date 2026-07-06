@@ -413,6 +413,32 @@ void Drive(double inches) {
       <li>Take your double-stack mission and replace the raw <code>Tick_Drive</code> calls with <code>Drive</code> in inches. Is the mission easier to read and plan now? Why?</li>
     </ul>
     <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — The Same Idea, Somewhere Else</h3>
+    <ul>
+      <li>The calibration idea you built today — measure once, build a numeric model from that measurement, then reuse the model going forward — isn't unique to robots.</li>
+      <li>Name two other fields (cooking, medicine dosing, engineering, sports, anything) where that same idea would apply, and explain one of them in 2-3 sentences.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+
+    <h3 class="sub">Extension F — Average Your Calibration</h3>
+    <ul>
+      <li>You calibrated 2-3 times in Extension A and got slightly different <code>ticks_per_inch</code> values each time. Write a few lines of code that take those readings and compute their average (sum divided by count) instead of eyeballing which one to use.</li>
+      <li>Use that averaged value as your real <code>ticks_per_inch</code> going forward. Does it change your accuracy on a test drive?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_f" aria-label="Extension F"></textarea>
+
+    <h3 class="sub">Extension G — Type In a Test Value</h3>
+    <ul>
+      <li>While testing (not during a competition run), use <code>scanf</code> to read a number typed by a teammate instead of hard-coding it — the same way <code>printf</code> already sends output to the console, <code>scanf</code> reads input from it:
+        <div class="code small">double distance;
+printf("Enter a distance to drive (inches): ");
+scanf("%lf", &amp;distance);
+Drive(distance);</div>
+      </li>
+      <li>Try it for a couple of different distances. Why is typing in a test value faster for testing than editing your code and re-running it each time?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_g" aria-label="Extension G"></textarea>
   </section>
 
   <div class="bottom-submit no-print">

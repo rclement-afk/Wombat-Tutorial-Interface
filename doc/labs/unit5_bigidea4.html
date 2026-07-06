@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 5 · Big Idea 4 — Every Second Counts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #16204a 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #e9edf7; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--navy); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--navy); background: #eef1f7; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.red { border-left-color: var(--red); background: #fbeef0; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--navy); margin: 0 0 4px; }
+  .callout.red .ctitle { color: var(--red); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .filetab { background: #ddd !important; color: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 5 · Big Idea 4</p>
+    <h1>Every Second Counts</h1>
+    <p class="sub">Student Lab · Measuring, Storing, and Making Sense of Performance</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine operate reliably in an imperfect world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Performance Can Be Measured</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>A system that never measures its own performance can't tell whether a change actually helped.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>systime() &amp; Elapsed Time · Modulo · Arrays for Metrics · Boolean Flags · Linear Search · Sorting · Algorithm Efficiency</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Mission 12 + Mission 16 — recover 2 spilled cubes, stack them on the Large Green Cube</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · full library · 2 spilled cubes · Large Green Cube · the game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Every lab so far has asked "did it work?" Today's question is different: "did it get <em>better</em>?" You can't answer that without a number. Today you'll time a real mission run, store repeated timing results the same way you stored pose data in Big Idea 1, and then write code that actually studies that stored data — finding the best and worst runs, and putting them in order.</p>
+    <div class="callout red">
+      <p class="ctitle">The Big Idea of This Unit</p>
+      <p>A system that never measures its own performance can't tell whether a change actually helped. Feeling faster isn't the same as being faster — you need a number, and you need to keep it.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Use <code>systime()</code> to measure how long a routine actually took.</li>
+      <li>Use the modulo operator (<code>%</code>) to turn a raw time value into something readable.</li>
+      <li>Store repeated measurements in an array, and use a boolean variable to track a running yes/no answer inside a loop.</li>
+      <li>Write a linear search to find the best and worst value in a data set.</li>
+      <li>Write a simple sort, and reason about how its cost changes as the data set grows.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: the mission ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — The Mission: Restack &amp; Shelve</h2>
+    <div class="callout">
+      <p class="ctitle">The run</p>
+      <p>Pick up <strong>2 spilled cubes</strong> and stack one on top of the other, placed on top of the <strong>Large Green Cube</strong>.</p>
+    </div>
+    <p>This single stacking action scores three things at once: Mission 12's Base Mission (two spilled cubes forming a valid stack), and Mission 16's Base <em>and</em> Bonus Mission (one, then a second, spilled cube ON TOP OF the Large Green Cube) — confirmed directly by the rules' own scoring examples. One clean action, most of the points on the board for these two missions.</p>
+    <p class="q">Say the mission back in your own words. Why does stacking the cubes <em>on the Large Green Cube</em>, instead of just on each other, matter for how many points you earn?</p>
+    <textarea class="answer" data-key="p1_restate" aria-label="Restate mission"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: concept — systime, elapsed time, modulo ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Measuring and Reading Elapsed Time</h2>
+    <div class="concept">
+      <div class="chead">A new type: unsigned long</div>
+      <div class="cbody">
+        <p>You've stored numbers in <code>double</code>, <code>int</code>, and <code>char</code> so far. Timing needs a new one: <code>unsigned long</code>.</p>
+        <p><code>long</code> is an integer type, like <code>int</code>, but built to hold <em>larger</em> whole numbers — useful here because a running clock value climbs quickly and keeps climbing the whole time your robot is on. <code>unsigned</code> means the variable can never be negative; in exchange for giving up negative numbers, it can count even higher using the same amount of memory. A timer value is never negative and never needs to be — a perfect match for <code>unsigned long</code>.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">What does systime() actually return?</div>
+      <div class="cbody">
+        <p><code>systime()</code> returns an <code>unsigned long</code> that keeps climbing the whole time your robot is powered on — but the documentation doesn't spell out the exact unit, so don't guess. Find out for yourself, the same way you found <code>ticks_per_inch</code> by measuring instead of assuming:</p>
+        <div class="code small">unsigned long start = systime();
+msleep(5000);   <span class="c">// wait exactly 5 real seconds</span>
+unsigned long stop = systime();
+printf("Difference: %lu\n", stop - start);</div>
+        <p>Run that. A 5-second wait should make the unit obvious from the size of the number you get back.</p>
+      </div>
+    </div>
+    <p class="q">What number did you get, and what does that tell you about the unit <code>systime()</code> counts in?</p>
+    <textarea class="answer" data-key="p2_units" aria-label="systime units"></textarea>
+    <div class="concept">
+      <div class="chead">The init_time / elapsed pattern</div>
+      <div class="cbody">
+        <p>Once you know the unit, timing any routine follows the same two-line pattern: capture the time before, capture it again after, subtract.</p>
+        <div class="code small">unsigned long init_time = systime();
+<span class="c">// ...the routine you're timing goes here...</span>
+unsigned long elapsed = systime() - init_time;</div>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Modulo: making a raw number readable</div>
+      <div class="cbody">
+        <p>A raw elapsed value is hard to read at a glance. <code>%</code> is the <strong>modulo</strong> operator — it gives you the <em>remainder</em> of division, not the quotient. That's exactly the tool for splitting a total into readable parts:</p>
+        <div class="code small">unsigned long total_sec = elapsed / 1000;   <span class="c">// whole seconds (adjust if your unit differs)</span>
+unsigned long minutes = total_sec / 60;
+unsigned long seconds = total_sec % 60;     <span class="c">// &lt;-- THIS % is the modulo operator (math), not the %lu below (text formatting)</span>
+printf("Elapsed: %lu:%02lu\n", minutes, seconds);</div>
+        <p><code>%</code> is new — you've used <code>/</code> plenty, but division only gives you how many whole groups fit. Modulo gives you what's left over after those whole groups are removed.</p>
+        <p>Careful: you're about to see <strong>two completely different jobs</strong> for the <code>%</code> symbol in the same few lines. In <code>total_sec % 60</code>, it's <strong>math</strong> — the modulo operator, computing a remainder. In <code>"%lu"</code> inside a <code>printf</code> string, it's not math at all — it's a placeholder telling <code>printf</code> "put a number here." Same symbol, two unrelated meanings, depending on whether it's sitting inside quotes or out in your code doing arithmetic.</p>
+      </div>
+    </div>
+    <p class="q">If <code>total_sec</code> is 197, what do <code>197 / 60</code> and <code>197 % 60</code> each give you, and what do those two numbers mean together?</p>
+    <textarea class="answer" data-key="p2_modulo" aria-label="Modulo reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: build the timed run ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build: Time the Restack Run</h2>
+    <p>Wrap your Restack &amp; Shelve routine in the timing pattern from Phase 2, using your own library calls.</p>
+    <div class="filetab">main.c</div>
+    <div class="code">int main() {
+    enable_servo(0);
+    enable_servo(1);
+
+    unsigned long init_time = systime();
+
+    <span class="c">// ===== the mission itself, using your own library =====</span>
+    <span class="hl">// Drive(...) / Turn(...) to spilled cube 1, pick it up</span>
+    <span class="hl">// Drive(...) / Turn(...) to the Large Green Cube, place it</span>
+    <span class="hl">// Drive(...) / Turn(...) to spilled cube 2, pick it up</span>
+    <span class="hl">// Drive(...) / Turn(...) back to the Large Green Cube, stack it</span>
+
+    unsigned long elapsed = systime() - init_time;
+    unsigned long total_sec = elapsed / <span class="hl">1000</span>;   <span class="c">// use what Phase 2 taught you about the unit</span>
+    printf("Elapsed: %lu:%02lu\n", total_sec / 60, total_sec % 60);
+
+    return 0;
+}</div>
+    <p class="q">Why does <code>init_time</code> get captured <em>before</em> the mission code runs, and <code>elapsed</code> get calculated <em>after</em> it finishes — what would go wrong if you calculated <code>elapsed</code> too early?</p>
+    <textarea class="answer" data-key="p3_timing" aria-label="Timing placement"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: run and record ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Run It 4 Times</h2>
+    <p>Reset the 2 spilled cubes to their starting positions between attempts, and run the full mission 4 separate times. Record each printed elapsed time (in seconds — convert from the MM:SS your program prints).</p>
+    <table class="grid">
+      <caption>Record your 4 trial times</caption>
+      <thead><tr><th style="width:16%">Trial</th><th style="width:30%">Printed MM:SS</th><th>Elapsed in seconds</th></tr></thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 5: concept — arrays, search, sort, efficiency ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Concept: Studying Your Own Data</h2>
+    <div class="concept">
+      <div class="chead">An array of results, not just one</div>
+      <div class="cbody">
+        <p>Back in Big Idea 1, <code>pose[3]</code> grouped three related values under one name. Today's array groups four results from the <em>same</em> measurement, repeated:</p>
+        <div class="code small">double times[4] = { <span class="hl">t1</span>, <span class="hl">t2</span>, <span class="hl">t3</span>, <span class="hl">t4</span> };  <span class="c">// your 4 recorded seconds from Phase 4</span></div>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">for loops: walking through an array by number</div>
+      <div class="cbody">
+        <p>A <code>for</code> loop has three parts, always in the same order, separated by semicolons:</p>
+        <div class="code small">for (int i = 0; i &lt; 4; i++) {
+    <span class="c">// this block runs once for i=0, once for i=1, once for i=2, once for i=3</span>
+}</div>
+        <ul>
+          <li><code>int i = 0</code> — runs once, right at the start: create a counter and set where it begins.</li>
+          <li><code>i &lt; 4</code> — checked before every trip through the loop: keep going as long as this is true.</li>
+          <li><code>i++</code> — runs at the end of every trip: add 1 to the counter.</li>
+        </ul>
+        <p>The new part today isn't the loop itself — it's what you do with <code>i</code> inside it. Since array slots are numbered, <code>i</code> can walk straight into your array as an index: <code>times[i]</code> means "whichever slot <code>i</code> currently points to." As <code>i</code> counts <code>0, 1, 2, 3</code>, <code>times[i]</code> visits every slot in the array in order.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Linear search: finding the best and worst</div>
+      <div class="cbody">
+        <p>A <strong>search</strong> uses that same walk to check each value against the best one found so far:</p>
+        <div class="code small">double fastest = times[0];
+double slowest = times[0];
+for (int i = 1; i &lt; 4; i++) {
+    if (times[i] &lt; fastest) fastest = times[i];
+    if (times[i] &gt; slowest) slowest = times[i];
+}</div>
+        <p>This checks every element exactly once — that's why it's called <em>linear</em>: the work grows in a straight line with the size of the array.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Swapping two values</div>
+      <div class="cbody">
+        <p>Sorting means trading two values' positions. That takes three lines, not two — if you just wrote <code>times[i] = times[i+1];</code> then <code>times[i+1] = times[i];</code>, the first line would already overwrite <code>times[i]</code>'s original value before you had a chance to move it into <code>times[i+1]</code>. You need a temporary holding spot:</p>
+        <div class="code small">double temp = times[i];        <span class="c">// 1. set the first value aside, so it isn't lost</span>
+times[i] = times[i + 1];       <span class="c">// 2. copy the second value into the first spot</span>
+times[i + 1] = temp;           <span class="c">// 3. copy the saved-aside value into the second spot</span></div>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Sorting: the simple version</div>
+      <div class="cbody">
+        <p>Picture 4 people standing in a line, out of height order. Walk down the line one time: compare each pair of neighbors, and swap them if the left person is taller than the right person. After one full walk, the tallest person has "bubbled" all the way to the end. Do that same walk a few more times, and eventually everyone's in order — that's the whole idea behind this sort.</p>
+        <div class="code small">for (int pass = 0; pass &lt; 3; pass++) {          <span class="c">// walk down the line a few times</span>
+    for (int i = 0; i &lt; 3; i++) {                <span class="c">// one full walk, comparing neighbors</span>
+        if (times[i] &gt; times[i + 1]) {           <span class="c">// out of order?</span>
+            double temp = times[i];               <span class="c">// swap them (see above)</span>
+            times[i] = times[i + 1];
+            times[i + 1] = temp;
+        }
+    }
+}</div>
+        <p>Walk through it by hand with 4 index cards showing your own 4 times, out of order. Do the swaps yourself, pass by pass, until they're sorted. For only 4 values, 3 passes is always enough to guarantee a full sort — that's why the outer loop stops at <code>pass &lt; 3</code>.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Sorting: stopping early with a stored boolean</div>
+      <div class="cbody">
+        <p>The version above always does all 3 passes, even if the line was already sorted after pass 1. You've used booleans <em>inline</em> before, inside an <code>if</code> condition with <code>&amp;&amp;</code> or <code>||</code>. Here's a new use: store a boolean's answer <strong>in a variable</strong> that carries a true/false memory from one pass into the next.</p>
+        <div class="code small">int swapped = 1;                 <span class="c">// start true, just to make sure the loop runs at least once</span>
+while (swapped) {
+    swapped = 0;                 <span class="c">// assume this pass finds nothing to fix...</span>
+    for (int i = 0; i &lt; 3; i++) {
+        if (times[i] &gt; times[i + 1]) {
+            double temp = times[i];
+            times[i] = times[i + 1];
+            times[i + 1] = temp;
+            swapped = 1;          <span class="c">// ...unless a swap actually happened</span>
+        }
+    }
+}</div>
+        <p>If an entire pass finds nothing out of order, <code>swapped</code> never gets reset to 1, the <code>while</code> loop's condition goes false, and the sort stops — without wasting a pass it didn't need.</p>
+      </div>
+    </div>
+    <p class="q">Walk through the simple version by hand on paper first, with your own 4 numbers. Then answer: why does checking <code>swapped</code> let the improved version stop early on data that's already close to sorted? What's stored in the variable at the moment it does?</p>
+    <textarea class="answer" data-key="p5_flag" aria-label="Boolean flag reasoning"></textarea>
+    <div class="concept">
+      <div class="chead">Efficiency: what happens at a bigger size?</div>
+      <div class="cbody">
+        <p>Your search touched 4 values once each. Your sort, in the worst case, compared neighboring pairs across multiple passes over those same 4 values. Now imagine 100 recorded times instead of 4.</p>
+      </div>
+    </div>
+    <p class="q">Would the search's work grow by roughly 25× (matching the 25× growth in data, from 4 to 100)? Would the sort's worst-case work grow by exactly 25×, or by something faster than that? This — how the amount of work grows as the data grows — is what computer scientists mean by <strong>algorithm efficiency</strong>.</p>
+    <textarea class="answer" data-key="p5_efficiency" aria-label="Efficiency reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: build the analysis ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Build: Analyze Your Times</h2>
+    <p>Using your 4 recorded values from Phase 4, write the full analysis: hardcode the array, search for fastest/slowest, sort it, and report all of it.</p>
+    <div class="filetab">main.c</div>
+    <div class="code">double times[4] = { <span class="hl">/* your 4 recorded seconds */</span> };
+
+<span class="c">// ===== SEARCH =====</span>
+double fastest = times[0];
+double slowest = times[0];
+for (int i = 1; i &lt; 4; i++) {
+    if (times[i] &lt; fastest) fastest = times[i];
+    if (times[i] &gt; slowest) slowest = times[i];
+}
+printf("Fastest: %.2f  Slowest: %.2f\n", fastest, slowest);
+
+<span class="c">// ===== SORT =====</span>
+int swapped = 1;
+while (swapped) {
+    swapped = 0;
+    for (int i = 0; i &lt; 3; i++) {
+        if (times[i] &gt; times[i + 1]) {
+            double temp = times[i];
+            times[i] = times[i + 1];
+            times[i + 1] = temp;
+            swapped = 1;
+        }
+    }
+}
+printf("Sorted: %.2f, %.2f, %.2f, %.2f\n", times[0], times[1], times[2], times[3]);</div>
+    <div class="callout gold">
+      <p class="ctitle">Requirement check</p>
+      <p>4 real trial times recorded and hardcoded into <code>times[4]</code>. Fastest and slowest found by search. Full array sorted using the boolean-flag loop. Both results printed.</p>
+    </div>
+    <p class="q">Once your array is sorted, where do the fastest and slowest values sit in it? Could you have skipped writing a separate search entirely, if you'd sorted first?</p>
+    <textarea class="answer" data-key="p6_sorted_search" aria-label="Sorted vs search"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: connect & reflect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Connect &amp; Reflect</h2>
+    <div class="callout red">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>A system that never measures its own performance can't tell whether a change actually helped.</p>
+    </div>
+    <p>Every real engineering team does exactly what you just did: time something, run it more than once, store the results, and actually look at the numbers instead of trusting a gut feeling. A search engine times how long a query takes across millions of runs. A game studio times level-load times across every playtest. None of them trust a single run — and none of them just eyeball the numbers either; they sort them, find the extremes, and watch how those numbers change as the system scales up.</p>
+    <p class="muted">Complete the reflection on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Walk through the <code>init_time</code> / <code>elapsed</code> pattern in your own words — what does each line actually do?</p>
+    <textarea class="answer" data-key="p7_q1_timing" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What does modulo (<code>%</code>) give you that regular division (<code>/</code>) doesn't?</p>
+    <textarea class="answer" data-key="p7_q2_modulo" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> What was <code>swapped</code> actually tracking, and why does a stored boolean matter here in a way that an inline <code>&amp;&amp;</code>/<code>||</code> check couldn't?</p>
+    <textarea class="answer" data-key="p7_q3_boolean" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "A system that never measures its own performance can't tell whether a change helped. This means that before I claim my robot got faster, I should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Time a Different Metric</h3>
+    <ul>
+      <li>Apply the same array + search + sort pattern to a different measurement — for example, how many degrees off-target your last 4 turns landed. What changes in your code, and what stays exactly the same?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Watch the Early Exit</h3>
+    <ul>
+      <li>Add a <code>printf</code> inside the <code>while (swapped)</code> loop that prints the value of <code>swapped</code> at the end of each pass. Run your sort on data that's already close to sorted — how many passes does it actually take before <code>swapped</code> stays 0?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Scaling to 8</h3>
+    <ul>
+      <li>If you had 8 trial times instead of 4, how would you need to change the array declaration and the loop bounds? In the worst case, roughly how many more comparisons would the sort need — twice as many, or more than that?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 5 Big Idea 4</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit5_bigidea4";
+
+  (function buildRows() {
+    const trial = document.getElementById("trialBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="num">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_mmss" aria-label="Trial ' + i + ' MMSS"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_sec" aria-label="Trial ' + i + ' seconds"></td>';
+      trial.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 5 · Big Idea 4 — Every Second Counts",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>
