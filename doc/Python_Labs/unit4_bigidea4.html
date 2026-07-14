@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 4 · Big Idea 4 — Keeping Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .console { background: #0c0f16; color: #c8f0c0; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.7; border: 1px solid #2b3445; }
+  .console .pl { color: #6fa8dc; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .seedc { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+  .grid.tight th, .grid.tight .seed, .grid.tight .seedc { padding: 6px 10px; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .console { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .console { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .console .pl { color: #2a5b8a !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 4 · Big Idea 4</p>
+    <h1>Keeping Score</h1>
+    <p class="sub">Student Lab · A Full Red-Cube Run That Tracks Its Own Points</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine know where it is and where it is going?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A Program Can Track Its Own Progress</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems track their own state and report what they have done.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Accumulating Variables · State · Console Output (f-strings) · Integration</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Stack the red cubes, then dock the pallet — scoring as you go</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · your full library · red cubes · pallet · dock · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Time to bring it <em>all</em> together. You'll write a complete red-cube run that drives, squares up, stacks cubes, and docks the pallet — using every major tool in your library. But this run does something new: it <strong>keeps its own score</strong>. After each point-scoring maneuver, the program adds the points to a running total and <strong>prints a report</strong> of what it just did and where the score stands. By the end, your robot narrates its own competition run.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A single variable can hold a running total that grows as the program runs. Printing it after each step turns your robot into something that reports its own progress — exactly how real systems keep track of what they've accomplished.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Use a variable to accumulate a running score.</li>
+      <li>Print a status report with an f-string after each maneuver.</li>
+      <li>Combine your whole library into one complete scored run.</li>
+      <li>Read the real Botball point values for the maneuvers you complete.</li>
+    </ul>
+    <div class="callout navy">
+      <p class="ctitle">Every one of these must appear in your run</p>
+      <p><code>back_until_pressed()</code> · <code>square_up()</code> · <code>Drive()</code> · <code>Turn()</code> · <code>move_arm()</code> · <code>move_claw()</code> — your full toolbox, working together.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1: score concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Concept: A Variable That Remembers</h2>
+    <div class="concept">
+      <div class="chead">An accumulating variable holds a running total</div>
+      <div class="cbody">
+        <p>You've used variables to store fixed values. Now you'll use one that <strong>changes over time</strong> — a score that starts at zero and grows. The key line takes the score's current value, adds points, and stores the result back:</p>
+        <div class="code small">score = 0        <span class="c"># start with no points</span>
+score = score + 9    <span class="c"># add 9 — score is now 9</span>
+score = score + 11   <span class="c"># add 11 — score is now 20</span></div>
+        <p>Read <code>score = score + 9</code> as "make score equal to <em>whatever it is now</em>, plus 9." The variable <em>remembers</em> its total between steps. This is called <strong>state</strong> — information the program carries as it runs.</p>
+      </div>
+    </div>
+    <p class="q">Explain what <code>score = score + 9</code> does. Why does the variable need to "remember" its old value to work?</p>
+    <textarea class="answer" data-key="p1_accumulate" aria-label="Accumulate meaning"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: print reporting ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Reporting With print()</h2>
+    <div class="concept">
+      <div class="chead">Print a message and the current score</div>
+      <div class="cbody">
+        <p>You met <code>print()</code> when you printed your <code>ticks_per_inch</code>. Here you'll use it to <strong>report each maneuver</strong>. To print a number inside a message, use an <strong>f-string</strong>: put an <code>f</code> right before the opening quote, then drop the variable inside curly braces <code>{ }</code> wherever you want its value to appear:</p>
+        <div class="code small">print(f"Stacked first red cube. Score: {score}")</div>
+        <p><code>{score}</code> gets replaced by the current value of <code>score</code> when the line runs. After your robot adds points, a line like this tells you exactly what happened and the new total.</p>
+      </div>
+    </div>
+    <div class="callout navy">
+      <p class="ctitle">The pattern: do → score → report</p>
+      <p>Every scoring maneuver follows the same three-step rhythm: <strong>do</strong> the maneuver (library calls), <strong>add</strong> the points to <code>score</code>, then <strong>print</strong> the report. Do, score, report — every time.</p>
+    </div>
+    <p class="q">What does the <code>{score}</code> inside an f-string do? Why is printing a report after each maneuver useful during a competition run?</p>
+    <textarea class="answer" data-key="p2_printf" aria-label="printf meaning"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: scoring reference ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — The Real Point Values</h2>
+    <p>These are the actual Botball points for the maneuvers in your run. Each maneuver's difficulty maps to a score — harder tasks are worth more.</p>
+    <table class="grid tight">
+      <caption>Your run's scoring maneuvers</caption>
+      <thead><tr><th style="width:54%">Maneuver</th><th style="width:20%">Difficulty</th><th>Points</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Place 1st small red cube on the large red cube</div></td><td><div class="seed">5</div></td><td><div class="seedc">9</div></td></tr>
+        <tr><td><div class="seed">Place 2nd small red cube on the large red cube</div></td><td><div class="seed">6</div></td><td><div class="seedc">11</div></td></tr>
+        <tr><td><div class="seed">Place the pallet (with large red cube) on the dock</div></td><td><div class="seed">6</div></td><td><div class="seedc">11</div></td></tr>
+        <tr><td><div class="seed">Small red cube still on top when docked</div></td><td><div class="seed">5</div></td><td><div class="seedc">9</div></td></tr>
+      </tbody>
+    </table>
+    <div class="calc" style="background:#fff6e0;border:1px solid var(--gold);border-radius:10px;padding:12px 16px;">
+      <p style="margin:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:#8a6d22;font-size:17px;">Perfect run total: 9 + 11 + 11 + 9 = 40 points</p>
+    </div>
+    <p class="q">If your robot completed only the first two stacks but failed to dock, what would the score be? Show your addition.</p>
+    <textarea class="answer" data-key="p3_partial_score" aria-label="Partial score"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: plan ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Plan the Run</h2>
+    <p>Before coding, map your run as a list of actions and the points each scores. Think through the whole path: find the wall to reset, square up, drive and turn to the cubes, stack them, then move the pallet to the dock. Mark which library function does each step.</p>
+    <table class="grid">
+      <thead><tr><th style="width:8%">#</th><th style="width:48%">What the robot does</th><th style="width:24%">Library call(s)</th><th>Points (if any)</th></tr></thead>
+      <tbody id="planBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="muted">You don't need to score on every line — driving and turning set up the scoring maneuvers. Mark points only on the lines that actually score.</p>
+  </section>
+
+  <!-- ===== Phase 5: build ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Build: The Scored Run</h2>
+    <p>Now write it. Start <code>score</code> at 0. Follow the <strong>do → score → report</strong> rhythm: run the maneuver with your library functions, add the points, then <code>print</code> the report. The skeleton below shows the structure and the scoring/reporting lines — <strong>you fill in the driving, turning, and stacking</strong> from your Phase 4 plan.</p>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 4 · Big Idea 4 — Keeping Score</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+<span class="hl">from yourname import *</span>     <span class="c"># your full library</span>
+
+def main():
+    k.enable_servo(0)
+    k.enable_servo(1)
+
+    score = 0                          <span class="c"># running total starts at zero</span>
+    print(f"Run started. Score: {score}")
+
+    <span class="c"># --- Reset to a known position ---</span>
+    back_until_pressed()                   <span class="c"># back into the wall to reset</span>
+    square_up()                             <span class="c"># straighten against the line</span>
+
+    <span class="c"># --- Drive/turn to the cubes (your plan) ---</span>
+    <span class="hl"># Drive(...)  Turn(...)  as needed</span>
+
+    <span class="c"># --- SCORE: first small red cube on the large cube ---</span>
+    <span class="hl"># move_arm(...) / move_claw(...) to make the stack</span>
+    score = score + 9                      <span class="c"># difficulty 5 = 9 points</span>
+    print(f"Stacked first red cube. Score: {score}")
+
+    <span class="c"># --- SCORE: second small red cube ---</span>
+    <span class="hl"># reposition + move_arm / move_claw</span>
+    score = score + 11                     <span class="c"># difficulty 6 = 11 points</span>
+    print(f"Stacked second red cube. Score: {score}")
+
+    <span class="c"># --- SCORE: dock the pallet ---</span>
+    <span class="hl"># Drive / Turn the pallet onto the dock</span>
+    score = score + 11                     <span class="c"># difficulty 6 = 11 points</span>
+    print(f"Pallet on the dock. Score: {score}")
+
+    <span class="c"># --- SCORE: cube still on top when docked ---</span>
+    score = score + 9                      <span class="c"># difficulty 5 = 9 points</span>
+    print(f"Cube held on top. Final score: {score}")
+
+main()</div>
+    <div class="callout gold">
+      <p class="ctitle">Requirement check</p>
+      <p>Your finished run must use all six: <code>back_until_pressed</code>, <code>square_up</code>, <code>Drive</code>, <code>Turn</code>, <code>move_arm</code>, and <code>move_claw</code>. Fill the planning blanks with real calls so each one appears.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 6: run + console ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Run It and Read the Report</h2>
+    <p>Run your program and watch the console. A perfect run prints a growing score, ending at 40. Here's what a clean run looks like:</p>
+    <div class="console"><span class="pl">&gt;</span> Run started. Score: 0
+<span class="pl">&gt;</span> Stacked first red cube. Score: 9
+<span class="pl">&gt;</span> Stacked second red cube. Score: 20
+<span class="pl">&gt;</span> Pallet on the dock. Score: 31
+<span class="pl">&gt;</span> Cube held on top. Final score: 40</div>
+    <h3 class="sub">Your Run Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:40%">What the console printed (final score)</th><th>What worked / what you fixed</th></tr></thead>
+      <tbody id="runBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">What final score did your run reach? If it was below 40, which maneuver fell short, and how did the printed report help you find it?</p>
+    <textarea class="answer" data-key="p6_final_score" aria-label="Final score"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: connect & reflect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Connect &amp; Reflect</h2>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Intelligent systems track their own state and report what they have done.</p>
+    </div>
+    <p>Your robot didn't just act — it <em>kept track of its own progress and reported it</em>. That's everywhere in real systems. A delivery robot logs each package dropped; a game tracks your score; a fitness band counts your steps and tells you the total. Keeping a running state and reporting it is how machines stay accountable — to their users and to the people debugging them. The printed log you built is exactly the kind of record engineers rely on to see what a system actually did, step by step.</p>
+    <p class="muted">Complete the reflection on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> How does an accumulating variable like <code>score</code> "remember" a running total as the program runs?</p>
+    <textarea class="answer" data-key="p7_q1_state" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Why is printing a report after each maneuver helpful when something in the run goes wrong?</p>
+    <textarea class="answer" data-key="p7_q2_logging" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> This run used your whole library. Name two functions you called and what each contributed to the run.</p>
+    <textarea class="answer" data-key="p7_q3_library" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Intelligent systems track their own state and report what they have done. This means a well-built robot can tell you..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Use the Turn Return Value</h3>
+    <ul>
+      <li>Your <code>Turn</code> returns 1 for success. Only add points if a maneuver's setup turn succeeded. How would you use the return value to protect your score?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — A Scoring Function</h3>
+    <ul>
+      <li>Write a helper like <code>score_points(int current, int add)</code> that adds points and prints the report in one call. Why might that be cleaner than repeating the two lines?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Count Maneuvers Too</h3>
+    <ul>
+      <li>Add a second accumulating variable that counts how many maneuvers you completed. Print both score and count at the end.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Time It</h3>
+    <ul>
+      <li>A real run has a time limit. How could you report points-per-second, or warn if the run is taking too long? Sketch the idea.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — One Combined Message</h3>
+    <ul>
+      <li>Right now your score report prints as several separate <code>print</code> lines. Build one combined summary string with an f-string — for example, your score and maneuver count in a single sentence — before printing it in one call.</li>
+      <li>What's one advantage of building one complete string before printing, instead of printing pieces as you go?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 4 Big Idea 4 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit4_bigidea4";
+
+  (function buildRows() {
+    const plan = document.getElementById("planBody");
+    for (let i = 1; i <= 8; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="num">' + i + '</td>' +
+        '<td><input type="text" data-key="plan' + i + '_what" aria-label="Plan ' + i + ' what"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_call" aria-label="Plan ' + i + ' call"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_pts" aria-label="Plan ' + i + ' points"></td>';
+      plan.appendChild(tr);
+    }
+    const run = document.getElementById("runBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="run' + i + '_printed" aria-label="Run ' + i + ' printed"></td>' +
+        '<td><input type="text" data-key="run' + i + '_fixed" aria-label="Run ' + i + ' fixed"></td>';
+      run.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 4 · Big Idea 4 — Keeping Score",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 2 · Big Idea 4 — Reading the Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+  .calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+  .calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .calc-line input { width: 90px; font-family: ui-monospace, Consolas, monospace; font-size: 16px; text-align: center; padding: 6px 8px; border: 1.5px solid #b7dcb7; border-radius: 6px; background: #fff; }
+  .calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety, .widget-step, .calc-box { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input, .calc-line input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 2 · Big Idea 4</p>
+    <h1>Information Must Be Interpreted</h1>
+    <p class="sub">Student Lab · Reading the Line</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine sense and respond to the world around it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Information Must Be Interpreted Before It Becomes Useful</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems transform raw sensor data into meaningful information.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Analog Sensors · Raw Data · Calibration · Thresholds · if/else on a live sensor</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Detecting tape — steering along a line</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · Tophat sensor · ruler · black tape on white board · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Your touch sensor gave a clean yes-or-no. Today's sensor is different. A <strong>Tophat</strong> sensor shines infrared light at the floor and measures how much bounces back — white reflects a lot, black tape reflects little. But it doesn't return 0 or 1. It returns a <strong>number</strong> from a big range, and that number is <em>noisy</em> — it jumps around even when nothing moves. Before this sensor is useful, you have to <strong>interpret</strong> it: figure out what counts as "black" and what counts as "white." That work is most of this lab, and almost all of it happens before you write a single line of code.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>Raw sensor data is messy and meaningless on its own. The intelligence is in turning a jumpy number into a clear decision: "this means line, that means floor."</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Read an <em>analog</em> sensor with <code>k.analog(0)</code> and explain why its values are noisy.</li>
+      <li>Calibrate the sensor: measure black and white, and find the best mounting height.</li>
+      <li>Calculate a <em>threshold</em> (midpoint) that separates "black" from "white."</li>
+      <li>Use <code>if/else</code> on the live reading to steer a robot along a line.</li>
+    </ul>
+
+    <div class="callout navy">
+      <p class="ctitle">A heads-up</p>
+      <p>This is the biggest lab yet. You'll do a lot of measuring and thinking before any driving. Take your time on the data — the better your calibration, the better your robot follows the line.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1: Mount + Meet the Sensor ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Mount the Sensor &amp; Find Its Values</h2>
+    <h3 class="sub">Mount It</h3>
+    <div class="callout navy">
+      <p class="ctitle">Setup</p>
+      <p>Mount the <strong>Tophat sensor</strong> on the <strong>front</strong> of your robot, facing down at the floor, about <strong>1/4 inch</strong> off the surface.</p>
+      <p>Plug it into <strong>analog port 0</strong>. In code, <code>k.analog(0)</code> reads this sensor.</p>
+    </div>
+
+    <h3 class="sub">Find It on the Controller</h3>
+    <div class="widget-step no-print">
+      <p class="ctitle">Watch the raw values</p>
+      <p>On the Wombat, open the <strong>Motors and Sensors</strong> widget, then the <strong>sensor list</strong>. Find the <strong>analog port 0</strong> reading.</p>
+      <p>Hold the sensor still over a white part of the board and just watch the number. <strong>It bounces.</strong> It won't sit on one value — it jitters up and down. That jitter is normal; it's <em>raw data</em>, and it's exactly why we can't just check for one exact number.</p>
+    </div>
+    <p class="q">Hold the sensor still over white and watch the port-0 value for a few seconds. What was the lowest number you saw, and the highest? How much did it bounce?</p>
+    <textarea class="answer" data-key="p1_white_bounce" aria-label="White bounce range"></textarea>
+    <p class="q">Why is a sensor that bounces around a problem if you wanted to check for one exact value like <code>k.analog(0) == 2000</code>?</p>
+    <textarea class="answer" data-key="p1_why_bounce_problem" aria-label="Why bounce is a problem"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: Height Exploration ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Find the Best Height</h2>
+    <p>The sensor's height off the floor changes how well it can tell black from white. Too close or too far, and black and white start to look the same. You want the height where the <strong>difference</strong> between a black reading and a white reading is as <strong>big</strong> as possible — a big gap is easy to split; a small gap is not.</p>
+
+    <h3 class="sub">Step 1 — Read at Different Heights Over WHITE</h3>
+    <p>Hold the sensor at each height over a plain white area. Record the value you see (pick the middle of the bounce).</p>
+    <table class="grid">
+      <caption>Over WHITE</caption>
+      <thead><tr><th style="width:40%">Height off surface</th><th>Sensor value (analog 0)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1/8 inch</div></td><td><input type="text" data-key="white_h1" /></td></tr>
+        <tr><td><div class="seed">1/4 inch</div></td><td><input type="text" data-key="white_h2" /></td></tr>
+        <tr><td><div class="seed">1/2 inch</div></td><td><input type="text" data-key="white_h3" /></td></tr>
+        <tr><td><div class="seed">3/4 inch</div></td><td><input type="text" data-key="white_h4" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 2 — Read at Different Heights Over BLACK</h3>
+    <p>Now the same heights, over black tape.</p>
+    <table class="grid">
+      <caption>Over BLACK</caption>
+      <thead><tr><th style="width:40%">Height off surface</th><th>Sensor value (analog 0)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1/8 inch</div></td><td><input type="text" data-key="black_h1" /></td></tr>
+        <tr><td><div class="seed">1/4 inch</div></td><td><input type="text" data-key="black_h2" /></td></tr>
+        <tr><td><div class="seed">1/2 inch</div></td><td><input type="text" data-key="black_h3" /></td></tr>
+        <tr><td><div class="seed">3/4 inch</div></td><td><input type="text" data-key="black_h4" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 3 — Find the Biggest Difference</h3>
+    <p>For each height, subtract: black value − white value. The bigger the difference, the easier it is to tell them apart.</p>
+    <table class="grid">
+      <thead><tr><th style="width:34%">Height</th><th style="width:33%">Difference (black − white)</th><th>Biggest gap? (✓)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1/8 inch</div></td><td><input type="text" data-key="diff_h1" /></td><td><input type="text" data-key="best_h1" /></td></tr>
+        <tr><td><div class="seed">1/4 inch</div></td><td><input type="text" data-key="diff_h2" /></td><td><input type="text" data-key="best_h2" /></td></tr>
+        <tr><td><div class="seed">1/2 inch</div></td><td><input type="text" data-key="diff_h3" /></td><td><input type="text" data-key="best_h3" /></td></tr>
+        <tr><td><div class="seed">3/4 inch</div></td><td><input type="text" data-key="diff_h4" /></td><td><input type="text" data-key="best_h4" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Which height gave the biggest difference between black and white? Why is a bigger gap better for telling the line from the floor?</p>
+    <textarea class="answer" data-key="p2_best_height" aria-label="Best height reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: Calibrate Mounted + Midpoint ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Calibrate &amp; Find the Midpoint</h2>
+    <p>Now mount the sensor firmly at your best height (around 1/4 inch). With it mounted exactly where it will drive, take your real readings — these are the numbers your code will trust.</p>
+
+    <h3 class="sub">Step 1 — Mounted Readings</h3>
+    <table class="grid">
+      <thead><tr><th style="width:50%">Sensor over...</th><th>Mounted value (analog 0)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">WHITE floor</div></td><td><input type="text" data-key="mounted_white" aria-label="Mounted white" /></td></tr>
+        <tr><td><div class="seed">BLACK tape</div></td><td><input type="text" data-key="mounted_black" aria-label="Mounted black" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 2 — Calculate the Midpoint</h3>
+    <p>The <strong>midpoint</strong> is the value exactly halfway between black and white. It's your <em>threshold</em>: above it means black, below it means white. Add your two readings and divide by 2.</p>
+    <div class="calc-box no-print">
+      <p class="ctitle">Midpoint = ( black + white ) ÷ 2</p>
+      <div class="calc-line">
+        ( <input type="text" data-key="calc_black" aria-label="black value" placeholder="black" />
+        + <input type="text" data-key="calc_white" aria-label="white value" placeholder="white" /> )
+        ÷ 2 =
+        <input type="text" data-key="calc_midpoint" aria-label="midpoint" placeholder="midpoint" />
+      </div>
+    </div>
+    <div class="callout gold">
+      <p class="ctitle">This number is the heart of the lab</p>
+      <p>Your midpoint is the line between "I see black" and "I see white." Write it down — you'll type it into your code as <code>MIDPOINT</code>. Every robot's number is a little different, because every sensor is a little different.</p>
+    </div>
+    <p class="q">Write your final midpoint value here, and explain in one sentence what it means.</p>
+    <textarea class="answer" data-key="p3_midpoint_meaning" aria-label="Midpoint meaning"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: Concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Concept: Threshold &amp; Steering</h2>
+    <div class="concept">
+      <div class="chead">Analog: a range, not a switch</div>
+      <div class="cbody">
+        <p>Your touch sensor was <em>digital</em> — only 0 or 1. The Tophat is <em>analog</em> — it returns a number across a wide range. That's more information, but it's also messier: it bounces, and there's no single "line" value. You have to decide where the line <em>is</em>.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">A threshold turns a number into a decision</div>
+      <div class="cbody">
+        <p>A <strong>threshold</strong> is a cutoff. Once you have your midpoint, every reading becomes a yes-or-no again:</p>
+        <div class="code small">if k.analog(0) &gt; MIDPOINT:    <span class="c"># reading is HIGH — that's BLACK</span>
+    <span class="c"># ...we're on the line</span>
+else:                          <span class="c"># reading is LOW — that's WHITE</span>
+    <span class="c"># ...we're on the floor</span></div>
+        <p>This is the same <code>if/else</code> you learned in Unit 1 — but now the condition reads a <strong>live sensor</strong>, not a number you typed. The robot is interpreting the real world.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Following the EDGE of the line</div>
+      <div class="cbody">
+        <p>With one sensor, the trick is to ride the <strong>edge</strong> of the tape — half on black, half on white. Every time the robot drifts, the reading tells it which way it slipped, and it steers back:</p>
+        <ul>
+          <li>Reading <strong>above</strong> midpoint → drifted onto <strong>black</strong> → steer one way</li>
+          <li>Reading <strong>below</strong> midpoint → drifted onto <strong>white</strong> → steer the other way</li>
+        </ul>
+        <p>Constantly correcting back and forth, the robot wiggles its way right along the edge of the line.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 5: Build ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Build the line_follow Function</h2>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Test in your hands first</p>
+      <p>Hold the robot up and pass the line under the sensor by hand. Watch the wheels change speed as you move from white to black. Only put it on the board once the steering reacts the right way.</p>
+    </div>
+
+    <p>You'll reuse the encoder skeleton from <code>Tick_Drive</code> — clear the counter, loop to a tick target, brake at the end — but inside the loop you'll put the <code>if/else</code> that steers. Type your own <code>MIDPOINT</code> from Phase 3 at the top. Define <code>line_follow</code> above <code>main()</code>, as always.</p>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 2 · Big Idea 4 — Reading the Line</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+
+MIDPOINT = <span class="hl">____</span>   <span class="c"># YOUR midpoint from Phase 3 (black + white) / 2</span>
+
+def main():
+    line_follow(3000)         <span class="c"># follow the line for this many ticks</span>
+
+def line_follow(ticks):
+    k.cmpc(0)                       <span class="c"># clear the wheel counter</span>
+
+    while k.gmpc(0) &lt; ticks:        <span class="c"># keep going until we've driven far enough</span>
+        if k.analog(0) &gt; MIDPOINT:  <span class="c"># HIGH reading = on BLACK = steer right</span>
+            k.motor(0, 50)          <span class="c"># left motor faster</span>
+            k.motor(1, 20)          <span class="c"># right motor slower</span>
+        else:                       <span class="c"># LOW reading = on WHITE = steer left</span>
+            k.motor(0, 20)          <span class="c"># left motor slower</span>
+            k.motor(1, 50)          <span class="c"># right motor faster</span>
+
+    k.motor(0, 0)                   <span class="c"># brake (from Big Idea 2)</span>
+    k.motor(1, 0)
+    k.msleep(50)
+
+main()</div>
+
+    <div class="callout gold">
+      <p class="ctitle">If your robot steers the WRONG way — flip the branches</p>
+      <p>Every robot is wired a little differently. If your robot veers off the line instead of hugging it, swap the two motor blocks: put the white block's speeds in the black branch and the black block's speeds in the white branch. The logic is right; it just needs to match how <em>your</em> motors are wired.</p>
+    </div>
+
+    <h3 class="sub">Tuning Log</h3>
+    <p>Run it on the line. Adjust your speeds (the 50 and 20) and re-test. Record what you tried.</p>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:30%">Speeds you used (fast / slow)</th><th>How well did it follow the line?</th></tr></thead>
+      <tbody id="tuneBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Checklist</h3>
+    <ul>
+      <li>You typed your own measured <code>MIDPOINT</code> at the top</li>
+      <li>The <code>if</code> tests <code>k.analog(0) &gt; MIDPOINT</code></li>
+      <li>The black branch and white branch set the two motors to different speeds</li>
+      <li>The loop still uses <code>k.cmpc(0)</code> and <code>k.gmpc(0) &lt; ticks</code> to control distance</li>
+      <li>The robot brakes at the end</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 6: Connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea — AI Literacy Thread</p>
+      <p>Intelligent systems transform raw sensor data into meaningful information.</p>
+    </div>
+    <p>Your sensor handed you a noisy, jumpy number. On its own, it meant nothing. You turned it into meaning by calibrating and setting a threshold — and only then could the robot act on it. Every intelligent system does this. A voice assistant gets a messy sound wave and has to decide "was that a word?" A medical device reads a noisy heartbeat signal and decides "is that a real beat?" The raw data is always messy; the intelligence is in interpreting it well. A bad threshold makes a bad decision, no matter how good everything else is.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Your midpoint was different from your neighbor's, even with the same kind of sensor. Why must each robot be calibrated for itself instead of using one number for everyone?</p>
+    <textarea class="answer" data-key="p6_calibrate_each" aria-label="Why calibrate each"></textarea>
+    <p class="q">Imagine you set your threshold too low, so the robot calls almost everything "black." What would the robot do wrong? Now too high — what goes wrong then?</p>
+    <textarea class="answer" data-key="p6_bad_threshold" aria-label="Bad threshold effects"></textarea>
+    <p class="q">A raw sensor value is just a noisy number until it's interpreted. Name another machine that has to turn messy raw data into a clear decision, and say what its "threshold" decides.</p>
+    <textarea class="answer" data-key="p6_other_system" aria-label="Another system"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: Reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is the difference between a <em>digital</em> sensor (the touch button) and an <em>analog</em> sensor (the Tophat)?</p>
+    <textarea class="answer" data-key="p7_q1_analog_digital" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What is a <em>threshold</em>, and how did you calculate yours? Why is the midpoint a good choice?</p>
+    <textarea class="answer" data-key="p7_q2_threshold" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> In Unit 1, your <code>if/else</code> tested a number you typed. Today it tested a live sensor. Why is testing a real sensor more powerful?</p>
+    <textarea class="answer" data-key="p7_q3_live_sensor" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems transform raw sensor data into meaningful information. This means that before a robot can trust a sensor, someone must..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Smoother Steering</h3>
+    <ul>
+      <li>Your robot probably wiggles. Try making the fast/slow speeds closer together (like 45 and 30). Does it wobble less? What's the trade-off?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Re-calibrate Under Different Light</h3>
+    <ul>
+      <li>Move to a brighter or darker spot and re-read black and white. Did your midpoint change? What does that tell you about trusting old calibration data?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Make is_on_black()</h3>
+    <ul>
+      <li>Write a small helper function, defined above where you use it, that returns whether the sensor sees black, using your threshold. How could that make <code>line_follow</code> easier to read?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Two Sensors (a peek ahead)</h3>
+    <ul>
+      <li>If you had a Tophat on the left AND the right, how could the robot follow the line more smoothly? Sketch the idea in words. (We'll build toward this.)</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 2 Big Idea 4 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit2_bigidea4";
+
+  (function buildRows() {
+    const tune = document.getElementById("tuneBody");
+    for (let i = 1; i <= 5; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="tune' + i + '_speeds" aria-label="Tune ' + i + ' speeds"></td>' +
+        '<td><input type="text" data-key="tune' + i + '_result" aria-label="Tune ' + i + ' result"></td>';
+      tune.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 2 · Big Idea 4 — Reading the Line",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

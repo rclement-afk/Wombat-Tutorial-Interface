@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 5 · Big Idea 2 — Ease On, Ease Off</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #16204a 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #e9edf7; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--navy); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--navy); background: #eef1f7; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.red { border-left-color: var(--red); background: #fbeef0; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--navy); margin: 0 0 4px; }
+  .callout.red .ctitle { color: var(--red); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .formula { font-family: ui-monospace, Consolas, monospace; font-size: 16px; color: var(--navy); background: #eef1f7; border: 1px solid #cfdcef; border-radius: 8px; padding: 12px 14px; margin: 10px 0; text-align: center; font-weight: 600; }
+
+  .filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .zonebar { display: flex; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--line); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-align: center; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; }
+  .zonebar div { padding: 14px 6px; color: #fff; }
+  .zonebar .accel { background: var(--gold); color: #4a3a10; flex: 0 0 15%; }
+  .zonebar .cruise { background: var(--navy); flex: 1 1 auto; }
+  .zonebar .decel { background: var(--red); flex: 0 0 30%; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .warn, .zonebar { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .filetab { background: #ddd !important; color: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .zonebar div { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 5 · Big Idea 2</p>
+    <h1>Ease On, Ease Off</h1>
+    <p class="sub">Student Lab · Driving Like a Car, Not a Light Switch</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine operate reliably in an imperfect world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Robust Systems Tolerate Uncertainty</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Reliable systems respond proportionally to how close they are to a goal, instead of acting the same way right up until they suddenly stop.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>elif Chains · Multi-Branch Decisions · Linear Functions in Code (y = mx + b) · Reliability-Oriented Motor Control</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Mission 18 — move Botguy to the loading zone (final position judged)</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · full library · Botguy · the game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Every <code>Drive()</code> you've written so far does the same thing the whole way: full speed, then slam to a stop the instant the tick count is reached. That works, but think about how a car actually drives — it eases onto the gas, cruises, then eases onto the brake well before the stop sign. It never slams from 60 to 0 in one instant. Today you rebuild <code>Drive()</code> to do the same thing: ease on for the first few ticks, cruise in the middle, and ease off for the last several hundred ticks before the target — using a new tool, the <strong>elif chain</strong>, to decide which of those three zones the robot is in right now.</p>
+    <div class="callout red">
+      <p class="ctitle">The Big Idea of This Unit</p>
+      <p>A robust system doesn't treat "far from the goal" and "about to arrive" the same way. It measures how close it is and adjusts its behavior smoothly — proportional response instead of all-or-nothing.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain what an <code>elif</code> chain does and when it's the right tool versus separate <code>if</code> statements.</li>
+      <li>Describe motor speed as a linear function of position, in the form y = mx + b.</li>
+      <li>Rebuild <code>Drive()</code> so it accelerates, cruises, and decelerates instead of running at one fixed speed.</li>
+      <li>Tune the constants in that linear function by testing, not by guessing.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: the mission ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — The Mission: Move Botguy</h2>
+    <div class="callout">
+      <p class="ctitle">The run</p>
+      <p>Move <strong>Botguy</strong> into the <strong>loading zone</strong>. This mission is scored by Botguy's <strong>final position</strong> — it doesn't matter how he got there, only where he ends up.</p>
+    </div>
+    <p>Here's why this mission is a perfect fit for today: Botguy isn't fixed to the floor. If your robot arrives at full speed and slams to a stop, the impact can shove Botguy off target in the last instant — the exact moment accuracy matters most. A robot that eases off its speed as it approaches is far less likely to overshoot the zone or knock Botguy out of position on contact.</p>
+    <p class="q">Say the mission back in your own words. Why would a sudden stop right at the end be especially risky for <em>this</em> mission compared to, say, just driving to an empty spot on the floor?</p>
+    <textarea class="answer" data-key="p1_restate" aria-label="Restate mission"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: concept — elif ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: elif Chains</h2>
+    <div class="concept">
+      <div class="chead">What is elif?</div>
+      <div class="cbody">
+        <p>You already know <code>if</code> and <code>else</code>. Python's <strong>elif</strong> (short for "else if") adds one or more extra checks in between, for when there are more than two possible situations:</p>
+        <div class="code small">if condition_1:
+    <span class="c"># runs only if condition_1 is true</span>
+elif condition_2:
+    <span class="c"># runs only if condition_1 was false AND condition_2 is true</span>
+else:
+    <span class="c"># runs only if BOTH conditions above were false</span></div>
+        <p>The chain is checked <strong>top to bottom</strong>, and the instant one condition is true, its block runs and <strong>every condition below it is skipped</strong> — even if one of them would also have been true. Only one block in the whole chain ever runs.</p>
+      </div>
+    </div>
+    <div class="concept" style="margin-top:18px;">
+      <div class="chead">When is it the right tool?</div>
+      <div class="cbody">
+        <p><strong>Good fit:</strong> when the situations are <em>mutually exclusive zones</em> — a value falls into exactly one of them, never more than one. A speed limit that's 20 mph in a school zone, 35 in a residential zone, and 55 on the highway is a perfect <code>elif</code> chain: any one location is in exactly one zone.</p>
+        <p><strong>Poor fit:</strong> when the conditions are <em>independent</em> — more than one could be true at the same time, and you need to react to each one separately. "It's raining" and "it's nighttime" can both be true at once. Chaining them with <code>elif</code> would silently skip the nighttime check whenever it's already raining — that's a bug, not a design choice. Two separate <code>if</code> statements are correct there.</p>
+      </div>
+    </div>
+    <p class="q">In your own words: what does an elif chain do differently from writing separate if statements? Give one example (robot or not) where elif is the right tool, and one where it would cause a bug.</p>
+    <textarea class="answer" data-key="p2_elseif" aria-label="elif concept"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: concept — accel/decel ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Concept: Three Zones, One Drive</h2>
+    <p>A car doesn't drive at one constant speed and then slam the brakes. It <strong>eases onto the gas</strong> leaving a stop sign, <strong>cruises</strong> once it's up to speed, and <strong>eases onto the brake</strong> well before the next stop. Your <code>Drive()</code> is going to do the same thing, split into three zones based on tick position:</p>
+    <div class="zonebar">
+      <div class="accel">Accelerate<br>first 50 ticks</div>
+      <div class="cruise">Cruise<br>full speed</div>
+      <div class="decel">Decelerate<br>final 500 ticks</div>
+    </div>
+    <p>Exactly one of these zones applies at any instant while the robot is driving — which makes this a textbook <code>if</code> / <code>elif</code> / <code>else</code> chain.</p>
+    <div class="concept">
+      <div class="chead">Speed as a line: y = mx + b</div>
+      <div class="cbody">
+        <p>In the deceleration zone, speed isn't fixed — it depends on how many ticks are <strong>left</strong> to travel. The fewer ticks remaining, the slower you want to go. That relationship is a straight line, exactly like <code>y = mx + b</code> from math class:</p>
+        <div class="formula">motor_speed = (ticks_remaining) &times; m + b</div>
+        <p>Here, <code>ticks_remaining</code> is your <strong>x</strong>, <code>motor_speed</code> is your <strong>y</strong>, <code>m</code> is how steeply speed drops as you get closer, and <code>b</code> is a small base speed so the robot never fully stalls before it actually reaches the target. A starting point to test:</p>
+        <div class="formula">motor_speed = (desired_ticks - current_ticks) &times; 2 + 150</div>
+        <p>where <code>desired_ticks - current_ticks</code> is exactly <code>ticks_remaining</code>. The acceleration zone works the same way, just measuring from the <em>start</em> instead of the end — speed ramps <strong>up</strong> as <code>current_ticks</code> grows from 0 toward 50.</p>
+      </div>
+    </div>
+    <p class="q">Why does deceleration speed depend on ticks <em>remaining</em> rather than ticks <em>already driven</em>? What would go wrong if you used the wrong one?</p>
+    <textarea class="answer" data-key="p3_linear" aria-label="Linear speed concept"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: build ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build: Rebuild Drive()</h2>
+    <p>Replace your single fixed-speed loop with the three-zone <code>if</code> / <code>elif</code> / <code>else</code> chain. This checks the zone <strong>every trip through the loop</strong>, so speed updates continuously as ticks change.</p>
+    <div class="filetab"><span class="hl">yourname.py</span></div>
+    <div class="code">def Drive(inches):
+    desired_ticks = inches * ticks_per_inch
+    k.cmpc(0)
+    current_ticks = k.gmpc(0)
+
+    while current_ticks &lt; desired_ticks:
+        current_ticks = k.gmpc(0)
+
+        if current_ticks &lt; 50:
+            <span class="c"># ACCELERATION ZONE — ramp speed UP from a slow start</span>
+            motor_speed = current_ticks * <span class="hl">12</span> + <span class="hl">150</span>
+        elif (desired_ticks - current_ticks) &lt; 500:
+            <span class="c"># DECELERATION ZONE — ramp speed DOWN as ticks remaining shrinks</span>
+            motor_speed = (desired_ticks - current_ticks) * <span class="hl">2</span> + <span class="hl">150</span>
+        else:
+            <span class="c"># CRUISE ZONE — full speed, neither ramp applies</span>
+            motor_speed = <span class="hl">750</span>
+
+        k.mav(0, motor_speed)
+        k.mav(1, motor_speed)
+
+    k.mav(0, 0); k.mav(1, 0); k.msleep(50)   <span class="c"># brake</span></div>
+    <p class="q">Walk through the three branches in your own words: what triggers each one, and what does each one do to <code>motor_speed</code>?</p>
+    <textarea class="answer" data-key="p4_walkthrough" aria-label="Drive walkthrough"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: run and tune ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Run It, Then Tune the Constants</h2>
+    <p>Test your new <code>Drive()</code> on a medium-to-long distance (24+ inches works well, so all three zones actually get used). Watch the robot closely as it drives — does it visibly ease on, cruise, then ease off? Or does something look off?</p>
+    <div class="warn">
+      <p class="ctitle">⚠ Something to watch for</p>
+      <p>The cruise speed in the skeleton is <strong>750</strong>. Plug <code>ticks_remaining = 500</code> (the instant deceleration begins) into the decel formula: <code>500 &times; 2 + 150 = 1150</code>. That's <em>faster</em> than cruise speed — the robot would speed up right as it's supposed to start slowing down. Watch for this when you test. If you see it, that's not a mistake in the lab — it's your <code>m</code> and <code>b</code> constants not yet matching your cruise speed.</p>
+    </div>
+    <table class="grid">
+      <caption>Tune your constants</caption>
+      <thead><tr><th style="width:22%">Constant</th><th style="width:16%">Starting value</th><th style="width:16%">Your tuned value</th><th>Why you changed it</th></tr></thead>
+      <tbody>
+        <tr><td class="label">Accel slope (m)</td><td><div class="seed">12</div></td><td><input type="text" data-key="p5_accel_m" /></td><td><input type="text" data-key="p5_accel_m_why" /></td></tr>
+        <tr><td class="label">Accel base (b)</td><td><div class="seed">150</div></td><td><input type="text" data-key="p5_accel_b" /></td><td><input type="text" data-key="p5_accel_b_why" /></td></tr>
+        <tr><td class="label">Decel slope (m)</td><td><div class="seed">2</div></td><td><input type="text" data-key="p5_decel_m" /></td><td><input type="text" data-key="p5_decel_m_why" /></td></tr>
+        <tr><td class="label">Decel base (b)</td><td><div class="seed">150</div></td><td><input type="text" data-key="p5_decel_b" /></td><td><input type="text" data-key="p5_decel_b_why" /></td></tr>
+        <tr><td class="label">Cruise speed</td><td><div class="seed">750</div></td><td><input type="text" data-key="p5_cruise" /></td><td><input type="text" data-key="p5_cruise_why" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Did you hit the speed-jump problem described above? How did you change your constants so decel speed at 500 ticks remaining lines up with your cruise speed instead of exceeding it?</p>
+    <textarea class="answer" data-key="p5_tune" aria-label="Tuning result"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: mission run ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Run the Mission</h2>
+    <p>Using your tuned <code>Drive()</code>, drive to Botguy and move him into the loading zone. Run it several times.</p>
+    <table class="grid">
+      <caption>Run it 4+ times — how consistent is the final position?</caption>
+      <thead><tr><th style="width:10%">Run</th><th style="width:35%">Botguy fully in the loading zone?</th><th>Did the stop feel smooth, or still abrupt?</th></tr></thead>
+      <tbody id="runBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Compare this to a flat-speed <code>Drive()</code> from Unit 4. Was Botguy's final position more consistent with easing on/off? Why would a reliability engineer care about that consistency more than raw speed?</p>
+    <textarea class="answer" data-key="p6_consistency" aria-label="Mission consistency"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: connect & reflect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Connect &amp; Reflect</h2>
+    <div class="callout red">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Reliable systems respond proportionally to how close they are to a goal, instead of acting the same way right up until they suddenly stop.</p>
+    </div>
+    <p>This idea shows up everywhere intelligent systems need to be trusted with something delicate. A self-driving car doesn't brake at one constant rate regardless of following distance — it eases harder the closer it gets to a stopped car ahead. A robotic arm placing a fragile part slows dramatically in its last few millimeters of travel. Even a thermostat easing a heater's output as room temperature approaches the target, instead of blasting full heat until the exact instant it's satisfied, is the same pattern: <strong>proportional response near the goal, not all-or-nothing action right up to it.</strong></p>
+    <p class="muted">Complete the reflection on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What does an elif chain do that separate if statements don't, and why did the three speed zones need one?</p>
+    <textarea class="answer" data-key="p7_q1_elseif" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain the decel formula <code>motor_speed = ticks_remaining &times; m + b</code> the way you'd explain y = mx + b to a friend who hasn't seen this lab.</p>
+    <textarea class="answer" data-key="p7_q2_formula" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Why does tuning constants by testing beat guessing a value and hoping it works?</p>
+    <textarea class="answer" data-key="p7_q3_tuning" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Reliable systems respond proportionally instead of all-or-nothing. This means that near a goal, a system should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Ease Your Turns Too</h3>
+    <ul>
+      <li>Apply the same three-zone idea to <code>Turn()</code>. Does a turn need as large a deceleration zone as a long drive? Why or why not?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Does It Scale?</h3>
+    <ul>
+      <li>Test your tuned <code>Drive()</code> on a very short distance (6 inches) and a very long one (48+ inches). Does the same accel/decel zone size work well for both? What would you change if not?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Name the Cruise Zone</h3>
+    <ul>
+      <li>Rewrite the plain <code>else</code> as an explicit <code>elif</code> that checks both bounds of the cruise zone directly. Why was the plain <code>else</code> sufficient here — what did it save you from writing?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Should It Exist?</h3>
+    <ul>
+      <li>Find one credible news article (not a blog or forum post) about a real self-driving car incident, or a robot that failed in the field.</li>
+      <li>In 3-4 sentences: what happened, was the technology more beneficial or harmful overall, and how do you think it will need to change in the next 10 years to be trusted?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Round and Check</h3>
+    <ul>
+      <li>Wrap your <code>motor_speed</code> calculation with <code>round()</code> so it's always a whole number (motors don't understand fractional ticks/sec anyway). Python's built-in <code>round()</code> works without any extra import.</li>
+      <li>Use <code>abs()</code> on the difference between your tuned decel speed at 500 ticks remaining and your cruise speed — how close did your tuning actually get them?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 5 Big Idea 2</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit5_bigidea2";
+
+  (function buildRows() {
+    const run = document.getElementById("runBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="run' + i + '_botguy" aria-label="Run ' + i + ' botguy"></td>' +
+        '<td><input type="text" data-key="run' + i + '_smooth" aria-label="Run ' + i + ' smoothness"></td>';
+      run.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 5 · Big Idea 2 — Ease On, Ease Off",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

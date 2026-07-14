@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Labs — KIPR Botball 2026</title>
+  <title>Student Labs · Python Edition — KIPR Botball 2026</title>
   <link rel="stylesheet" href="../shared.css">
   <style>
     body { background: var(--dark); min-height: 100vh; display: flex; flex-direction: column; }
@@ -17,7 +17,10 @@
       line-height: 1; color: var(--white); letter-spacing: -0.01em; margin-bottom: 0.75rem;
     }
     .page-title span { color: var(--red); }
-    .page-sub { color: rgba(255,255,255,0.55); max-width: 560px; margin-bottom: 2.5rem; }
+    .page-sub { color: rgba(255,255,255,0.55); max-width: 560px; margin-bottom: 1.25rem; }
+    .toggle-line { font-size: 0.85rem; color: rgba(255,255,255,0.45); margin-bottom: 2.5rem; }
+    .toggle-line a { color: var(--red); text-decoration: none; font-weight: 600; }
+    .toggle-line a:hover { text-decoration: underline; }
     .unit-label {
       font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
       text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 0 0 1rem;
@@ -60,17 +63,17 @@
     <div class="nav-links">
       <a href="../index.html">Home</a>
       <a href="../2026-missions.html">2026 Missions</a>
-      <a href="index.html" class="active">Labs</a>
-      <a href="../Python_Labs/index.html">Python Labs</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="index.html" class="active">Python Labs</a>
       <a href="../telemetry.html">Telemetry</a>
     </div>
   </nav>
 
   <div class="wrap">
-    <p class="page-eyebrow">Botball Explorer · CS1 + AI Literacy</p>
-    <h1 class="page-title">Student <span>Labs</span></h1>
-    <p class="page-sub">Interactive lab sheets you fill in on screen. Enter your PIN, work through the activity, then press Submit &amp; Download to save your results file and a printable PDF.</p>
-    <p style="font-size:0.85rem; color:rgba(255,255,255,0.45); margin-bottom:2.5rem;">Prefer Python? <a href="../Python_Labs/index.html" style="color:var(--red); text-decoration:none; font-weight:600;">View the Python labs →</a></p>
+    <p class="page-eyebrow">Botball Explorer · CS1 + AI Literacy · Python Edition</p>
+    <h1 class="page-title">Student Labs <span>· Python</span></h1>
+    <p class="page-sub">The same Botball Explorer curriculum, written in Python. Enter your PIN, work through the activity, then press Submit &amp; Download to save your results file and a printable PDF.</p>
+    <p class="toggle-line">Prefer C? <a href="../labs/index.html">View the original labs →</a></p>
 
     <p class="unit-label">Unit 1 · Understanding Instructions</p>
     <div class="card-grid">
@@ -101,7 +104,7 @@
       <a class="lab-card" href="unit1_bigidea5.html">
         <span class="lab-num">Big Idea 5</span>
         <span class="lab-title">The Pom Pusher</span>
-        <span class="lab-desc">Modularity and reuse — build behaviors from prototypes and reuse them across a scattered field.</span>
+        <span class="lab-desc">Modularity and reuse — use id() to see how a name points to your code, then reuse behaviors across a scattered field.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
     </div>
@@ -163,7 +166,7 @@
       <a class="lab-card" href="unit3_bigidea3.html">
         <span class="lab-num">Big Idea 3</span>
         <span class="lab-title">Build Your Library</span>
-        <span class="lab-desc">Libraries and #include — switch to Advanced mode and gather all your functions into one reusable header file.</span>
+        <span class="lab-desc">Modules and import — gather all your functions into one reusable Python file, named after you.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit3_bigidea4.html">
@@ -185,25 +188,25 @@
       <a class="lab-card" href="unit4_bigidea1.html">
         <span class="lab-num">Big Idea 1</span>
         <span class="lab-title">The Model</span>
-        <span class="lab-desc">Prediction and the double type — build a ticks_per_inch model and a Drive function that commands distance in inches.</span>
+        <span class="lab-desc">Prediction and precision — build a ticks_per_inch model and a Drive function, choosing round() deliberately.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit4_bigidea2.html">
         <span class="lab-num">Big Idea 2</span>
         <span class="lab-title">Squaring Up</span>
-        <span class="lab-desc">Two IR sensors and boolean &amp;&amp; — each wheel watches its own sensor to straighten the robot against a line.</span>
+        <span class="lab-desc">Two IR sensors and boolean and — each wheel watches its own sensor to straighten the robot against a line.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit4_bigidea3.html">
         <span class="lab-num">Big Idea 3</span>
         <span class="lab-title">The Turn Model</span>
-        <span class="lab-desc">char, for loops, and return values — build one Turn(direction, angle) function from a ticks_per_degree model.</span>
+        <span class="lab-desc">len(), for loops, and True/False returns — build one Turn(direction, angle) function from a ticks_per_degree model.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit4_bigidea4.html">
         <span class="lab-num">Big Idea 4</span>
         <span class="lab-title">Keeping Score</span>
-        <span class="lab-desc">Accumulating state and printf logging — a full red-cube run that stacks, docks, and tracks its own points.</span>
+        <span class="lab-desc">Accumulating state and f-string reporting — a full red-cube run that stacks, docks, and tracks its own points.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit4_bigidea5.html">
@@ -219,13 +222,13 @@
       <a class="lab-card" href="unit5_bigidea1.html">
         <span class="lab-num">Big Idea 1</span>
         <span class="lab-title">The Second Attempt</span>
-        <span class="lab-desc">Arrays and indexed state — track a believed pose (x, y, heading) and update it only at real reset checkpoints.</span>
+        <span class="lab-desc">Lists and indexed state — track a believed pose (x, y, heading) and update it only at real reset checkpoints.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit5_bigidea2.html">
         <span class="lab-num">Big Idea 2</span>
         <span class="lab-title">Ease On, Ease Off</span>
-        <span class="lab-desc">else if chains and linear speed ramps — rebuild Drive() to accelerate, cruise, and decelerate instead of one fixed speed.</span>
+        <span class="lab-desc">elif chains and linear speed ramps — rebuild Drive() to accelerate, cruise, and decelerate instead of one fixed speed.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
       <a class="lab-card" href="unit5_bigidea3.html">
@@ -237,7 +240,7 @@
       <a class="lab-card" href="unit5_bigidea4.html">
         <span class="lab-num">Big Idea 4</span>
         <span class="lab-title">Every Second Counts</span>
-        <span class="lab-desc">systime() and modulo, arrays of results, a boolean-flagged sort, and a linear search — measuring performance instead of guessing at it.</span>
+        <span class="lab-desc">systime(), // and %, lists of results, a boolean-flagged sort, and a linear search — measuring performance instead of guessing at it.</span>
         <span class="lab-arrow">Open Lab →</span>
       </a>
     </div>

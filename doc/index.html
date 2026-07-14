@@ -157,6 +157,33 @@
       color: rgba(255,255,255,0.25);
       letter-spacing: 0.05em;
     }
+
+    /* Cheat sheet banner */
+    .cheat-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      text-align: center;
+      padding: 0.7rem 1.5rem;
+      background: var(--red);
+      color: var(--white);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      animation: cheat-pulse 1.8s ease-in-out infinite;
+    }
+    .cheat-banner:hover { background: var(--dark-red); }
+    .cheat-banner .cheat-icon { font-size: 1.05rem; }
+    @keyframes cheat-pulse {
+      0%, 100% { background: var(--red); box-shadow: 0 0 0 rgba(192,57,43,0); }
+      50% { background: var(--dark-red); box-shadow: 0 0 18px rgba(192,57,43,0.6); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cheat-banner { animation: none; }
+    }
   </style>
 </head>
 <body>
@@ -169,9 +196,15 @@
       <a href="index.html" class="active">Home</a>
       <a href="2026-missions.html">2026 Missions</a>
       <a href="labs/index.html">Labs</a>
-      <a href="telemetry.html">Telemetry</a>
+      <a href="Python_Labs/index.html">Python Labs</a>
     </div>
   </nav>
+
+  <a class="cheat-banner" href="Explorer_2026_CheatSheet.pdf" download>
+    <span class="cheat-icon">⚡</span>
+    <span>Botball Explorer CheatSheet — Click here to download the 2026 one-pager</span>
+    <span class="cheat-icon">⚡</span>
+  </a>
 
   <section class="hero">
     <img src="botguy.png" alt="" class="hero-botguy">
@@ -193,11 +226,11 @@
           <span class="card-desc">Interactive Botball Explorer lab sheets — fill in on screen, then submit for a results file and printable PDF.</span>
           <span class="card-arrow">Open Labs →</span>
         </a>
-        <a class="doc-card" href="telemetry.html">
-          <span class="card-num">Robot Diagnostics</span>
-          <span class="card-title">Telemetry Dashboard</span>
-          <span class="card-desc">View current motor, servo, sensor, IMU, and battery readings for connected hardware.</span>
-          <span class="card-arrow">Open Telemetry →</span>
+        <a class="doc-card" href="Python_Labs/index.html">
+          <span class="card-num">Classroom · CS1 + AI · Python</span>
+          <span class="card-title">Student Labs — Python</span>
+          <span class="card-desc">The same Botball Explorer curriculum, written in Python — fill in on screen, then submit for a results file and printable PDF.</span>
+          <span class="card-arrow">Open Python Labs →</span>
         </a>
       </div>
     </div>

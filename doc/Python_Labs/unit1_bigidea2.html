@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 1 · Big Idea 2 — The Red Cube Breakdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32;
+    --red-dark: #7d1526;
+    --navy: #1F2D5A;
+    --gold: #C8A14B;
+    --ink: #1c1c1e;
+    --grey: #6b7280;
+    --line: #d8dbe2;
+    --bg: #f0f0f0;
+    --panel: #ffffff;
+    --field: #fcfcfd;
+    --field-focus: #fffdf5;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  /* ---------- Sticky PIN / submit bar ---------- */
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; }
+  .status.warn { color: #ffd9a0; }
+  .status.err { color: #ffb3b3; }
+
+  /* ---------- Page shell ---------- */
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  /* ---------- Hero ---------- */
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  /* ---------- Meta table ---------- */
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  /* ---------- Sections ---------- */
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; }
+  li { margin: 4px 0; }
+  .obj li { margin: 5px 0; }
+
+  /* ---------- Callout ---------- */
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); }
+  .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+
+  /* ---------- Concept box (new CS concepts) ---------- */
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+  .concept .term { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 6px 0 2px; }
+  .concept .term:first-child { margin-top: 0; }
+
+  /* ---------- Code block ---------- */
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+
+  /* ---------- Inputs ---------- */
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; }
+  .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  /* ---------- Data tables ---------- */
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+
+  /* ---------- Name/date inline ---------- */
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  /* ---------- Bottom submit ---------- */
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Unit 1 · Big Idea 2</p>
+    <h1>Problems Can Be Broken Into Smaller Problems</h1>
+    <p class="sub">Student Lab · The Red Cube Breakdown</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine understand and act within the world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Problems Can Be Broken Into Smaller Problems</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems solve complex problems by breaking them into smaller parts.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Decomposition · Computational Thinking · Planning · Abstraction</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Mission 2 — Relocate the Red Cube (drive, push, return) · builds toward Mission 8 — Deliver the Red Cube</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot kit · game field · this lab sheet · sticky notes (optional)</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Today's challenge looks impossible at first glance. Mission 2 — Relocate the Red Cube — requires your robot to drive to the Large Red Cube (which starts on top of its pallet), push the whole palletized assembly off the black tape, and then return to its starting box. That's not one task. That's a system of tasks.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>No intelligent system solves a complex problem all at once.</p>
+      <p>It solves many small problems in sequence — and the intelligence lies in knowing how to break the big problem apart.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Define <em>decomposition</em> and explain why it is a foundational strategy for both programmers and AI systems.</li>
+      <li>Break a multi-stage game mission into independent sub-problems and identify dependencies between them.</li>
+      <li>Write modular code where each function solves exactly one sub-problem.</li>
+      <li>Connect the structure of your program to how large intelligent systems are architected.</li>
+    </ul>
+
+    <!-- ===== NEW CS CONCEPTS BOX ===== -->
+    <h3 class="sub">New This Time: Variables and Functions</h3>
+    <p class="muted">Two new tools you'll use today. You already know <code>k.motor()</code>, <code>k.msleep()</code>, and <code>k.ao()</code> — these let you organize them.</p>
+    <div class="concept">
+      <div class="chead">A variable — a named number</div>
+      <div class="cbody">
+        <p>A variable gives a number a <strong>name</strong>, so you can use the name instead of typing the number everywhere. Change it once at the top, and every place that uses the name updates.</p>
+        <div class="code small">DRIVE_SPEED = 50        <span class="c"># name a number: DRIVE_SPEED now means 50</span>
+
+k.motor(0, DRIVE_SPEED)  <span class="c"># same as writing k.motor(0, 50)</span>
+k.motor(1, DRIVE_SPEED)  <span class="c"># same as writing k.motor(1, 50)</span></div>
+        <p>Here you've named your motors' speed once. If you want them slower later, you change <code>50</code> in one spot instead of hunting through your whole program.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">A function — a name for a group of commands</div>
+      <div class="cbody">
+        <p>A function lets you take several commands and give them <strong>one name</strong>. After you build it once, you can run all of those commands by just writing its name. Writing <code>def</code> means you're defining a function that does a job but doesn't hand a number back.</p>
+        <div class="code small">def drive_forward():        <span class="c"># make a new command called drive_forward</span>
+    k.motor(0, DRIVE_SPEED)  <span class="c"># these lines are the job it does</span>
+    k.motor(1, DRIVE_SPEED)
+    k.msleep(1000)
+    k.ao()                   <span class="c"># stop at the end</span></div>
+        <p>Now, anywhere in your program, writing <code>drive_forward()</code> runs all of those lines. You built your own command.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: The Impossible Errand</h2>
+    <p>Imagine someone gives you one instruction: <strong>"Make dinner."</strong></p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>Why is "Make dinner" not actually a useful instruction for a robot?</p>
+      <p>What does a robot need before it can act on a task that big?</p>
+      <p>Break "Make dinner" into the smallest steps you can. How many steps do you end up with?</p>
+    </div>
+    <p class="group-label">Break it down — list as many sub-steps as you can think of:</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p1_dinner_1" aria-label="Dinner step 1" /></li>
+      <li><input type="text" data-key="p1_dinner_2" aria-label="Dinner step 2" /></li>
+      <li><input type="text" data-key="p1_dinner_3" aria-label="Dinner step 3" /></li>
+      <li><input type="text" data-key="p1_dinner_4" aria-label="Dinner step 4" /></li>
+      <li><input type="text" data-key="p1_dinner_5" aria-label="Dinner step 5" /></li>
+      <li><input type="text" data-key="p1_dinner_6" aria-label="Dinner step 6" /></li>
+      <li><input type="text" data-key="p1_dinner_7" aria-label="Dinner step 7" /></li>
+      <li><input type="text" data-key="p1_dinner_8" aria-label="Dinner step 8" /></li>
+    </ul>
+    <p class="q">At what point did you stop breaking it down? What made you decide a step was "small enough"?</p>
+    <textarea class="answer" data-key="p1_stop_point" aria-label="When you stopped decomposing"></textarea>
+    <p class="q">How is "Make dinner" similar to a robot mission on the Foundations field?</p>
+    <textarea class="answer" data-key="p1_similar_to_mission" aria-label="Similarity to a robot mission"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Decomposition &amp; Abstraction</h2>
+    <h3 class="sub">Decomposition</h3>
+    <p>Decomposition is the process of breaking a complex problem into smaller sub-problems that are each simple enough to solve independently. It is one of the four pillars of computational thinking and one of the most important strategies in both programming and AI system design.</p>
+    <p class="group-label">Why Decomposition Works</p>
+    <ol>
+      <li>Each sub-problem can be solved and tested independently.</li>
+      <li>Sub-problems can be worked on by different people (or different parts of a system) at the same time.</li>
+      <li>A solution to one sub-problem can often be reused in a different context.</li>
+      <li>When something breaks, you know exactly which sub-problem to fix.</li>
+    </ol>
+    <h3 class="sub">Abstraction</h3>
+    <p>Abstraction means hiding the details of how something works so you can use it without thinking about those details. When you call <code>drive_forward()</code>, you don't think about motor power, wheel friction, or timing. You just think: "the robot drives forward." That's abstraction. In this activity, every function you write is an abstraction — once it works, you use it without thinking about its internals.</p>
+    <h3 class="sub">Dependencies</h3>
+    <p>When decomposing a problem, some sub-problems must be solved before others. This ordering relationship is called a <em>dependency</em>. Identifying dependencies before you code prevents wasted effort.</p>
+    <div class="callout gold">
+      <p class="ctitle">Example</p>
+      <p>You cannot push the palletized cube off the tape until the robot has driven to it. "Drive to the cube" is a dependency of "push the cube" — so you build and test the driving first, before you write a single line of the pushing. Get the order wrong and you waste time testing a push on a robot that isn't even in the right place yet.</p>
+    </div>
+    <p class="q">In your own words: what is the difference between decomposition and just "making a list"?</p>
+    <textarea class="answer" data-key="p2_decomp_vs_list" aria-label="Decomposition versus a list"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Analyze</h2>
+    <h3 class="sub">Mission 2 — What Must Happen?</h3>
+    <div class="callout">
+      <p class="ctitle">Mission 2 — Relocate the Red Cube</p>
+      <p><strong>Starting state:</strong> The Large Red Cube begins ON TOP OF its pallet.</p>
+      <p><strong>Base:</strong> The Large Red Cube AND its pallet are both OFF the black tape.</p>
+      <p><strong>Bonus:</strong> Both Small Red Cubes are also OFF the black tape.</p>
+      <p><strong>Key rule:</strong> Both the cube AND the pallet must independently satisfy the OFF definition. The cube rides on the pallet, so pushing the assembly together is what scores — no lifting required.</p>
+    </div>
+    <div class="callout navy">
+      <p class="ctitle">Your target today: drive, push, return</p>
+      <p>Your robot will use only the driving and turning commands you already have. It drives to the palletized cube, pushes the whole assembly off the black tape, and returns to its starting box. No arm, no lifting — that comes in a later lesson.</p>
+    </div>
+    <div class="callout gold">
+      <p class="ctitle">Looking ahead — Mission 8</p>
+      <p>Later in the game, Mission 8 — Deliver the Red Cube asks the robot to lift that same palletized cube up onto the Loading Dock. That takes an arm, which means servos — a tool you haven't met yet. We'll worry about that lifting motion in a later lesson. For now, notice that the very first part of Mission 8 is the same as Mission 2: drive to the cube. The work you do today is a piece you'll reuse.</p>
+    </div>
+
+    <h3 class="sub">Step 1 — Identify the Sub-Problems</h3>
+    <p>Before writing any code, decompose Mission 2 into its smallest independent pieces. List every distinct action your robot must perform, in order — from leaving the starting box to returning to it.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p3_subtask_1" aria-label="Sub-task 1" /></li>
+      <li><input type="text" data-key="p3_subtask_2" aria-label="Sub-task 2" /></li>
+      <li><input type="text" data-key="p3_subtask_3" aria-label="Sub-task 3" /></li>
+      <li><input type="text" data-key="p3_subtask_4" aria-label="Sub-task 4" /></li>
+      <li><input type="text" data-key="p3_subtask_5" aria-label="Sub-task 5" /></li>
+      <li><input type="text" data-key="p3_subtask_6" aria-label="Sub-task 6" /></li>
+    </ul>
+
+    <h3 class="sub">Step 2 — Identify Dependencies</h3>
+    <p>For each sub-task, note what must happen first, and whether you could test it on its own. The first row is filled in as an example.</p>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:36%">Sub-Task</th><th style="width:40%">Depends On (must happen first)</th><th style="width:24%">Test alone?</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="seed">Drive to the cube</div></td>
+          <td><div class="seed">Start position</div></td>
+          <td><div class="seed">Yes</div></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_dep1_task" /></td>
+          <td><input type="text" data-key="p3_dep1_depends" /></td>
+          <td><input type="text" data-key="p3_dep1_testalone" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_dep2_task" /></td>
+          <td><input type="text" data-key="p3_dep2_depends" /></td>
+          <td><input type="text" data-key="p3_dep2_testalone" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_dep3_task" /></td>
+          <td><input type="text" data-key="p3_dep3_depends" /></td>
+          <td><input type="text" data-key="p3_dep3_testalone" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_dep4_task" /></td>
+          <td><input type="text" data-key="p3_dep4_depends" /></td>
+          <td><input type="text" data-key="p3_dep4_testalone" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_dep5_task" /></td>
+          <td><input type="text" data-key="p3_dep5_depends" /></td>
+          <td><input type="text" data-key="p3_dep5_testalone" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 3 — Name Your Functions</h3>
+    <p>Each sub-task should become its own function. Name them here before you write any code. Good function names describe exactly what the function does. The first row is an example.</p>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:30%">Function Name</th><th style="width:46%">What it does (one sentence)</th><th style="width:24%">Output / Effect</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="seed">drive_to_cube()</div></td>
+          <td><div class="seed">Drive from the start box to the cube</div></td>
+          <td><div class="seed">Robot at the cube</div></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_fn1_name" /></td>
+          <td><input type="text" data-key="p3_fn1_does" /></td>
+          <td><input type="text" data-key="p3_fn1_effect" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_fn2_name" /></td>
+          <td><input type="text" data-key="p3_fn2_does" /></td>
+          <td><input type="text" data-key="p3_fn2_effect" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_fn3_name" /></td>
+          <td><input type="text" data-key="p3_fn3_does" /></td>
+          <td><input type="text" data-key="p3_fn3_effect" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_fn4_name" /></td>
+          <td><input type="text" data-key="p3_fn4_does" /></td>
+          <td><input type="text" data-key="p3_fn4_effect" /></td>
+        </tr>
+        <tr>
+          <td><input type="text" data-key="p3_fn5_name" /></td>
+          <td><input type="text" data-key="p3_fn5_does" /></td>
+          <td><input type="text" data-key="p3_fn5_effect" /></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="q">Look at your function list. Which function are you most uncertain about? What specifically makes it hard?</p>
+    <textarea class="answer" data-key="p3_uncertain_fn" aria-label="Most uncertain function"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build</h2>
+    <div class="callout navy">
+      <p class="ctitle">The One-Function Rule</p>
+      <p>Build and test one function at a time. Do not write the next function until the current one works reliably.</p>
+      <p>A function "works" when it produces the correct result on 3 runs in a row without adjustment. This is the same discipline used to build every large software system ever written.</p>
+    </div>
+    <h3 class="sub">Code Scaffold</h3>
+    <div class="callout gold">
+      <p class="ctitle">Where do functions go?</p>
+      <p>A function has to be defined <em>before</em> the code that uses it. Since <code>main()</code> is what runs your program, your functions live <strong>above</strong> <code>main()</code>. The computer reads top to bottom, so it needs to know what <code>drive_forward()</code> means before it reaches the line that calls it.</p>
+    </div>
+    <p>Your program structure should look like this. Notice the movement commands are now <strong>functions you name</strong>, and each uses the named speed variables set at the top. Fill in each function body from your Phase 3 decomposition. Only add a function call in <code>main()</code> once that function is tested and working.</p>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 1 · Big Idea 2 — Red Cube Breakdown</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+
+<span class="c"># ── Named values — change these as you test ──</span>
+DRIVE_SPEED = 50
+TURN_SPEED  = 40
+
+<span class="c"># ── Movement commands you can reuse (no parameters yet) ──</span>
+def drive_forward():
+    k.motor(0, DRIVE_SPEED)
+    k.motor(1, DRIVE_SPEED)
+    k.msleep(1000)
+    k.ao()
+
+def turn_right():
+    k.motor(0, TURN_SPEED)
+    k.motor(1, -TURN_SPEED)
+    k.msleep(600)
+    k.ao()
+
+<span class="c"># ── Your sub-task functions — write ONE, test it, then write the next ──</span>
+<span class="c"># Build each one out of drive_forward() and turn_right().</span>
+<span class="c"># Name them using your Phase 3 list — for example, a function that</span>
+<span class="c"># drives the robot to the cube, one that pushes it off the tape,</span>
+<span class="c"># or one that returns to the starting box.</span>
+
+
+<span class="c"># ── Integration — only add a call here after that function passes 3 runs ──</span>
+def main():
+    <span class="c"># Add each call only after that function works:</span>
+    <span class="c"># your_first_function()</span>
+    <span class="c"># your_second_function()</span>
+    <span class="c"># your_third_function()</span>
+    pass
+
+main()</div>
+
+    <h3 class="sub">Build Log — Track Each Function</h3>
+    <p>Complete one row when you finish building and testing each function. Do not move to the next function until the current one passes 3 runs in a row.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:26%">Function Name</th>
+          <th style="width:12%">Runs tried</th>
+          <th style="width:14%">Passes (3 needed)</th>
+          <th style="width:24%">Problem encountered</th>
+          <th>How you fixed it</th>
+        </tr>
+      </thead>
+      <tbody id="buildLogBody"><!-- rows injected --></tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Integrate</h2>
+    <p>Once all your individual functions pass, add all the calls in <code>main()</code> and run the complete sequence. Record what happens.</p>
+    <div class="callout gold">
+      <p class="ctitle">What to watch for during integration</p>
+      <p>Functions that worked alone sometimes fail when combined. Why? Because the robot's position at the end of one function is the starting position for the next.</p>
+      <p>If function B fails after function A, the problem is usually function A — it left the robot in the wrong position. Fix function A before touching function B.</p>
+    </div>
+    <h3 class="sub">Integration Trial Log</h3>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:24%">Last function reached</th>
+          <th style="width:23%">Where it failed</th>
+          <th style="width:22%">Root cause</th>
+          <th>Fix applied</th>
+        </tr>
+      </thead>
+      <tbody id="integBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Did any function that passed alone fail during integration? Describe exactly what happened and why.</p>
+    <textarea class="answer tall" data-key="p5_integration_fail" aria-label="Integration failure description"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea 2 — AI Literacy Thread</p>
+      <p>Intelligent systems solve complex problems by breaking them into smaller parts.</p>
+    </div>
+    <p>A self-driving car doesn't "drive." It runs hundreds of sub-systems at once: one detects lane markings, one tracks other vehicles, one monitors speed, one predicts pedestrian movement, one manages braking, one handles steering. Each sub-system is a decomposed piece of the larger problem. The complexity of the whole emerges from the coordination of the parts. Today, you built that coordination from scratch.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">A search engine returns results in under a second for any query ever typed. Decompose this: what are at least four distinct sub-problems the system must solve to do this?</p>
+    <textarea class="answer tall" data-key="p6_search_decomp" aria-label="Search engine decomposition"></textarea>
+    <p class="q">Each sub-task function you wrote is an abstraction — once it works, you call it by name without thinking about the <code>drive_forward()</code> and <code>turn_right()</code> steps inside it. Pick one of your functions: what details does it hide from the rest of your program? Why does hiding those details make your code better?</p>
+    <textarea class="answer" data-key="p6_abstraction" aria-label="Abstraction question"></textarea>
+    <p class="q">In Phase 5 you may have found that functions interacted in unexpected ways during integration. What does this tell you about the challenge of building large AI systems from many smaller components?</p>
+    <textarea class="answer" data-key="p6_integration_lesson" aria-label="Integration lesson"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Define decomposition in your own words. What problem does it solve for a programmer?</p>
+    <textarea class="answer" data-key="p7_q1_decomposition" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What is a dependency? Give one example of a dependency from your robot program today.</p>
+    <textarea class="answer" data-key="p7_q2_dependency" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> The One-Function Rule says: don't write the next function until the current one works. Why is this discipline hard to follow? What happens when you skip it?</p>
+    <textarea class="answer" data-key="p7_q3_one_function_rule" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems solve complex problems by breaking them into smaller parts. This means that when an AI system fails at a complex task..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Going for the Bonus</h3>
+    <ul>
+      <li>The Mission 2 bonus also requires both Small Red Cubes to be OFF the black tape.</li>
+      <li>Where are the small cubes relative to your push path? Could one push clear everything, or do you need a separate move?</li>
+      <li>Decompose the bonus: what new sub-task(s) would you add, and where in your sequence would they go?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Dependency Map</h3>
+    <ul>
+      <li>Create a visual dependency map of your full program. Each function is a node; draw an arrow from A to B if B depends on A.</li>
+      <li>What shape does your map have — a linear chain, a branching tree, something else?</li>
+      <li>What does the shape tell you about the structure of your solution?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — The Reuse Test</h3>
+    <ul>
+      <li>Can any of your sub-task functions be reused for a different mission?</li>
+      <li>Which functions are specific to Mission 2? Which are general-purpose?</li>
+      <li>Which function would you redesign to be more general, and how?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Abstraction Levels</h3>
+    <ul>
+      <li>Right now your program has two levels: <code>main()</code> calls sub-task functions, which call movement functions.</li>
+      <li>Add a third level: group your sub-task functions into two or three higher-level functions (e.g., <code>relocate_cube()</code>, <code>return_home()</code>).</li>
+      <li>Rewrite <code>main()</code> to call only those high-level functions. How does this make the program easier to read and modify?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 1 Big Idea 2 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit1_bigidea2";
+
+  // ----- build repeating table rows -----
+  (function buildRows() {
+    const build = document.getElementById("buildLogBody");
+    for (let i = 1; i <= 6; i++) {
+      const tr = document.createElement("tr");
+      const seed = i === 1
+        ? '<td><div class="seed">drive_to_cube()</div></td>'
+        : '<td><input type="text" data-key="build' + i + '_name" aria-label="Build ' + i + ' name"></td>';
+      tr.innerHTML = seed +
+        '<td><input type="text" data-key="build' + i + '_runs" aria-label="Build ' + i + ' runs"></td>' +
+        '<td><input type="text" data-key="build' + i + '_passes" aria-label="Build ' + i + ' passes"></td>' +
+        '<td><input type="text" data-key="build' + i + '_problem" aria-label="Build ' + i + ' problem"></td>' +
+        '<td><input type="text" data-key="build' + i + '_fix" aria-label="Build ' + i + ' fix"></td>';
+      build.appendChild(tr);
+    }
+    const integ = document.getElementById("integBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="integ' + i + '_reached" aria-label="Integration ' + i + ' reached"></td>' +
+        '<td><input type="text" data-key="integ' + i + '_failed" aria-label="Integration ' + i + ' failed"></td>' +
+        '<td><input type="text" data-key="integ' + i + '_cause" aria-label="Integration ' + i + ' cause"></td>' +
+        '<td><input type="text" data-key="integ' + i + '_fix" aria-label="Integration ' + i + ' fix"></td>';
+      integ.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] = el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 1 · Big Idea 2 — The Red Cube Breakdown",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    // Always download the results JSON to the student's device,
+    // then open the print dialog for the PDF.
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 5 · Big Idea 1 — The Second Attempt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #16204a 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #e9edf7; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--navy); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--navy); background: #eef1f7; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.red { border-left-color: var(--red); background: #fbeef0; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--navy); margin: 0 0 4px; }
+  .callout.red .ctitle { color: var(--red); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+  .reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  .reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .reset-box { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .filetab { background: #ddd !important; color: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .reset-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 5 · Big Idea 1</p>
+    <h1>The Second Attempt</h1>
+    <p class="sub">Student Lab · Tracking What the Robot Believes About Itself</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine operate reliably in an imperfect world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Systems Must Handle Failure</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>A system can't catch its own failures unless it keeps track of what it believes about itself.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Arrays · Indexed State · Helper Functions · Conditional State Updates</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Mission 7 — deliver 2 orange + 2 blue poms to two different PVC enclosures</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · full library · 4 poms (2 orange, 2 blue) · two PVC enclosures · the game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>The Long Run taught you that error piles up over a mission, and that square-ups and backward touches reset it back to zero. But here's a question those labs never asked: <strong>how would the robot know it had drifted, if nobody ever wrote the number down?</strong> A reset only helps if something is keeping track of what the robot currently believes about its own position. Today you build that something: a small list that holds your robot's <strong>believed pose</strong> — its x, y, and heading — and you update it honestly every time you get a real chance to check it against the truth.</p>
+    <div class="callout red">
+      <p class="ctitle">The Big Idea of This Unit</p>
+      <p>A system can't recognize failure it isn't tracking. Before a robot can debug itself, recover from a bad turn, or know its plan has gone wrong, it needs some internal record of where it thinks it is — a record it can compare against reality.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Declare and use a small list to hold related values as one structure.</li>
+      <li>Write helper functions that read and write specific elements of that list.</li>
+      <li>Update believed position only at real, verified reset checkpoints.</li>
+      <li>Explain why an untracked system can't tell the difference between success and failure.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: the mission ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — The Mission: Hazard Containment</h2>
+    <div class="callout">
+      <p class="ctitle">The run</p>
+      <p>Collect <strong>2 orange poms and 2 blue poms</strong>. Deliver <strong>1 orange + 1 blue</strong> into one PVC enclosure (Base Mission), and <strong>1 orange + 1 blue</strong> into a <em>different</em> PVC enclosure (Bonus Mission). The two enclosures must not be the same one.</p>
+    </div>
+    <h3 class="sub">What counts</h3>
+    <ul>
+      <li>A pom counts as "in" an enclosure if any part of it crosses into the enclosure's interior, or it's touching the interior-facing surface.</li>
+      <li>Base and Bonus must use <strong>different</strong> enclosures — the field has three to choose from.</li>
+      <li>A pom used for the Base Mission can't also be counted for the Bonus Mission.</li>
+    </ul>
+    <p class="q">Say the mission back in your own words. Which two enclosures will you use, and why did you pick those two (think about which is easier to reach first)?</p>
+    <textarea class="answer" data-key="p1_restate" aria-label="Restate mission"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: concept — arrays ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Arrays</h2>
+    <div class="concept">
+      <div class="chead">What is a list?</div>
+      <div class="cbody">
+        <p>So far, every value you've stored has had its own variable name — <code>score</code>, <code>ticks_per_inch</code>, <code>pin</code>. A <strong>list</strong> is what you use when you have several <em>related</em> values and giving each one a separate name would hide the fact that they belong together.</p>
+        <div class="code small"><span class="c"># three separate variables — works, but they're not obviously connected</span>
+x = 0.0
+y = 0.0
+heading = 0.0
+
+<span class="c"># one list — three related values, one structure</span>
+pose = [0.0, 0.0, 0.0]</div>
+        <p>Think of <code>pose</code> as one locker-bank holding 3 numbered lockers. Locker <code>pose[0]</code>, locker <code>pose[1]</code>, locker <code>pose[2]</code> — counting starts at <strong>0</strong>, so a 3-locker list's lockers are numbered 0 through 2, never 1 through 3. <code>pose[0] = 14.5</code> puts a value in locker 0, the exact same way you'd assign any variable. <code>pose[0]</code> on its own reads back whatever's currently in that locker.</p>
+      </div>
+    </div>
+    <p class="q">In your own words, what is a list? Why does grouping x, y, and heading into one <code>pose</code> list make more sense here than three separate variables?</p>
+    <textarea class="answer" data-key="p2_array" aria-label="List concept"></textarea>
+
+    <div class="concept" style="margin-top:18px;">
+      <div class="chead">Naming an index: ALL_CAPS is a promise, not a rule</div>
+      <div class="cbody">
+        <p>A bare <code>pose[0]</code> doesn't say what it means. Give the index a name instead, so <code>pose[POSE_X]</code> reads exactly like what it is:</p>
+        <div class="code small">POSE_X = 0
+POSE_Y = 1
+POSE_R = 2   <span class="c"># R = heading, in degrees</span>
+
+<span class="c"># now pose[POSE_X] means exactly what it says, instead of a bare, meaningless pose[0]</span></div>
+        <p><code>POSE_X</code> is written in <strong>ALL_CAPS</strong> on purpose — that's a Python convention meaning "treat this as a constant; don't reassign it." But notice it's still just a regular variable — nothing in the language actually <em>stops</em> you from writing <code>POSE_X = 5</code> later and breaking everything that depends on it. The ALL_CAPS name is a promise you make to yourself and anyone reading your code, not a rule Python enforces for you.</p>
+      </div>
+    </div>
+    <p class="q">What does writing a name in ALL_CAPS signal to someone reading your code? Since Python doesn't actually stop you from changing it, why write it that way at all?</p>
+    <textarea class="answer" data-key="p2_define" aria-label="ALL_CAPS concept"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: concept — pose helpers ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Concept: Reading and Writing the Pose</h2>
+    <div class="concept">
+      <div class="chead">Helper functions keep the list honest</div>
+      <div class="cbody">
+        <p>Nothing stops you from writing <code>pose[POSE_X] = 14.0</code> directly anywhere in your code. But that gets messy fast and makes it easy to update the wrong slot by accident. Instead, write small helper functions that are the <em>only</em> places that touch the list directly.</p>
+        <p><code>initPose(x, y, r)</code> runs once, at the very top of <code>main()</code> — before the robot moves. It sets your robot's <strong>starting belief</strong>. You'll determine this starting (x, y) by measuring where the <strong>centerpoint between your two wheels</strong> sits — that's the exact point the robot pivots around during a zero-point turn, so it's the natural place to call "the robot's position."</p>
+        <p><code>setX(knownX)</code> and <code>setY(knownY)</code> are for later — for the moments <em>during</em> the run when you get real evidence of where you are, not a guess.</p>
+        <p><code>printPose()</code> prints the current believed pose so you (and later, the robot) can inspect it.</p>
+      </div>
+    </div>
+    <table class="grid">
+      <caption>Measure your robot's starting pose</caption>
+      <thead><tr><th style="width:34%">What to measure</th><th>Your value</th></tr></thead>
+      <tbody>
+        <tr><td class="label">Distance from your reference wall to the wheel centerpoint (x, inches)</td><td><input type="text" data-key="p3_startx" aria-label="Start x" /></td></tr>
+        <tr><td class="label">Distance from your reference wall to the wheel centerpoint (y, inches)</td><td><input type="text" data-key="p3_starty" aria-label="Start y" /></td></tr>
+        <tr><td class="label">Starting heading, facing straight out of the box</td><td><div class="seed">0.0° (by convention)</div></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Why does it matter that <code>initPose</code> runs only <em>once</em>, before the robot ever moves — what would go wrong if you called it again in the middle of the run?</p>
+    <textarea class="answer" data-key="p3_initpose" aria-label="initPose reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: concept — Turn updates R ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Concept: Turn() Now Updates R Too</h2>
+    <div class="concept">
+      <div class="chead">The return value finally does something</div>
+      <div class="cbody">
+        <p>Back in Unit 4, <code>Turn(direction, angle)</code> already returned <code>True</code> for success or <code>False</code> for an invalid direction — but nothing in your code actually <em>used</em> that value. Today it matters: <code>Turn()</code> should only update <code>pose[POSE_R]</code> when the turn actually succeeds. A failed call shouldn't change what the robot believes about its own heading.</p>
+      </div>
+    </div>
+    <div class="reset-box">
+      <p class="rtitle">Convention</p>
+      <p style="margin:0;">Turning <strong>left</strong> increases heading (<code>pose[POSE_R] += degrees</code>); turning <strong>right</strong> decreases it (<code>pose[POSE_R] -= degrees</code>). Heading 0° faces straight out of the starting box. Stay consistent with this the whole run.</p>
+    </div>
+    <div class="filetab">yourname.py</div>
+    <div class="code">def Turn(direction, angle):
+    if direction == 'L' or direction == 'l':
+        <span class="hl"># ...existing tick-turn logic for a left turn...</span>
+        pose[POSE_R] += angle    <span class="c"># only on a real, successful turn</span>
+        return True
+    elif direction == 'R' or direction == 'r':
+        <span class="hl"># ...existing tick-turn logic for a right turn...</span>
+        pose[POSE_R] -= angle
+        return True
+    else:
+        print(f"Invalid direction: {direction}")
+        return False                <span class="c"># no movement happened — don't touch pose</span></div>
+    <p class="q">Why should a <em>failed</em> <code>Turn()</code> call leave <code>pose[POSE_R]</code> unchanged? What would happen to your believed heading if it updated R even on failure?</p>
+    <textarea class="answer" data-key="p4_turn" aria-label="Turn and pose"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: plan the run ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Plan: Legs, Resets, and Prints</h2>
+    <p>Walk your path from the starting box to both enclosures. Mark every leg, whether a real reset (<code>back_until_pressed</code> or <code>square_up</code>) happens there, and whether you print the pose. You need <strong>at least 2 resets</strong> tied to a <code>setX</code>/<code>setY</code> call, and <strong>5 total prints</strong>: one right after <code>initPose</code>, then one after each of your 4 pom drop-offs.</p>
+    <table class="grid">
+      <caption>Plan each leg of the run</caption>
+      <thead><tr><th style="width:8%">#</th><th style="width:40%">Leg (what the robot does)</th><th style="width:20%">Library call(s)</th><th style="width:16%">Pose update</th><th>Print pose?</th></tr></thead>
+      <tbody id="planBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Where did you place your 2 resets, and what known value did you set <code>x</code> or <code>y</code> to at each one? How did you know that value was actually true (not a guess)?</p>
+    <textarea class="answer" data-key="p5_resets" aria-label="Reset placement"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: build ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Build: The Run in main()</h2>
+    <p>First add the pose list, the index names, and the helper functions to your library. Then write the run in <code>main()</code>, following your Phase 5 plan.</p>
+    <div class="filetab">yourname.py</div>
+    <div class="code">POSE_X = 0
+POSE_Y = 1
+POSE_R = 2
+
+pose = [0.0, 0.0, 0.0]   <span class="c"># pose[POSE_X], pose[POSE_Y], pose[POSE_R] — believed x, y, heading</span>
+
+def initPose(startX, startY, startR):
+    pose[POSE_X] = startX
+    pose[POSE_Y] = startY
+    pose[POSE_R] = startR
+
+def setX(knownX):
+    pose[POSE_X] = knownX
+
+def setY(knownY):
+    pose[POSE_Y] = knownY
+
+def printPose():
+    print(f"Pose: x={pose[POSE_X]:.2f} y={pose[POSE_Y]:.2f} R={pose[POSE_R]:.2f}")</div>
+    <div class="filetab">main.py</div>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 5 · Big Idea 1 — The Second Attempt</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+from <span class="hl">yourname</span> import *     <span class="c"># your full library</span>
+
+def main():
+    k.enable_servo(0)
+    k.enable_servo(1)
+
+    <span class="c"># ===== INITIALIZE BELIEF =====</span>
+    initPose(<span class="hl">START_X</span>, <span class="hl">START_Y</span>, 0.0)   <span class="c"># measured wheel-centerpoint, facing out</span>
+    printPose()                             <span class="c"># PRINT 1 — starting belief</span>
+
+    <span class="c"># ===== VERIFY START =====</span>
+    back_until_pressed()       <span class="c"># backward touch against the wall</span>
+    setY(<span class="hl">0.0</span>)                  <span class="c"># RESET #1 — known truth: y = 0 at this wall</span>
+
+    <span class="c"># ===== LEG 1: pom 1 (orange) to Enclosure A =====</span>
+    <span class="hl"># Drive(...) / Turn(...) to pom 1, pick it up</span>
+    <span class="hl"># Drive(...) / Turn(...) to Enclosure A, drop it</span>
+    printPose()                 <span class="c"># PRINT 2 — after drop-off 1</span>
+
+    <span class="c"># ===== LEG 2: pom 2 (blue) to Enclosure A — Base Mission complete =====</span>
+    <span class="hl"># Drive(...) / Turn(...) to pom 2, pick it up</span>
+    <span class="hl"># Drive(...) / Turn(...) to Enclosure A, drop it</span>
+    printPose()                 <span class="c"># PRINT 3 — after drop-off 2</span>
+
+    <span class="c"># ===== RESET before crossing to the second enclosure =====</span>
+    square_up()                 <span class="c"># known heading/position against a tape line</span>
+    setX(<span class="hl">KNOWN_X</span>)              <span class="c"># RESET #2 — known truth from this square-up</span>
+
+    <span class="c"># ===== LEG 3: pom 3 (orange) to Enclosure B =====</span>
+    <span class="hl"># Drive(...) / Turn(...) to pom 3, pick it up</span>
+    <span class="hl"># Drive(...) / Turn(...) to Enclosure B, drop it</span>
+    printPose()                 <span class="c"># PRINT 4 — after drop-off 3</span>
+
+    <span class="c"># ===== LEG 4: pom 4 (blue) to Enclosure B — Bonus Mission complete =====</span>
+    <span class="hl"># Drive(...) / Turn(...) to pom 4, pick it up</span>
+    <span class="hl"># Drive(...) / Turn(...) to Enclosure B, drop it</span>
+    printPose()                 <span class="c"># PRINT 5 — final belief</span>
+
+main()</div>
+    <div class="callout gold">
+      <p class="ctitle">Requirement check</p>
+      <p>2 orange + 2 blue poms delivered, split across <strong>two different</strong> PVC enclosures. <code>initPose</code> called once. At least <strong>2 real resets</strong> each paired with a <code>setX</code>/<code>setY</code> call. <strong>5 total</strong> <code>printPose()</code> calls. <code>Turn()</code> only updates <code>pose[POSE_R]</code> on success.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 7: run and check the drift ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Run It and Check the Belief Against Reality</h2>
+    <p>Run the mission. Each time it prints a pose, pause and physically measure where the robot actually is. Compare the printed number to your measurement — that gap is your robot's <strong>drift</strong>, and it's the first real evidence you've collected about where your model breaks down.</p>
+    <table class="grid">
+      <caption>Compare believed pose to measured pose, at each print</caption>
+      <thead><tr><th style="width:14%">Print #</th><th style="width:28%">Printed pose (x, y, R)</th><th style="width:28%">Measured pose (x, y, R)</th><th>Gap / likely cause</th></tr></thead>
+      <tbody id="driftBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Where was the gap biggest? Was it right after a reset, or right before the next one? What does that tell you about where error was actually coming from — a bad turn, a drive distance being off, or something else?</p>
+    <textarea class="answer" data-key="p7_drift" aria-label="Drift analysis"></textarea>
+  </section>
+
+  <!-- ===== Phase 8: connect & reflect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 8</span> — Connect &amp; Reflect</h2>
+    <div class="callout red">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>A system can't catch its own failures unless it keeps track of what it believes about itself.</p>
+    </div>
+    <p>Every intelligent system that operates reliably keeps some version of what you built today: a running record of its own believed state, updated honestly at moments of real evidence and left alone otherwise. A GPS-guided drone tracks believed position between satellite fixes. A robot vacuum tracks believed position between wall bumps. None of them are ever perfectly right — but because they keep the number written down, they can catch the moment it drifts too far, and that is the very first requirement for debugging a failure at all: you have to know what you expected before you can recognize that something went wrong.</p>
+    <p class="muted">Complete the reflection on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a list, and why did grouping x, y, and R into <code>pose</code> make more sense than three separate variables?</p>
+    <textarea class="answer" data-key="p8_q1_array" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Why should <code>setX</code>/<code>setY</code> only ever be called right after a real reset (a square-up or backward touch), never as a guess?</p>
+    <textarea class="answer" data-key="p8_q2_setters" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> How did making <code>Turn()</code>'s return value actually matter (updating R only on success) connect back to what you learned about return values in Unit 4?</p>
+    <textarea class="answer" data-key="p8_q3_return" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "A system can't recognize its own failure unless it keeps track of what it believes about itself. This means that before a robot can debug or recover from a mistake, it must first..."</p>
+    <textarea class="answer" data-key="p8_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — A Third Enclosure</h3>
+    <ul>
+      <li>Could your pose list help you plan a path to a <em>third</em> PVC enclosure too? Sketch how you'd extend the run, including where a new reset would go.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Detect the Failure, Don't Just Log It</h3>
+    <ul>
+      <li>Right now you compare printed vs. measured pose by hand. Sketch (in words, not code) how a program could compare two pose values itself and decide "that's too far off — something failed."</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — A Fourth List Slot</h3>
+    <ul>
+      <li>If you added a 4th slot to track something else about the robot's state during this run (battery voltage, pom count carried, elapsed time), what would you add, and why would it help catch a failure?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Chart the Drift</h3>
+    <ul>
+      <li>Sketch a simple bar chart (or line chart) of the 5 gap sizes from your Phase 7 table, one bar per checkpoint.</li>
+      <li>Which checkpoint had the least drift? Does the chart make the pattern easier to see than the table did?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Bundled Like an Object</h3>
+    <ul>
+      <li>Python supports bundling data with the functions that use it through a feature called a <strong>class</strong> — beyond what this course covers, but worth knowing it exists. Your <code>pose</code> list plus its helper functions (<code>initPose</code>, <code>setX</code>, <code>setY</code>, <code>printPose</code>) would likely be bundled together into one <code>Pose</code> object — the data and the functions that use it, packaged as a single unit. This idea is called <strong>encapsulation</strong>.</li>
+      <li>What's one advantage of bundling <code>pose</code> with its own functions into one object, instead of keeping the list and the functions separate the way we did?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+
+    <h3 class="sub">Extension F — Lists Are Already Passed by Reference</h3>
+    <ul>
+      <li>Right now, <code>printPose()</code> and friends reach out and grab the global <code>pose</code> list directly. Try rewriting <code>printPose</code> to instead take the list as a parameter: <code>def printPose(p):</code> called as <code>printPose(pose)</code>. Python passes the list itself — the function works with the exact same list in memory, not a copy. You didn't have to ask for that; it's just how Python handles lists.</li>
+      <li>Now compare: if a function took a plain number instead (<code>def addOne(n): n = n + 1</code>) and you called it with a variable, would the caller's variable change? Try it. Why does a list behave differently from a plain number when you pass it into a function?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_f" aria-label="Extension F"></textarea>
+
+    <h3 class="sub">Extension G — Write the Guide</h3>
+    <ul>
+      <li>Imagine a teammate's robot is drifting a lot more than yours. Using what you learned in Phase 7, write a short troubleshooting guide (3-4 steps) they could follow to find out why — without you being there to help directly.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_g" aria-label="Extension G"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 5 Big Idea 1</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit5_bigidea1";
+
+  (function buildRows() {
+    const plan = document.getElementById("planBody");
+    for (let i = 1; i <= 8; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="num">' + i + '</td>' +
+        '<td><input type="text" data-key="plan' + i + '_leg" aria-label="Plan ' + i + ' leg"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_call" aria-label="Plan ' + i + ' call"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_reset" aria-label="Plan ' + i + ' reset" style="text-align:center"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_print" aria-label="Plan ' + i + ' print" style="text-align:center"></td>';
+      plan.appendChild(tr);
+    }
+    const drift = document.getElementById("driftBody");
+    for (let i = 1; i <= 5; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="drift' + i + '_printed" aria-label="Drift ' + i + ' printed"></td>' +
+        '<td><input type="text" data-key="drift' + i + '_measured" aria-label="Drift ' + i + ' measured"></td>' +
+        '<td><input type="text" data-key="drift' + i + '_cause" aria-label="Drift ' + i + ' cause"></td>';
+      drift.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 5 · Big Idea 1 — The Second Attempt",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 3 · Big Idea 4 — Perfect Turns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 3 · Big Idea 4</p>
+    <h1>Perfect Turns</h1>
+    <p class="sub">Student Lab · Building Reliable 90° Turns</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine act on the world, not just move through it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Precise Motion Is Built and Tested, Not Assumed</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Small errors compound — intelligent systems must measure and correct for drift.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Pivot Turns · Encoders · Trial-and-Error Tuning · Accumulated Error</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>The left and right turns every stacking mission needs</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · open floor space · protractor or angle guide · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Every stacking mission needs your robot to turn — left to face a cube, right to face the pallet. But a turn that's "about 90°" will wreck a mission: after a few turns, the robot is pointing the wrong way entirely. Today you'll build <strong>reliable</strong> 90° turns, left and right, by counting encoder ticks — and then you'll run a clever test that reveals exactly how much error hides in each turn. This is the heart of <em>localization</em>: knowing, and trusting, where your robot is pointed.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A turn is never perfect on the first try. You build a good turn by testing it, measuring the error, and adjusting — until it's reliable enough to trust again and again.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Make the robot pivot in place by driving its wheels in opposite directions.</li>
+      <li>Use encoder ticks to control how far the robot turns.</li>
+      <li>Tune <code>turn_left</code> and <code>turn_right</code> to a true 90° through trial-and-error.</li>
+      <li>Run a repeat-test that exposes accumulated error, and correct for it.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: Concept pivot ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Concept: Pivot Turning</h2>
+    <div class="concept">
+      <div class="chead">Opposite wheels make the robot spin in place</div>
+      <div class="cbody">
+        <p>To turn without driving forward, you run the two wheels in <strong>opposite</strong> directions. One wheel goes forward, the other backward, and the robot pivots around its own center.</p>
+        <div class="code small">k.motor(0,  50)   <span class="c"># left wheel forward</span>
+k.motor(1, -50)   <span class="c"># right wheel backward  -> robot pivots RIGHT</span></div>
+        <p>Flip which wheel goes which way, and it pivots the other direction.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Count ticks to control how far it turns</div>
+      <div class="cbody">
+        <p>Just like driving a distance, you use the encoder to control <em>how far</em> the robot pivots — keep turning until a wheel has counted enough ticks, then brake.</p>
+        <div class="code small">k.cmpc(0)                        <span class="c"># clear the counter</span>
+while k.gmpc(0) &lt; TURN_TICKS:     <span class="c"># pivot until we've turned far enough</span>
+    k.motor(0, 50)
+    k.motor(1, -50)</div>
+        <p>The number of ticks that makes exactly 90° is something you'll have to <strong>find by testing</strong> — it depends on your robot's wheels and width.</p>
+      </div>
+    </div>
+    <div class="callout gold">
+      <p class="ctitle">Watch the forward wheel</p>
+      <p>Here's the catch: in a pivot, one wheel rolls forward (its tick count climbs) and one rolls backward (its count goes negative). Always count the wheel that's going <strong>forward</strong>. So a right pivot watches the left wheel — <code>k.gmpc(0)</code> — and a left pivot watches the right wheel — <code>k.gmpc(1)</code>.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 2: Build + tune RIGHT ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Build &amp; Tune the Right Turn</h2>
+    <p>Build <code>turn_right</code> with a tick value you'll tune. Start with a guess, run it, measure the actual angle with a protractor, and adjust <code>RIGHT_TICKS</code> until it's a true 90°.</p>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 3 · Big Idea 4 — Perfect Turns</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+
+RIGHT_TICKS = <span class="hl">____</span>   <span class="c"># ticks for a 90° RIGHT pivot — you'll tune this</span>
+LEFT_TICKS  = <span class="hl">____</span>   <span class="c"># ticks for a 90° LEFT pivot (Phase 3)</span>
+
+def main():
+    turn_right()    <span class="c"># test one right turn, then measure the angle</span>
+
+def turn_right():
+    k.cmpc(0)                            <span class="c"># clear the LEFT wheel's counter</span>
+    while k.gmpc(0) &lt; RIGHT_TICKS:        <span class="c"># left wheel rolls forward as we pivot right</span>
+        k.motor(0,  50)                  <span class="c"># left wheel forward</span>
+        k.motor(1, -50)                  <span class="c"># right wheel backward</span>
+    k.motor(0, 0); k.motor(1, 0); k.msleep(50)   <span class="c"># brake</span>
+
+main()</div>
+    <h3 class="sub">Tuning Log — Right Turn</h3>
+    <table class="grid">
+      <caption>Adjust RIGHT_TICKS until the turn is a true 90°</caption>
+      <thead><tr><th style="width:12%">Try</th><th style="width:30%">RIGHT_TICKS value</th><th>Actual angle turned (degrees)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="r_t1_ticks" /></td><td><input type="text" data-key="r_t1_angle" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="r_t2_ticks" /></td><td><input type="text" data-key="r_t2_angle" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><input type="text" data-key="r_t3_ticks" /></td><td><input type="text" data-key="r_t3_angle" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><input type="text" data-key="r_t4_ticks" /></td><td><input type="text" data-key="r_t4_angle" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">What <code>RIGHT_TICKS</code> value gave you the closest to a true 90°? How did you decide which way to adjust when it was off?</p>
+    <textarea class="answer" data-key="p2_right_best" aria-label="Best right ticks"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: Build + tune LEFT ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build &amp; Tune the Left Turn</h2>
+    <p>Now the left turn. It's the mirror image — wheels swapped — and it watches the <strong>right</strong> wheel (<code>k.gmpc(1)</code>), because that's the one rolling forward this time. Tune <code>LEFT_TICKS</code> the same way.</p>
+    <div class="code">def turn_left():
+    k.cmpc(1)                          <span class="c"># clear the RIGHT wheel's counter this time</span>
+    while k.gmpc(1) &lt; LEFT_TICKS:       <span class="c"># right wheel rolls forward as we pivot left</span>
+        k.motor(0, -50)                <span class="c"># left wheel backward</span>
+        k.motor(1,  50)                <span class="c"># right wheel forward</span>
+    k.motor(0, 0); k.motor(1, 0); k.msleep(50)   <span class="c"># brake</span></div>
+    <div class="callout navy">
+      <p class="ctitle">Why a separate number?</p>
+      <p>Your left and right turns may need <em>different</em> tick values. Motors aren't perfectly matched, weight isn't perfectly centered — so <code>LEFT_TICKS</code> might not equal <code>RIGHT_TICKS</code>. That's normal. Tune each one on its own.</p>
+    </div>
+    <h3 class="sub">Tuning Log — Left Turn</h3>
+    <table class="grid">
+      <caption>Adjust LEFT_TICKS until the turn is a true 90°</caption>
+      <thead><tr><th style="width:12%">Try</th><th style="width:30%">LEFT_TICKS value</th><th>Actual angle turned (degrees)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="l_t1_ticks" /></td><td><input type="text" data-key="l_t1_angle" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="l_t2_ticks" /></td><td><input type="text" data-key="l_t2_angle" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><input type="text" data-key="l_t3_ticks" /></td><td><input type="text" data-key="l_t3_angle" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><input type="text" data-key="l_t4_ticks" /></td><td><input type="text" data-key="l_t4_angle" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Did your <code>LEFT_TICKS</code> end up the same as <code>RIGHT_TICKS</code>, or different? Why might the two directions need different numbers?</p>
+    <textarea class="answer" data-key="p3_left_vs_right" aria-label="Left vs right ticks"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: The drift test ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — The Drift Test: Eight Turns</h2>
+    <p>A single 90° turn might look perfect — but a tiny error you can't see adds up. Here's how to expose it: turn the <strong>same direction 8 times</strong>. That's 8 × 90° = <strong>720°</strong>, two full spins, so the robot should end up facing <em>exactly</em> where it started. Any gap is your hidden error, multiplied by eight and now impossible to miss.</p>
+    <div class="concept">
+      <div class="chead">A loop that repeats the turn 8 times</div>
+      <div class="cbody">
+        <div class="code small">i = 0
+while i &lt; 8:              <span class="c"># repeat the turn 8 times = 720°</span>
+    turn_right()
+    k.msleep(300)         <span class="c"># brief pause so you can watch each step</span>
+    i = i + 1</div>
+        <p>Mark the robot's starting direction with a piece of tape. Run the eight turns. Where does it end up pointing?</p>
+      </div>
+    </div>
+    <h3 class="sub">Mark, Run, Measure</h3>
+    <table class="grid">
+      <thead><tr><th style="width:50%">After 8 turns (720°), the robot...</th><th>Your estimate</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Landed OVER or UNDER a full return?</div></td><td><input type="text" data-key="p4_over_under" aria-label="Over or under" /></td></tr>
+        <tr><td><div class="seed">About how many degrees off? (your best guess)</div></td><td><input type="text" data-key="p4_degrees_off" aria-label="Degrees off" /></td></tr>
+      </tbody>
+    </table>
+    <div class="callout gold">
+      <p class="ctitle">Now correct it</p>
+      <p>If the robot turned too far (over), your tick value is a little too big — lower it slightly. If it didn't turn far enough (under), raise it. Because 8 turns multiplied the error, even a small tick change makes a big difference. Adjust and run the eight-turn test again.</p>
+    </div>
+    <h3 class="sub">Correction Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:12%">Round</th><th style="width:30%">Tick value used</th><th>Where it landed after 8 turns</th></tr></thead>
+      <tbody id="driftBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">After adjusting, did the eight-turn test land closer to the start? Explain how the 8× test made a tiny per-turn error easy to see and fix.</p>
+    <textarea class="answer" data-key="p4_drift_finding" aria-label="Drift finding"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: Add to library ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Add Your Turns to the Library</h2>
+    <p>Your tuned turns are tools you'll use in every mission — so they belong in your library. Add <code>turn_left</code> and <code>turn_right</code> (and your <code>LEFT_TICKS</code>/<code>RIGHT_TICKS</code> values) to your library file from Big Idea 3, fully commented.</p>
+    <div class="code"><span class="c"># turn_right: Pivots the robot 90° to the right in place.</span>
+<span class="c">#   Watches the left wheel's encoder (gmpc 0). Tuned with</span>
+<span class="c">#   RIGHT_TICKS for a true 90°. Takes no input.</span>
+def turn_right():
+    k.cmpc(0)
+    while k.gmpc(0) &lt; RIGHT_TICKS:
+        k.motor(0, 50); k.motor(1, -50)
+    k.motor(0, 0); k.motor(1, 0); k.msleep(50)
+
+<span class="c"># turn_left: Pivots the robot 90° to the left in place.</span>
+<span class="c">#   Watches the right wheel's encoder (gmpc 1). Tuned with</span>
+<span class="c">#   LEFT_TICKS for a true 90°. Takes no input.</span>
+def turn_left():
+    k.cmpc(1)
+    while k.gmpc(1) &lt; LEFT_TICKS:
+        k.motor(0, -50); k.motor(1, 50)
+    k.motor(0, 0); k.motor(1, 0); k.msleep(50)</div>
+    <p class="q">Now that your turns are in the library, write a single line for <code>main</code> that would drive forward, turn right, and drive forward again (using your library functions).</p>
+    <textarea class="answer" data-key="p5_combo_line" aria-label="Combo line"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: Connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Small errors compound — intelligent systems must measure and correct for drift.</p>
+    </div>
+    <p>One turn looked fine, but eight turns revealed an error hiding in every single one. This is one of the most important truths in robotics and AI: <strong>small errors add up</strong>. A self-driving car that misjudges its heading by 1° is fine for a second and lost after a mile. A spacecraft off by a fraction of a degree misses a planet by thousands of miles. Smart systems don't assume they're perfect — they constantly measure their drift and correct it. Your eight-turn test is exactly the kind of test real engineers run to catch errors that are invisible at small scale.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">A single turn was off by just 2°. After 8 turns, how far off was it? Why is an error that's "too small to notice" still dangerous in a long mission?</p>
+    <textarea class="answer" data-key="p6_compound" aria-label="Compounding error"></textarea>
+    <p class="q">Why is running a turn 8 times a smarter test than running it once? What did multiplying the error let you see?</p>
+    <textarea class="answer" data-key="p6_why_8x" aria-label="Why 8x test"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: Reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> How does a robot pivot in place? Why does a right turn watch <code>k.gmpc(0)</code> but a left turn watch <code>k.gmpc(1)</code>?</p>
+    <textarea class="answer" data-key="p7_q1_pivot" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> You found your turn's tick value by trial-and-error. Describe that process — how did you know which way to adjust?</p>
+    <textarea class="answer" data-key="p7_q2_tuning" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> What did the eight-turn (720°) test reveal that a single turn hid?</p>
+    <textarea class="answer" data-key="p7_q3_drift" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Small errors compound, so intelligent systems must measure and correct for drift. This means that in a long mission, a robot should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Drive a Square</h3>
+    <ul>
+      <li>Combine <code>Tick_Drive</code> and <code>turn_right</code> to drive a square: forward, turn, four times. Does the robot return to its start? How far off is it?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Left Square vs. Right Square</h3>
+    <ul>
+      <li>Drive a square turning left, then one turning right. Is one more accurate than the other? What does that say about your two tick values?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — A turn(int degrees) Idea</h3>
+    <ul>
+      <li>Right now 90° is baked in. How could a function take the <em>number of degrees</em> as an argument and compute the ticks? Sketch the idea. (You'll have the tools for this soon.)</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Looking Ahead: Stacking</h3>
+    <ul>
+      <li>You now have driving, turning, and an arm. List the steps — in library function calls — to drive to a cube, pick it up, turn, and place it on the pallet.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 3 Big Idea 4 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit3_bigidea4";
+
+  (function buildRows() {
+    const drift = document.getElementById("driftBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="drift' + i + '_ticks" aria-label="Drift ' + i + ' ticks"></td>' +
+        '<td><input type="text" data-key="drift' + i + '_landed" aria-label="Drift ' + i + ' landed"></td>';
+      drift.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 3 · Big Idea 4 — Perfect Turns",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>
