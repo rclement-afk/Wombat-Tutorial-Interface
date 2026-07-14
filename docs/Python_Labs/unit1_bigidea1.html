@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 1 · Big Idea 1 — The Waypoint Navigator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32;
+    --red-dark: #7d1526;
+    --navy: #1F2D5A;
+    --gold: #C8A14B;
+    --ink: #1c1c1e;
+    --grey: #6b7280;
+    --line: #d8dbe2;
+    --bg: #f0f0f0;
+    --panel: #ffffff;
+    --field: #fcfcfd;
+    --field-focus: #fffdf5;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  /* ---------- Sticky PIN / submit bar ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 3px solid var(--gold);
+  }
+  .topbar-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topbar .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-right: auto;
+    color: #fff;
+  }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .pin-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #d7dcea;
+  }
+  .pin-field input {
+    width: 120px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+  }
+  .pin-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .submit-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+
+  .status {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 2px 2px 0;
+    min-height: 0;
+    color: #d7dcea;
+  }
+  .status.ok { color: #b9e6b0; }
+  .status.warn { color: #ffd9a0; }
+  .status.err { color: #ffb3b3; }
+
+  /* ---------- Page shell ---------- */
+  .sheet {
+    max-width: 920px;
+    margin: 22px auto 80px;
+    padding: 0 22px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 26px 30px;
+    border-bottom: 5px solid var(--gold);
+  }
+  .hero .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #f4d9a0;
+    margin: 0 0 4px;
+  }
+  .hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+  .hero .sub {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffe9e9;
+    margin: 0;
+  }
+
+  /* ---------- Meta table ---------- */
+  .meta {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+  .meta dl { margin: 0; }
+  .meta .row {
+    display: grid;
+    grid-template-columns: 215px 1fr;
+  }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--navy);
+    padding: 9px 16px;
+  }
+  .meta dd {
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+  /* ---------- Sections ---------- */
+  section { margin-top: 30px; }
+  .phase-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--navy);
+    letter-spacing: .01em;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--red);
+    margin: 0 0 4px;
+  }
+  .phase-head .pnum {
+    color: var(--red);
+    font-weight: 700;
+  }
+  h3.sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 18px 0 6px;
+  }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; }
+  li { margin: 4px 0; }
+  .obj li { margin: 5px 0; }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--red);
+    background: #fbeef0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout .ctitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: var(--red);
+    margin: 0 0 4px;
+  }
+  .callout.navy .ctitle { color: var(--navy); }
+  .callout p { margin: 4px 0; }
+
+  /* ---------- Command reference ---------- */
+  .cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .cmd-table th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 14px;
+  }
+  .cmd-table td {
+    border-top: 1px solid var(--line);
+    padding: 9px 14px;
+    vertical-align: top;
+    font-size: 15.5px;
+  }
+  .cmd-table tr:nth-child(even) td { background: #f7f8fa; }
+  .cmd-table code {
+    font-family: 'Barlow', monospace;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14.5px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Code block ---------- */
+  .code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+  .code .c { color: var(--code-green); }
+
+  /* ---------- Inputs ---------- */
+  .answer {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 76px;
+  }
+  .answer:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(200,161,75,.18);
+  }
+  .q {
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+  .q .n { color: var(--red); }
+  .field-line { margin: 10px 0 4px; }
+
+  /* numbered short-answer rows */
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 7px 0;
+  }
+  .steps li::before {
+    counter-increment: s;
+    content: counter(s) ".";
+    font-weight: 700;
+    color: var(--navy);
+    min-width: 22px;
+    font-size: 16px;
+  }
+  .steps input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+  .steps input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(200,161,75,.18);
+  }
+  .group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 17px;
+    margin: 14px 0 2px;
+  }
+
+  /* ---------- Data tables (field orientation, trial log) ---------- */
+  .grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+  }
+  .grid th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .02em;
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+  .grid td {
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+  .grid td .label {
+    padding: 8px 10px;
+    font-size: 15px;
+    background: #eef0f5;
+    font-weight: 500;
+  }
+  .grid input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    padding: 9px 10px;
+  }
+  .grid input:focus {
+    outline: none;
+    background: var(--field-focus);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+  .grid tr:nth-child(even) td:not(.has-label) { background: #fafbfc; }
+
+  /* ---------- Name/date inline ---------- */
+  .namebar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 8px 0 4px;
+  }
+  .namebar .nb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+  }
+  .namebar label {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .namebar input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+  .namebar input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(200,161,75,.18);
+  }
+
+  .pin-reminder {
+    background: #fff6e0;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+  .pin-reminder strong { color: var(--navy); }
+
+  /* ---------- Footer / bottom submit ---------- */
+  .bottom-submit {
+    margin-top: 36px;
+    text-align: center;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+  }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+  .credit {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13.5px;
+    margin: 26px 0 0;
+    letter-spacing: .02em;
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero {
+      background: var(--red) !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      border-radius: 0;
+    }
+    .meta, .callout, .cmd-table, .grid, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code {
+      background: #f2f2f2 !important; color: #1a1a1a !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      border: 1px solid #ccc;
+    }
+    .code .c { color: #3c7a3c !important; }
+    .cmd-table th, .grid th {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    /* show typed values cleanly in print */
+    .answer, .steps input, .grid input, .namebar input, .pin-field input {
+      border: none !important;
+      border-bottom: 1px solid #999 !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+    .answer { min-height: auto; }
+    .print-pin {
+      display: block !important;
+    }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar: PIN + submit ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Unit 1 · Big Idea 1</p>
+    <h1>Computers Follow Instructions</h1>
+    <p class="sub">Student Lab · The Waypoint Navigator</p>
+  </div>
+
+  <!-- PIN echo for printed copy -->
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine understand and act within the world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Computers Follow Instructions</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems require instructions before they can act.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Algorithms · Sequencing · Precision · Debugging · Inputs &amp; Outputs</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Mission 1 — Waypoint Alpha</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot kit · game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>In this activity you will write, run, and debug a program that navigates a robot to a specific location on the Foundations field and stops. That sounds simple — and the goal is simple — but the path from idea to working program will reveal something important.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A robot does exactly what you tell it to do — no more, no less.</p>
+      <p>If the robot does the wrong thing, the instructions are wrong. Your job is to find out why.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Define <em>algorithm</em> and explain why order matters in a sequence of instructions.</li>
+      <li>Write a precise, step-by-step program that moves a robot to a target zone.</li>
+      <li>Use a structured debugging process to find and fix errors in your code.</li>
+      <li>Connect robot behavior to the AI literacy idea that all intelligent systems begin with instructions.</li>
+    </ul>
+
+    <h3 class="sub">Commands You Will Use</h3>
+    <p class="muted">These are built-in commands the robot already understands. You will use them inside your program. You don't have to write them — they come with the controller.</p>
+    <table class="cmd-table">
+      <thead><tr><th style="width:34%">Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>motor(port, power)</code></td><td>Turns the motor on the given port at a power level from −100 to 100. Example: <code>motor(0, 100)</code> runs motor 0 forward at full power.</td></tr>
+        <tr><td><code>msleep(ms)</code></td><td>Pauses the program for the given number of milliseconds (1000 ms = 1 second). The robot keeps doing whatever it was last told to do during the pause.</td></tr>
+        <tr><td><code>ao()</code></td><td>“All off.” Turns every motor port off at once. Use it to make the robot stop.</td></tr>
+        <tr><td><code>alloff()</code></td><td>Turns all motors off — the same idea as <code>ao()</code>. Either one brings the robot to a complete stop.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: The Literal Robot</h2>
+    <h3 class="sub">The Sandwich Test</h3>
+    <p>Before you program a robot, it helps to feel what it is like to be one. A robot follows every instruction exactly as written. It cannot guess what you meant. It does only what you said — even when that is obviously not what you wanted.</p>
+    <div class="callout navy">
+      <p class="ctitle">Your Task</p>
+      <p>1. In the boxes below, write step-by-step instructions for making a peanut butter sandwich.</p>
+      <p>2. When you are done, read your instructions back out loud — and imagine following them as literally as possible.</p>
+      <p>3. Every time an instruction is unclear or could go wrong, mark it.</p>
+    </div>
+    <p class="group-label">My sandwich instructions (write them first):</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p1_sandwich_1" aria-label="Sandwich step 1" /></li>
+      <li><input type="text" data-key="p1_sandwich_2" aria-label="Sandwich step 2" /></li>
+      <li><input type="text" data-key="p1_sandwich_3" aria-label="Sandwich step 3" /></li>
+      <li><input type="text" data-key="p1_sandwich_4" aria-label="Sandwich step 4" /></li>
+      <li><input type="text" data-key="p1_sandwich_5" aria-label="Sandwich step 5" /></li>
+      <li><input type="text" data-key="p1_sandwich_6" aria-label="Sandwich step 6" /></li>
+    </ul>
+    <p class="q">Reading them back literally, what would go wrong?</p>
+    <textarea class="answer" data-key="p1_what_went_wrong" aria-label="What would go wrong"></textarea>
+    <p class="q">Why would the robot do something you did not intend? What does that tell you about instructions?</p>
+    <textarea class="answer" data-key="p1_why" aria-label="Why the robot does something unintended"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: What Is an Algorithm?</h2>
+    <p>An algorithm is a precise, ordered sequence of instructions that tells a system exactly what to do. Every program you write is an algorithm. Every autonomous robot runs an algorithm.</p>
+    <h3 class="sub">Four Properties of a Good Algorithm</h3>
+    <ol>
+      <li><strong>Complete</strong> — every step needed to finish the task is included.</li>
+      <li><strong>Ordered</strong> — the steps happen in the right sequence.</li>
+      <li><strong>Precise</strong> — each step is specific enough that it can be followed without guessing.</li>
+      <li><strong>Correct</strong> — following the steps produces the intended result.</li>
+    </ol>
+    <h3 class="sub">Inputs and Outputs</h3>
+    <p>Every algorithm takes <em>inputs</em> (information it needs) and produces <em>outputs</em> (the result). For a robot navigation program:</p>
+    <table class="grid">
+      <tr><td class="has-label"><div class="label">Inputs</div></td><td style="padding:9px 10px">Motor speed · time to run · starting position of the robot</td></tr>
+      <tr><td class="has-label"><div class="label">Outputs</div></td><td style="padding:9px 10px">Robot position on the field · whether the mission scored</td></tr>
+    </table>
+    <p class="q">In your own words: what is the difference between an algorithm and just a list of ideas?</p>
+    <textarea class="answer" data-key="p2_algorithm_vs_ideas" aria-label="Algorithm versus a list of ideas"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan</h2>
+    <h3 class="sub">Mission 1 — Waypoint Alpha: What Must Happen?</h3>
+    <div class="callout">
+      <p class="ctitle">Mission Requirement</p>
+      <p><strong>Base Mission:</strong> A robot enters the Waypoint Alpha zone and comes to a clear, complete stop while IN the zone.</p>
+      <p><strong>Bonus Mission:</strong> The same robot subsequently returns FULLY WITHIN a starting box and stops.</p>
+      <p><strong>Judging note:</strong> If you cannot clearly see that the robot stopped, the mission does not score.</p>
+    </div>
+
+    <h3 class="sub">Step 1 — Field Orientation</h3>
+    <p>Before writing code, you need to know where things are. Measure or estimate these values on the real field and record them here.</p>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Estimate</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Distance from starting box edge to Waypoint Alpha zone</div></td>
+          <td><input type="text" data-key="p3_dist_to_zone" aria-label="Distance to zone" /></td>
+          <td><input type="text" data-key="p3_dist_to_zone_unit" aria-label="Unit" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Width of the Waypoint Alpha zone (front to back)</div></td>
+          <td><input type="text" data-key="p3_zone_width" aria-label="Zone width" /></td>
+          <td><input type="text" data-key="p3_zone_width_unit" aria-label="Unit" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Distance from Waypoint Alpha zone back to starting box</div></td>
+          <td><input type="text" data-key="p3_dist_back" aria-label="Distance back" /></td>
+          <td><input type="text" data-key="p3_dist_back_unit" aria-label="Unit" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Motor speed we plan to use</div></td>
+          <td><input type="text" data-key="p3_motor_speed" aria-label="Motor speed" /></td>
+          <td><input type="text" data-key="p3_motor_speed_unit" aria-label="Unit" value="% power" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 2 — Write Your Algorithm in Plain English</h3>
+    <p>Write your plan as a numbered list. Do not write code yet. Be specific enough that someone who has not seen the field could follow your instructions.</p>
+    <p class="group-label">Phase A: Travel to Waypoint Alpha</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p3_planA_1" aria-label="Plan A step 1" /></li>
+      <li><input type="text" data-key="p3_planA_2" aria-label="Plan A step 2" /></li>
+      <li><input type="text" data-key="p3_planA_3" aria-label="Plan A step 3" /></li>
+    </ul>
+    <p class="group-label">Phase B: Stop in the zone</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p3_planB_4" aria-label="Plan B step 4" /></li>
+      <li><input type="text" data-key="p3_planB_5" aria-label="Plan B step 5" /></li>
+    </ul>
+    <p class="group-label">Phase C: Return to starting box (Bonus Mission)</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p3_planC_6" aria-label="Plan C step 6" /></li>
+      <li><input type="text" data-key="p3_planC_7" aria-label="Plan C step 7" /></li>
+      <li><input type="text" data-key="p3_planC_8" aria-label="Plan C step 8" /></li>
+    </ul>
+
+    <h3 class="sub">Step 3 — Predict</h3>
+    <p class="q">Before you run anything: what do you predict will go wrong on the first try, and why?</p>
+    <textarea class="answer" data-key="p3_predict" aria-label="Prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build &amp; Run</h2>
+    <h3 class="sub">Starting Code Template</h3>
+    <p>Type this program into your robot controller exactly as shown. Each line has a comment (after the <code>//</code>) that explains what it does. The comments are notes for you — the robot ignores them.</p>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 1 · Big Idea 1 — Waypoint Navigator</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+
+def main():
+    k.motor(0, 100)  <span class="c"># this turns one of the motors on</span>
+    k.motor(1, 100)  <span class="c"># this turns the other motor on</span>
+    k.msleep(1000)   <span class="c"># hold still so the stop is visible</span>
+    k.ao()           <span class="c"># turns the motors off after the msleep has completed</span>
+    <span class="c"># Add your Bonus Mission call here when ready.</span>
+
+main()</div>
+
+    <h3 class="sub">Before You Press Run — Checklist</h3>
+    <ul>
+      <li>Your program is typed in exactly as shown, with indentation matching the template</li>
+      <li>Robot is fully inside the starting box</li>
+      <li>You know exactly what “success” looks like before the run starts</li>
+      <li>You are watching to see whether the robot reaches the zone and stops</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Debug</h2>
+    <p>Debugging is not guessing. It is a structured process of observation, hypothesis, and testing. Every time something goes wrong, use this process instead of randomly changing numbers.</p>
+    <h3 class="sub">Structured Debugging — Four Questions</h3>
+    <ol>
+      <li><strong>OBSERVE:</strong> What exactly happened? (Not “it didn't work” — be specific.)</li>
+      <li><strong>COMPARE:</strong> What did you expect to happen? What was the gap?</li>
+      <li><strong>HYPOTHESIZE:</strong> What is the most likely cause of that gap?</li>
+      <li><strong>TEST:</strong> Change one thing, run again, and record what changed.</li>
+    </ol>
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — even failed runs contain information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:16%">What you changed</th>
+          <th style="width:13%">Reached zone?</th>
+          <th style="width:14%">Stopped in zone?</th>
+          <th style="width:14%">Returned to box?</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Describe one specific bug you found. What was the symptom? What was the cause? How did you fix it?</p>
+    <textarea class="answer" data-key="p5_bug" aria-label="Bug description" style="min-height:100px"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea 1 — AI Literacy Thread</p>
+      <p>Intelligent systems require instructions before they can act.</p>
+    </div>
+    <p>Your robot did not decide to navigate to Waypoint Alpha. It followed the instructions you wrote. Every intelligent system — from a robot to a recommendation engine to a self-driving car — begins with someone writing instructions that tell the system what to do and how to do it. The quality of the system depends directly on the quality of those instructions.</p>
+    <p class="muted">Read each scenario below. Think it through, then write a short answer.</p>
+    <p class="q">A navigation app tells you to turn right — into a wall. Who wrote the instructions that caused this? What probably went wrong?</p>
+    <textarea class="answer" data-key="p6_navapp" aria-label="Navigation app scenario"></textarea>
+    <p class="q">A spam filter marks an important email as junk. What does this tell you about the instructions the filter was given?</p>
+    <textarea class="answer" data-key="p6_spam" aria-label="Spam filter scenario"></textarea>
+    <p class="q">In both cases above — and in your robot runs today — who is responsible for fixing the instructions? What does that mean for how we should think about AI systems?</p>
+    <textarea class="answer" data-key="p6_responsibility" aria-label="Responsibility scenario"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is an algorithm? Write a definition in your own words — do not use the word “instructions.”</p>
+    <textarea class="answer" data-key="p7_q1_definition" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What was the most important variable in your program today? How did changing it affect the robot's behavior?</p>
+    <textarea class="answer" data-key="p7_q2_variable" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Precision matters in algorithms. Give one example from today where being imprecise caused a problem, and explain how you fixed it.</p>
+    <textarea class="answer" data-key="p7_q3_precision" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: “Intelligent systems require instructions before they can act. This means that when an AI system makes a mistake...”</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Precision Tuning</h3>
+    <ul>
+      <li>Add a third variable called SPEED to your program and connect it to your motor calls.</li>
+      <li>Run 5 trials at SPEED = 30, then 5 at SPEED = 70.</li>
+      <li>Record how speed affects your travel time. What relationship do you notice?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — The Pause Problem</h3>
+    <ul>
+      <li>The rules say the stop must be clearly visible. What is the minimum pause value that reliably gets credit?</li>
+      <li>Design an experiment: run 5 trials at each of three different pause values.</li>
+      <li>What is the minimum pause you would use in a real competition run, and why?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Sequence Matters</h3>
+    <ul>
+      <li>What happens if you tell the robot to drive back before it ever reaches Waypoint Alpha? Predict the outcome, then test it.</li>
+      <li>Why does sequence matter in an algorithm? Write 2–3 sentences connecting this to how AI systems are designed.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Inputs as Numbers</h3>
+    <ul>
+      <li>Change the two motor power numbers and the msleep number, and predict what each change will do before you run it.</li>
+      <li>What advantage does changing a number at the top give you over changing it in many places?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Blocks vs. Text</h3>
+    <ul>
+      <li>If you've used a block-based tool before (Scratch, Blockly, etc.), compare it to the Python you just wrote. What can you do in Python that blocks make awkward? What did blocks make easier?</li>
+      <li>Why might a real robot controller prefer a text language like Python over a block-based one?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+
+    <h3 class="sub">Extension F — Why a PIN?</h3>
+    <ul>
+      <li>Every lab in this course has asked for your PIN before you could submit. That's a simple password system protecting your identity so no one else's work gets mixed up with yours.</li>
+      <li>What's one weakness of a short numeric PIN compared to a longer password? If someone guessed your PIN, what's one change to this system that would make that harder — and how would that change actually fix the weakness you named?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_f" aria-label="Extension F"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 1 Big Idea 1 — Student Lab</p>
+</main>
+
+<script>
+  // ----- mission id: drives both the server filename and the local copy -----
+  const MISSION_ID = "unit1_bigidea1";
+
+  // ----- build trial log rows -----
+  (function buildTrials() {
+    const body = document.getElementById("trialBody");
+    for (let i = 1; i <= 6; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_reached" aria-label="Trial ' + i + ' reached"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_stopped" aria-label="Trial ' + i + ' stopped"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_returned" aria-label="Trial ' + i + ' returned"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
+      body.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  // ----- local autosave so a refresh doesn't wipe work -----
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] = el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) { /* storage full or blocked — ignore */ }
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  // ----- build the submission payload -----
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 1 · Big Idea 1 — The Waypoint Navigator",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  // ----- download a local JSON copy (fallback / always-available) -----
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // ----- main submit flow -----
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    // Always download the results JSON to the student's device,
+    // then open the print dialog for the PDF.
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

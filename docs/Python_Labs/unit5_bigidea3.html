@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 5 · Big Idea 3 — Backing Up Your Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #16204a 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #e9edf7; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--navy); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--navy); background: #eef1f7; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.red { border-left-color: var(--red); background: #fbeef0; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--navy); margin: 0 0 4px; }
+  .callout.red .ctitle { color: var(--red); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .steps { counter-reset: step; list-style: none; padding-left: 0; margin: 12px 0; }
+  .steps li { counter-increment: step; position: relative; padding: 4px 0 4px 42px; margin: 10px 0; }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 2px; width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+
+  .filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .warn { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .filetab { background: #ddd !important; color: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .steps li::before { background: #666 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 5 · Big Idea 3</p>
+    <h1>Backing Up Your Work</h1>
+    <p class="sub">Student Lab · Getting Your Library onto GitHub</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine operate reliably in an imperfect world?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A Reliable System Keeps a Recoverable History</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>A robust workflow doesn't trust one file on one computer — it keeps a recoverable history of every change, and lets others build on it safely.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Version Control · Repositories · Commits · Push / Pull · Software Licensing</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>N/A — this lab is about your development workflow, not a mission run</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>A computer with a web browser and internet access · an email address · your library file, downloaded from the IDE · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Right now, your library — every function you've written across every lab — lives in exactly one place: the IDE. If that IDE account is lost, if a Chromebook gets wiped, if you simply want to work on your code somewhere else, your work is gone unless you've backed it up. Today you're going to give your library a permanent, recoverable home using <strong>GitHub</strong>, the tool almost every professional software team on Earth uses to store and share code.</p>
+    <div class="callout red">
+      <p class="ctitle">The Big Idea of This Unit</p>
+      <p>A reliable system doesn't depend on one fragile copy of anything. It keeps a history it can recover from — the same reason your pose array kept a record of belief in Big Idea 1, GitHub keeps a record of every version of your code.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Create a GitHub account.</li>
+      <li>Create a repository, including a README and an open-source license.</li>
+      <li>Upload a file to a repository using only a web browser.</li>
+      <li>Explain, in your own words, what "push" and "pull" mean.</li>
+      <li>Describe how a developer pushes a change from the command line.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: download from the IDE ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Get Your Library Off the IDE</h2>
+    <p>Before you can back anything up, you need a copy of it on your own computer.</p>
+    <ol class="steps">
+      <li>In the KISS IDE, click the <strong>Files</strong> page at the top of the screen.</li>
+      <li>Find your library file (<code>yourname.h</code>) in the file list.</li>
+      <li>Download it. It should land in your computer's <strong>Downloads</strong> folder.</li>
+      <li>Confirm you can find it — open your Downloads folder and check the file is really there before moving on.</li>
+    </ol>
+    <p class="q">Where did the file end up, and what is it named? (Write the exact filename — you'll need it in a few minutes.)</p>
+    <textarea class="answer" data-key="p1_filename" aria-label="Downloaded filename"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: create a GitHub account ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Create a GitHub Account</h2>
+    <ol class="steps">
+      <li>Go to <strong>github.com</strong> and click <strong>Sign up</strong>.</li>
+      <li>Enter an email address you can actually check, and create a password.</li>
+      <li>Choose a <strong>username</strong>. Pick something professional — future employers and college programs can see this. Avoid a nickname you'll be embarrassed by in five years.</li>
+      <li>Verify your email if GitHub asks you to (check your inbox for a confirmation link or code).</li>
+    </ol>
+    <div class="callout gold">
+      <p class="ctitle">Why this matters beyond today</p>
+      <p>A GitHub account is something you'll likely keep for your entire career. Many software job applications ask for your GitHub username directly.</p>
+    </div>
+    <table class="grid">
+      <caption>Your account</caption>
+      <tbody>
+        <tr><td class="label" style="width:35%">GitHub username</td><td><input type="text" data-key="p2_username" /></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 3: create a repository ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Create a Repository</h2>
+    <p>A <strong>repository</strong> (or "repo") is a project's folder on GitHub — it holds your files and every past version of them.</p>
+    <ol class="steps">
+      <li>Click the <strong>+</strong> icon near the top right of GitHub, then <strong>New repository</strong>.</li>
+      <li>Name it something clear, like <code>wombat-library</code> or <code>yourname-botball</code>.</li>
+      <li>Choose <strong>Public</strong> (so it also works as something to show off later) or <strong>Private</strong>, if you'd rather keep it to yourself for now.</li>
+      <li>Check the box for <strong>Add a README file</strong>.</li>
+      <li>Under <strong>Choose a license</strong>, select <strong>MIT License</strong>.</li>
+      <li>Click <strong>Create repository</strong>.</li>
+    </ol>
+    <div class="concept">
+      <div class="chead">What is the MIT License actually saying?</div>
+      <div class="cbody">
+        <p>A license is a set of rules for what other people are legally allowed to do with your code — you ran into this idea in Unit 3's "Whose Code Is It?" extension. The <strong>MIT License</strong> is one of the most permissive licenses that exists: anyone can use your code, modify it, or even sell something built on it — the one condition is they have to keep your name credited somewhere. It's a popular choice for student and open-source projects because it puts almost no restrictions on how your work gets used.</p>
+      </div>
+    </div>
+    <p class="q">Why might a license matter for a file you're about to make public on the internet? What could go wrong if you skipped adding one entirely?</p>
+    <textarea class="answer" data-key="p3_license" aria-label="License reasoning"></textarea>
+    <table class="grid">
+      <caption>Your repository</caption>
+      <tbody>
+        <tr><td class="label" style="width:35%">Repository name</td><td><input type="text" data-key="p3_reponame" /></td></tr>
+        <tr><td class="label">Repository URL</td><td><input type="text" data-key="p3_repourl" placeholder="https://github.com/yourusername/your-repo" /></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 4: upload via the browser ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Upload Your File (No Terminal Needed)</h2>
+    <p>You don't need any special software to get a file onto GitHub. This path works on any computer, including school Chromebooks.</p>
+    <ol class="steps">
+      <li>Open your new repository's page on GitHub.</li>
+      <li>Click <strong>Add file</strong>, then <strong>Upload files</strong>.</li>
+      <li>Drag your <code>yourname.h</code> file from your Downloads folder into the browser window — or click <strong>choose your files</strong> and select it.</li>
+      <li>Scroll down and click <strong>Commit changes</strong>. This is the moment your file actually becomes part of the repository's history.</li>
+      <li>Refresh the page and confirm you can see your file listed.</li>
+    </ol>
+    <p class="q">Your library file now exists in two places. What are they, and what happens to the GitHub copy if your school Chromebook is wiped tomorrow?</p>
+    <textarea class="answer" data-key="p4_backup" aria-label="Backup reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: concept — push and pull ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Concept: Push and Pull</h2>
+    <div class="concept">
+      <div class="chead">Two copies, one project</div>
+      <div class="cbody">
+        <p>Once you're working with GitHub for real, your project usually exists in two places at once: a <strong>remote</strong> copy (living on GitHub's servers) and a <strong>local</strong> copy (living on your own computer). Those two copies need a way to stay in sync.</p>
+        <p><strong>Push</strong> sends changes from your local copy <em>up</em> to the remote. <strong>Pull</strong> brings changes from the remote <em>down</em> to your local copy. Think of the remote as the single source of truth everyone agrees on, and push/pull as the two directions you move information relative to it.</p>
+        <p>When you uploaded your file through the browser in Phase 4, you technically just performed a push — GitHub's website did it for you with no separate command needed. That's the easy path. Most real software teams instead work with a <strong>local</strong> copy of the repo on their own machine using a tool called <strong>git</strong>, which makes push and pull explicit commands they run themselves.</p>
+      </div>
+    </div>
+    <p class="q">In your own words: what's the difference between push and pull? If two teammates are both editing the same repo, why would they each need to pull before they start working?</p>
+    <textarea class="answer" data-key="p5_pushpull" aria-label="Push and pull concept"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: the command line path ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — How Push Actually Works on the Command Line</h2>
+    <div class="warn">
+      <p class="ctitle">⚠ You probably can't run this at school</p>
+      <p>Most school Chromebooks don't give you a terminal or let you install <code>git</code>. That's completely normal — this phase is for understanding what's happening under the hood, not something you need to complete hands-on today. If you have a laptop at home with git installed, feel free to actually try it.</p>
+    </div>
+    <p>Here's the sequence a developer runs from a terminal to get a local change onto GitHub:</p>
+    <div class="filetab">terminal</div>
+    <div class="code"><span class="c"># one-time setup: copy the remote repo down to your computer</span>
+git clone https://github.com/yourusername/your-repo.git
+cd your-repo
+
+<span class="c"># ...edit yourname.h in a text editor...</span>
+
+<span class="c"># stage the change — tell git which files you want to include</span>
+git add yourname.h
+
+<span class="c"># commit — save a labeled snapshot of that change, locally</span>
+git commit -m "Added the pose array functions"
+
+<span class="c"># push — send that commit up to GitHub</span>
+git push
+
+<span class="c"># pull — bring down anyone else's commits before you start editing again</span>
+git pull</div>
+    <p>Notice this is the exact same push/pull idea from Phase 5 — just as explicit typed commands instead of browser buttons. <code>git add</code> and <code>git commit</code> happen entirely on your computer; nothing reaches GitHub until <code>git push</code> actually runs.</p>
+    <p class="q">Walk through what each of the five commands above does, in order, in your own words.</p>
+    <textarea class="answer" data-key="p6_walkthrough" aria-label="Command walkthrough"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: connect & reflect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Connect &amp; Reflect</h2>
+    <div class="callout red">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>A robust workflow doesn't trust one file on one computer — it keeps a recoverable history of every change, and lets others build on it safely.</p>
+    </div>
+    <p>Every serious software project — the operating system on your phone, the app you use to message friends, the code running self-driving cars — is built this way: many people push and pull changes to a shared, recoverable history, instead of emailing files back and forth and hoping nothing gets overwritten. The license you added in Phase 3 is part of that same reliability story — it's what lets other people build on your work with confidence, instead of guessing whether they're allowed to.</p>
+    <p class="muted">Complete the reflection on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a repository, and how is it different from just a folder on your own computer?</p>
+    <textarea class="answer" data-key="p7_q1_repo" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What does the MIT License let other people do with your code, and what's the one thing it requires of them?</p>
+    <textarea class="answer" data-key="p7_q2_license" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Explain push and pull to someone who has never heard either term.</p>
+    <textarea class="answer" data-key="p7_q3_pushpull" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "A reliable system keeps a recoverable history instead of trusting one copy. For my own code, this means..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Write a Real README</h3>
+    <ul>
+      <li>Edit your repository's README file to actually describe your library: what functions it has, and what each one does. Would a stranger be able to understand your code from the README alone?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Make a Second Commit</h3>
+    <ul>
+      <li>Edit your uploaded file directly on GitHub (click the pencil icon), change something small, and commit again with a clear commit message. Then look at your repository's "commits" history — can you see both versions?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Try It From Home</h3>
+    <ul>
+      <li>If you have a computer at home, install git, and actually run the <code>clone</code> / <code>add</code> / <code>commit</code> / <code>push</code> sequence from Phase 6 for real. What was different about doing it for real versus reading about it?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Who's Left Out?</h3>
+    <ul>
+      <li>Not every student has a home computer, reliable internet, or money for paid tools professionals use. If a class assignment required GitHub, a paid IDE, or a fast home computer, who would that leave out?</li>
+      <li>What social or economic factors affect who gets to become a programmer? Who's missing from the room when software gets built, and what effect might that have on what gets built?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Ethical Use and the Rules</h3>
+    <ul>
+      <li>If you found someone else's code on GitHub with no license at all, would it be ethical to copy it into your own project without asking? What does your school's Acceptable Use Policy say about copying digital work?</li>
+      <li>Should there be a law requiring all public code to have a license, or should it be left up to each programmer? Give your position and one reason.</li>
+      <li>GitHub connects programmers across the entire world, not just your classroom. How might a tool like this change who you could realistically collaborate with on a project, compared to before it existed?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+
+    <h3 class="sub">Extension F — Talking to a Server</h3>
+    <ul>
+      <li>When you pushed (or uploaded through the browser), your file traveled over the internet to GitHub's servers, potentially thousands of miles away. What has to go right for that to work reliably — address routing, server uptime, your own connection?</li>
+      <li>What would happen to millions of programmers worldwide if GitHub's servers went down for a day? Why do large services like GitHub use many servers instead of just one?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_f" aria-label="Extension F"></textarea>
+
+    <h3 class="sub">Extension G — Secret Messages</h3>
+    <ul>
+      <li>When you log into GitHub, your password travels over the internet — but not as plain, readable text. Look up what "HTTPS" stands for and why the "s" matters.</li>
+      <li>In your own words, why is it risky to type a password into a site that only uses "HTTP" without the "s"?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_g" aria-label="Extension G"></textarea>
+
+    <h3 class="sub">Extension H — Find the Community</h3>
+    <ul>
+      <li>GitHub isn't just storage — it's a community. Public repos can get "stars" from people who find them useful, and anyone can open an "Issue" to suggest an improvement or report a problem.</li>
+      <li>Search for 2-3 real public student or hobbyist robotics repositories on GitHub (try "wombat robot" or "botball"). What's one thing you could learn from how someone else organized or documented their project?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_h" aria-label="Extension H"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 5 Big Idea 3</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit5_bigidea3";
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 5 · Big Idea 3 — Backing Up Your Work",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

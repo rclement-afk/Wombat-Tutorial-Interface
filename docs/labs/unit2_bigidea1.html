@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 2 · Big Idea 1 — The Touch Sensor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+  .grid code { font-size: 14px; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 2 · Big Idea 1</p>
+    <h1>Computers Gather Information From Their Environment</h1>
+    <p class="sub">Student Lab · The Touch Sensor</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine sense and respond to the world around it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Computers Gather Information From Their Environment</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems rely on sensors to gather information about the world around them.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Inputs · Sensors · Digital Sensors · while Loops · Observation</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Back into the starting box using touch · reset the origin</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · push button (touch) sensor · game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>All through Unit 1, your robot was blind. It drove for a set time and hoped for the best — it could not feel the world at all. Today that changes. You'll attach a <strong>touch sensor</strong> to the back of your robot and write a program that drives backward and <strong>stops the instant it feels a wall</strong>. For the first time, the robot reacts to something real instead of a guessed-at time.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A sensor is how a machine gathers information about the world. Without sensors, a robot can only follow a script. With them, it can respond to what is actually happening.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain what a <em>digital sensor</em> is and read the touch sensor with <code>digital(0)</code>.</li>
+      <li>Write a <code>while</code> loop that repeats an action until a condition changes.</li>
+      <li>Drive the robot backward until the touch sensor is pressed, then stop.</li>
+      <li>Use reaching the wall as a known spot to reset the robot's stored origin.</li>
+    </ul>
+
+    <!-- ===== HARDWARE SETUP ===== -->
+    <h3 class="sub">Set Up Your Sensor</h3>
+    <div class="callout navy">
+      <p class="ctitle">Before any code</p>
+      <p>Attach the push button (touch) sensor to the <strong>back</strong> of your robot, facing backward, so it will press when the robot backs into a wall.</p>
+      <p>Plug it into <strong>digital port 0</strong>.</p>
+      <p>In your program, <code>digital(0)</code> reads this sensor: it is <strong>0 when the button is open</strong> and <strong>1 when the button is pressed</strong>.</p>
+    </div>
+
+    <!-- ===== NEW CS CONCEPT BOXES ===== -->
+    <h3 class="sub">New This Time: The while Loop</h3>
+    <div class="concept">
+      <div class="chead">A while loop repeats code as long as something is true</div>
+      <div class="cbody">
+        <p>Until now your code ran top to bottom, once. A <code>while</code> loop lets a block run <strong>over and over</strong>, checking a condition each time before it repeats.</p>
+        <div class="code small">while (condition) {
+    <span class="c">// this runs again and again,</span>
+    <span class="c">// as long as the condition is true</span>
+}</div>
+        <p>How it works, step by step:</p>
+        <ol>
+          <li>Check the condition in the parentheses.</li>
+          <li>If it is <strong>true</strong>, run the code in the braces — then go back to step 1.</li>
+          <li>If it is <strong>false</strong>, skip the braces and move on.</li>
+        </ol>
+        <p>The loop keeps checking. That is what lets a robot <em>wait for</em> something to happen instead of guessing how long it will take. To drive until the button is pressed, we loop <strong>while the button is NOT pressed</strong>:</p>
+        <div class="code small">while (digital(0) == 0) {   <span class="c">// while the button is NOT pressed...</span>
+    <span class="c">// keep driving and keep checking</span>
+}</div>
+        <p>The moment the button reads 1, the condition <code>digital(0) == 0</code> becomes false, the loop stops, and the program moves on.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Why a tiny msleep goes inside the loop</div>
+      <div class="cbody">
+        <p>You've used <code>msleep()</code> to drive for a set time. Inside a loop it does something different — and much smaller.</p>
+        <div class="code small">while (digital(0) == 0) {
+    motor(0, -50);   <span class="c">// drive backward</span>
+    motor(1, -50);
+    msleep(10);      <span class="c">// tiny pause — just 10 ms</span>
+}</div>
+        <p>That <code>msleep(10)</code> is <strong>not</strong> how long you drive. The loop checks the button hundreds of times a second. Without a small pause, it would check <em>as fast as the computer possibly can</em> — and that <strong>bogs down the controller</strong> for no benefit. A 10 ms pause slows the checking to a sensible rate so the computer isn't overwhelmed, while still feeling instant to us.</p>
+        <p class="muted">Notice how small this is compared to before: <code>msleep(1000)</code> used to mean "drive for a whole second." Here <code>msleep(10)</code> just means "wait a blink before checking the button again." Same command, completely different job.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: How Do You Know to Stop?</h2>
+    <p>Close your eyes and slowly back up toward a wall with your hand out behind you. You don't count steps — you wait until your hand <em>feels</em> the wall, then stop. You are using a sensor (your hand) and checking it constantly until it tells you something changed.</p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>Why is "feel for the wall, then stop" more reliable than "take exactly 7 steps back"?</p>
+      <p>How many times per second do you think your hand was "checking" for the wall?</p>
+    </div>
+    <p class="q">A timed move (drive for 1 second) and a sensed move (drive until you feel the wall) can both reach a wall. Why is the sensed move better when you don't know exactly how far away the wall is?</p>
+    <textarea class="answer" data-key="p1_timed_vs_sensed" aria-label="Timed versus sensed"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Inputs, Sensors, and Digital Values</h2>
+    <h3 class="sub">A Sensor Is an Input</h3>
+    <p>An <em>input</em> is information coming <em>into</em> the program from the outside world. A sensor is a device that turns something physical — a touch, a distance, a brightness — into a number the program can read. Reading <code>digital(0)</code> is the robot gathering an input.</p>
+    <h3 class="sub">Digital Means Two States</h3>
+    <p>A <em>digital</em> sensor has only two possible readings: <strong>0 or 1</strong>. Your touch sensor is digital — the button is either open (0) or pressed (1). There is no "halfway." This is the same true/false, Boolean thinking you used with <code>if</code> statements, now coming from the real world.</p>
+    <div class="callout gold">
+      <p class="ctitle">Digital vs. Analog (a look ahead)</p>
+      <p>Some sensors are <em>analog</em> — they return a whole range of numbers, not just 0 or 1 (like a distance sensor reading "how far"). You'll meet those soon. Today's touch sensor is the simplest kind: just 0 or 1.</p>
+    </div>
+    <p class="q">In your own words: what does it mean that the touch sensor is "digital"? What are its only two possible values, and what does each one mean?</p>
+    <textarea class="answer" data-key="p2_digital_meaning" aria-label="What digital means"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan</h2>
+    <h3 class="sub">The Goal</h3>
+    <div class="callout">
+      <p class="ctitle">Back Into the Box</p>
+      <p>Your robot starts in the field. It must drive <strong>backward</strong> until its touch sensor presses against the <strong>starting-box wall</strong>, then stop. Reaching that wall means it is home — a known, reliable spot.</p>
+    </div>
+
+    <h3 class="sub">Step 1 — Predict the Sensor Readings</h3>
+    <p>Fill in what <code>digital(0)</code> reads in each situation, and what the loop should do.</p>
+    <table class="grid">
+      <thead><tr><th style="width:46%">Situation</th><th style="width:27%"><code>digital(0)</code> reads</th><th>Loop keeps going?</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Driving back, not at wall yet</div></td><td><input type="text" data-key="p3_reading_open" aria-label="Reading when open" /></td><td><input type="text" data-key="p3_loop_open" aria-label="Loop when open" /></td></tr>
+        <tr><td><div class="seed">Button hits the wall</div></td><td><input type="text" data-key="p3_reading_pressed" aria-label="Reading when pressed" /></td><td><input type="text" data-key="p3_loop_pressed" aria-label="Loop when pressed" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Step 2 — Write the Plan in Plain English</h3>
+    <p>Before any code, describe your program in order — including what happens the moment the button is pressed.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p3_plan_1" aria-label="Plan step 1" /></li>
+      <li><input type="text" data-key="p3_plan_2" aria-label="Plan step 2" /></li>
+      <li><input type="text" data-key="p3_plan_3" aria-label="Plan step 3" /></li>
+      <li><input type="text" data-key="p3_plan_4" aria-label="Plan step 4" /></li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build &amp; Run</h2>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Test in your hands FIRST</p>
+      <p>Before you ever put this on the board, <strong>hold the robot up off the ground</strong> and run the program. The wheels will spin backward. Press the button with your finger and watch the wheels stop. Only once that works should you set it on the field. This keeps the robot from driving off a table while you test.</p>
+    </div>
+
+    <h3 class="sub">Starting Code Template</h3>
+    <p>Type this program. The position variables are back from before — you'll reset <code>y_position</code> to zero the moment the robot reaches the wall.</p>
+    <div class="code">// Unit 2 · Big Idea 1 — The Touch Sensor
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+<span class="c">// The robot's stored position (from Unit 1). Start at the origin.</span>
+int x_position = 0;
+int y_position = 0;
+
+int main() {
+
+    <span class="c">// Drive BACKWARD and keep checking the button.</span>
+    <span class="c">// digital(0) is 0 when open, 1 when pressed.</span>
+    while (digital(0) == 0) {   <span class="c">// while the button is NOT pressed...</span>
+        motor(0, -50);          <span class="c">// ...drive backward</span>
+        motor(1, -50);
+        msleep(10);             <span class="c">// tiny pause so we don't overwork the computer</span>
+    }
+
+    ao();              <span class="c">// button was pressed — stop the motors</span>
+    y_position = 0;    <span class="c">// we're home against the wall — reset our origin</span>
+
+    return 0;
+}</div>
+    <p class="muted">Looking ahead: next lab, you'll move the two <code>motor()</code> lines to just <em>above</em> the loop, so the loop body is only the <code>msleep</code>. The motors will already be running, and the loop will just wait and watch the sensor.</p>
+
+    <h3 class="sub">Run Log</h3>
+    <p>Test in your hands first, then on the board. Record each.</p>
+    <table class="grid">
+      <thead><tr><th style="width:30%">Test</th><th style="width:35%">What you expected</th><th>What actually happened</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">In hand, press by finger</div></td><td><input type="text" data-key="p4_hand_expect" /></td><td><input type="text" data-key="p4_hand_actual" /></td></tr>
+        <tr><td><div class="seed">On board, back into wall</div></td><td><input type="text" data-key="p4_board_expect" /></td><td><input type="text" data-key="p4_board_actual" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Checklist</h3>
+    <ul>
+      <li>You tested in your hands and saw the wheels stop when you pressed the button</li>
+      <li>The loop condition is <code>digital(0) == 0</code> (keep going while NOT pressed)</li>
+      <li>There is an <code>msleep(10)</code> inside the loop</li>
+      <li><code>ao()</code> comes right after the loop, so the robot stops when pressed</li>
+      <li><code>y_position = 0;</code> resets the origin once the robot is home</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Make It a Reusable Behavior</h2>
+    <p>Once your program works, wrap the whole back-until-pressed behavior into a function so you can reuse it. Build it the way you've been doing it: write the <strong>prototype</strong> above <code>main()</code>, call it inside <code>main()</code>, and put the full <strong>definition</strong> below.</p>
+    <div class="code">#include &lt;kipr/wombat.h&gt;
+
+int x_position = 0;
+int y_position = 0;
+
+void back_until_pressed();   <span class="c">// PROTOTYPE — the promise, above main()</span>
+
+int main() {
+    back_until_pressed();    <span class="c">// CALL — drive home using the sensor, then reset zero</span>
+    return 0;
+}
+
+void back_until_pressed() {  <span class="c">// DEFINITION — the recipe, below main()</span>
+    while (digital(0) == 0) { <span class="c">// while the button is NOT pressed...</span>
+        motor(0, -50);
+        motor(1, -50);
+        msleep(10);
+    }
+    ao();              <span class="c">// stop</span>
+    y_position = 0;    <span class="c">// home — reset origin</span>
+}</div>
+    <p class="q">Now that <code>main()</code> just says <code>back_until_pressed()</code>, what does it read like? Why is wrapping the loop in a named function helpful for the rest of the game?</p>
+    <textarea class="answer" data-key="p5_function_value" aria-label="Value of the function"></textarea>
+    <h3 class="sub">Debugging Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:36%">What went wrong</th><th style="width:26%">Why (your best guess)</th><th>How you fixed it</th></tr></thead>
+      <tbody id="debugBody"><!-- rows injected --></tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Big Idea 1 — AI Literacy Thread</p>
+      <p>Intelligent systems rely on sensors to gather information about the world around them.</p>
+    </div>
+    <p>Today your robot stopped because it <em>felt</em> a wall, not because a timer ran out. That is the foundation of every intelligent machine: it senses the world and responds to what is really there. A phone screen senses your touch; a car senses the car ahead; a thermostat senses the room's temperature. None of them follow a fixed script — they all watch a sensor and react. And just like you, they check that sensor over and over, many times a second.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Name a machine you use that reacts to a sensor instead of a timer. What is it sensing, and what does it do when the sensor changes?</p>
+    <textarea class="answer" data-key="p6_sensor_machine" aria-label="A sensor machine"></textarea>
+    <p class="q">Your robot reaching the wall told it "I am home." Why is a sensed, physical landmark a more trustworthy way to reset position than just hoping the robot drove the right distance?</p>
+    <textarea class="answer" data-key="p6_landmark_reset" aria-label="Landmark reset"></textarea>
+    <p class="q">The loop checks the sensor many times a second, with a tiny pause each time. Why does an intelligent system need to keep checking, rather than reading a sensor just once?</p>
+    <textarea class="answer" data-key="p6_keep_checking" aria-label="Why keep checking"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a digital sensor? What two values can <code>digital(0)</code> return, and what does each mean for the touch button?</p>
+    <textarea class="answer" data-key="p7_q1_digital" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain what a <code>while</code> loop does, in your own words. What makes it stop?</p>
+    <textarea class="answer" data-key="p7_q2_while" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Why is there a small <code>msleep(10)</code> inside the loop? What would happen to the controller without it?</p>
+    <textarea class="answer" data-key="p7_q3_msleep" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems rely on sensors to gather information about the world. This means that a robot without sensors can only..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Drive Forward After Resetting</h3>
+    <ul>
+      <li>After <code>back_until_pressed()</code> resets your origin, add a known forward move and update <code>y_position</code> as you go (like Unit 1 Big Idea 4).</li>
+      <li>Because you started from a trusted zero, your stored position should now be accurate. Test whether it is.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Change the Speed</h3>
+    <ul>
+      <li>Try a slower backward speed (for example −30). Does the robot stop more precisely at the wall? Why might slower be more accurate?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Try a Different msleep</h3>
+    <ul>
+      <li>Change the loop's <code>msleep(10)</code> to <code>msleep(200)</code>. Press the button quickly and release. Does the robot still catch it? What does this tell you about how often it's checking?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Reset Both Coordinates</h3>
+    <ul>
+      <li>If backing straight into the wall sets a known spot, should <code>x_position</code> reset too? Decide what makes sense for your robot's path and explain your reasoning.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — What If It Were Event-Driven?</h3>
+    <ul>
+      <li>Everything you've built waits and checks in a loop (polling) — repeatedly asking "are we there yet?" An <strong>event-driven</strong> system instead sits idle until something happens, then a designated function runs automatically.</li>
+      <li>In words (not code), rewrite how <code>back_until_pressed()</code> could work if it were event-driven instead of polling: what would the "event" be, and what function would run when it fires?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 2 Big Idea 1 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit2_bigidea1";
+
+  (function buildRows() {
+    const debug = document.getElementById("debugBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="debug' + i + '_wrong" aria-label="Debug ' + i + ' wrong"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_why" aria-label="Debug ' + i + ' why"></td>' +
+        '<td><input type="text" data-key="debug' + i + '_fix" aria-label="Debug ' + i + ' fix"></td>';
+      debug.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 2 · Big Idea 1 — The Touch Sensor",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    // Always download the results JSON to the student's device,
+    // then open the print dialog for the PDF.
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

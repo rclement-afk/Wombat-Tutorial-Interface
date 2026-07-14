@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 2 · Big Idea 2 — Brake vs. Coast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); font-style: italic; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; padding: 4px 0 2px; }
+  .grid caption.a { color: var(--red); } .grid caption.b { color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 2 · Big Idea 2</p>
+    <h1>Stopping Is Not the Same as Being Stopped</h1>
+    <p class="sub">Student Lab · Brake vs. Coast</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine sense and respond to the world around it?</dd></div>
+      <div class="row"><dt>Focus</dt><dd>Motor control, reliability, and measuring consistency</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Reliable systems are tested with data, not assumed to work.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Braking vs. Neutral · Settle Time · Experiments · Data &amp; Consistency</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Sensor homing + repeatable forward moves from a reset origin</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · touch sensor (port 0) · ruler/tape measure · game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Last lab, your robot used its touch sensor to back into the wall and reset its origin. Today you'll use that same reliable starting point to run an <strong>experiment</strong>. You'll drive forward a short distance and stop — two different ways — and measure which way is more consistent. The two ways of "stopping" are not the same, and your own data is going to prove it.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>Telling a motor to stop and a motor actually holding still are two different things. How you stop changes how consistent — and how straight — your robot is.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain the difference between <em>braking</em> a motor and letting it go <em>neutral</em>.</li>
+      <li>Reuse <code>back_until_pressed()</code> to start every trial from the same reset origin.</li>
+      <li>Run a controlled experiment: same move, two stopping methods, five trials each.</li>
+      <li>Use your own data to decide which method is more consistent in distance and direction.</li>
+    </ul>
+
+    <!-- ===== NEW CS CONCEPT BOX ===== -->
+    <h3 class="sub">New This Time: Brake vs. Neutral</h3>
+    <div class="concept">
+      <div class="chead">Two different ways to "stop"</div>
+      <div class="cbody">
+        <p>There are two ways to end a motor's motion, and they behave very differently:</p>
+        <div class="code small">motor(0, 0);   <span class="c">// BRAKE — actively holds the motor at zero, resisting motion</span>
+motor(1, 0);
+
+ao();          <span class="c">// "all off" — cuts power; motors go NEUTRAL and COAST</span></div>
+        <p><strong><code>motor(0,0)</code> brakes.</strong> It actively holds the wheel at zero and resists it turning — like pressing the brake pedal. The robot stops where it is and holds the line.</p>
+        <p><strong><code>ao()</code> goes neutral.</strong> It shuts the power off and lets the motors spin freely — like shifting a car into neutral and coasting. The robot drifts to a stop on its own momentum.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Why coasting drifts — and why settle time matters</div>
+      <div class="cbody">
+        <p>When motors coast, the two wheels almost never coast <em>equally</em> — one carries a little more momentum than the other. That difference makes the robot <strong>veer off a straight line</strong> as it rolls to a stop, and it stops at a slightly different distance each time.</p>
+        <p>Braking fights that. And after you brake, a short pause lets the motors fully settle into their hold before the next command:</p>
+        <div class="code small">motor(0, 0);
+motor(1, 0);
+msleep(50);    <span class="c">// give the motors a moment to settle and lock</span></div>
+        <p>That <code>msleep(50)</code> isn't a drive time — it's just enough time for the brake to take hold before the robot does anything else.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: Two Ways to Stop a Bike</h2>
+    <p>Picture riding a bike to a line on the ground. You could <strong>squeeze the brakes</strong> and stop right on it — or you could just <strong>stop pedaling</strong> and coast, hoping you roll to a stop at the right spot. One is controlled. The other depends on your speed, the ground, and luck.</p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>Which method stops you closer to the exact line every time — braking, or coasting?</p>
+      <p>If you coasted to a stop ten times, would you land on the exact same spot each time? Why or why not?</p>
+    </div>
+    <p class="q">A coasting bike and a braking bike can both stop. Why is the braking one more <em>predictable</em>? Connect this to a robot that needs to stop in the same place every run.</p>
+    <textarea class="answer" data-key="p1_bike" aria-label="Bike braking versus coasting"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Consistency and Evidence</h2>
+    <h3 class="sub">Consistency Is a Measurable Thing</h3>
+    <p>A robot that drives "about 6 inches" isn't good enough for a competition — you need it to drive the same distance every single time. <em>Consistency</em> means the results cluster tightly together. You can't tell how consistent something is from one run; you have to run it several times and look at the spread.</p>
+    <h3 class="sub">An Experiment Compares One Change</h3>
+    <p>To test which stopping method is better, you change <strong>only</strong> the stop — everything else stays the same. Same start (the wall reset), same forward move, same five trials. The only difference is brake vs. coast. That's a fair experiment: when one thing changes and the rest is held still, you know the difference is caused by that one thing.</p>
+    <div class="callout gold">
+      <p class="ctitle">Why the wall reset matters here</p>
+      <p>Because <code>back_until_pressed()</code> resets the origin against the wall every trial, it does not matter how far from the wall the robot started — it always re-establishes the <strong>same zero</strong>. That gives every trial a fair, identical starting line to measure from.</p>
+    </div>
+    <p class="q">Why can't you judge which stopping method is more consistent from just one run of each? What does running five trials let you see that one run hides?</p>
+    <textarea class="answer" data-key="p2_why_five" aria-label="Why five trials"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan</h2>
+    <h3 class="sub">The Experiment</h3>
+    <div class="callout">
+      <p class="ctitle">What Each Trial Does</p>
+      <p>1. <code>back_until_pressed()</code> — back into the wall, reset the origin.</p>
+      <p>2. Drive forward about 6 inches.</p>
+      <p>3. Stop — using <strong>coast</strong> (<code>ao()</code>) for Version A, or <strong>brake</strong> (<code>motor(0,0); motor(1,0); msleep(50);</code>) for Version B.</p>
+      <p>4. Measure how far the robot actually traveled, and note whether it stayed straight or drifted.</p>
+      <p>You'll run Version A five times, then Version B five times.</p>
+    </div>
+
+    <h3 class="sub">Predict First</h3>
+    <p class="q">Before you run anything: which version — coast or brake — do you think will be more consistent in distance? Which will stay straighter? Why?</p>
+    <textarea class="answer" data-key="p3_prediction" aria-label="Prediction"></textarea>
+
+    <h3 class="sub">Set Your Forward Distance</h3>
+    <p>You'll reuse your <code>drive_forward()</code> function and pick a time that travels roughly 6 inches. What time will you start with?</p>
+    <table class="grid">
+      <thead><tr><th style="width:60%">Forward move</th><th>msleep time to try (ms)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">Drive forward ~6 inches</div></td><td><input type="text" data-key="p3_forward_ms" aria-label="Forward time" /></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 4 — EXPERIMENT CENTERPIECE ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build &amp; Run the Experiment</h2>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Test in your hands first</p>
+      <p>As always, hold the robot off the ground and run the program once to confirm it backs up, presses, then drives forward — before you set it on the field.</p>
+    </div>
+
+    <h3 class="sub">The Two Versions</h3>
+    <p>Both versions are identical except for how they stop. Build Version A first, run your five trials, then change only the stop to make Version B and run five more. Keep the prototype above <code>main()</code> and the definition below, as always.</p>
+    <div class="code">// Unit 2 · Big Idea 2 — Brake vs. Coast
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+
+int x_position = 0;
+int y_position = 0;
+
+void back_until_pressed();   <span class="c">// from last lab — backs into wall, resets origin</span>
+void drive_forward();        <span class="c">// drives forward ~6 inches (you set the time)</span>
+
+int main() {
+    back_until_pressed();    <span class="c">// reset to a known zero at the wall</span>
+    drive_forward();         <span class="c">// move forward about 6 inches</span>
+
+    <span class="c">// ---- VERSION A: COAST (neutral) ----</span>
+    ao();                    <span class="c">// cut power — motors coast to a stop</span>
+
+    <span class="c">// ---- VERSION B: BRAKE (active hold) ----</span>
+    <span class="c">// Comment out the ao() above and use these three lines instead:</span>
+    <span class="c">// motor(0, 0);</span>
+    <span class="c">// motor(1, 0);</span>
+    <span class="c">// msleep(50);            // let the brake settle and hold</span>
+
+    return 0;
+}
+
+void drive_forward() {
+    motor(0, 50);
+    motor(1, 50);
+    msleep(____);            <span class="c">// your ~6-inch time from Phase 3</span>
+}
+
+void back_until_pressed() {
+    while (digital(0) == 0) {
+        motor(0, -50);
+        motor(1, -50);
+        msleep(10);
+    }
+    ao();
+    y_position = 0;          <span class="c">// home — reset origin</span>
+}</div>
+
+    <h3 class="sub">Version A — Coast (<code>ao()</code>)</h3>
+    <p>Run five trials. After each, measure the distance the robot traveled forward, and note whether it stayed straight or drifted (and which way).</p>
+    <table class="grid">
+      <caption class="a">Version A · Coast</caption>
+      <thead><tr><th style="width:14%">Trial</th><th style="width:43%">Distance traveled (inches)</th><th>Straight, or drifted? (which way?)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="a_t1_dist" /></td><td><input type="text" data-key="a_t1_drift" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="a_t2_dist" /></td><td><input type="text" data-key="a_t2_drift" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><input type="text" data-key="a_t3_dist" /></td><td><input type="text" data-key="a_t3_drift" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><input type="text" data-key="a_t4_dist" /></td><td><input type="text" data-key="a_t4_drift" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><input type="text" data-key="a_t5_dist" /></td><td><input type="text" data-key="a_t5_drift" /></td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Version B — Brake (<code>motor(0,0); motor(1,0); msleep(50);</code>)</h3>
+    <p>Change only the stop. Run five more trials and record the same way.</p>
+    <table class="grid">
+      <caption class="b">Version B · Brake</caption>
+      <thead><tr><th style="width:14%">Trial</th><th style="width:43%">Distance traveled (inches)</th><th>Straight, or drifted? (which way?)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><input type="text" data-key="b_t1_dist" /></td><td><input type="text" data-key="b_t1_drift" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><input type="text" data-key="b_t2_dist" /></td><td><input type="text" data-key="b_t2_drift" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><input type="text" data-key="b_t3_dist" /></td><td><input type="text" data-key="b_t3_drift" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><input type="text" data-key="b_t4_dist" /></td><td><input type="text" data-key="b_t4_drift" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><input type="text" data-key="b_t5_dist" /></td><td><input type="text" data-key="b_t5_drift" /></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== Phase 5 — Analyze ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Analyze Your Data</h2>
+    <p>Now look at your two sets of five. Don't guess — read what your numbers actually say.</p>
+    <table class="grid">
+      <thead><tr><th style="width:40%">Question</th><th style="width:30%">Version A (Coast)</th><th>Version B (Brake)</th></tr></thead>
+      <tbody>
+        <tr><td><div class="label">Shortest distance</div></td><td><input type="text" data-key="an_a_min" /></td><td><input type="text" data-key="an_b_min" /></td></tr>
+        <tr><td><div class="label">Longest distance</div></td><td><input type="text" data-key="an_a_max" /></td><td><input type="text" data-key="an_b_max" /></td></tr>
+        <tr><td><div class="label">Spread (longest − shortest)</div></td><td><input type="text" data-key="an_a_spread" /></td><td><input type="text" data-key="an_b_spread" /></td></tr>
+        <tr><td><div class="label">How many trials drifted?</div></td><td><input type="text" data-key="an_a_drifts" /></td><td><input type="text" data-key="an_b_drifts" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q"><strong>Based on your data:</strong> which version looks more consistent in distance? A smaller spread means more consistent.</p>
+    <textarea class="answer" data-key="p5_more_consistent_distance" aria-label="More consistent in distance"></textarea>
+    <p class="q"><strong>Based on your data:</strong> which version stayed straighter? What did the drift notes show?</p>
+    <textarea class="answer" data-key="p5_straighter" aria-label="Which stayed straighter"></textarea>
+    <p class="q">Did your data match your Phase 3 prediction? If it surprised you, what surprised you?</p>
+    <textarea class="answer" data-key="p5_vs_prediction" aria-label="Versus prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">Reliability Comes From Evidence</p>
+      <p>Intelligent systems aren't trusted because someone hopes they work — they're trusted because they've been tested and the data shows they're consistent.</p>
+    </div>
+    <p>Today you didn't take anyone's word for which stop was better — you ran it ten times and let the numbers decide. That's exactly how real autonomous systems are built. A self-driving car's braking isn't shipped because it "seemed fine"; it's tested thousands of times and measured for consistency. When a system has to do the same thing reliably, engineers gather data on how much it varies — just like you did.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">A robot drives "about 6 inches" but sometimes 5 and sometimes 7. Across a long mission with many moves, why does a small inconsistency on each move become a big problem by the end?</p>
+    <textarea class="answer" data-key="p6_accumulating_error" aria-label="Accumulating error"></textarea>
+    <p class="q">You proved which stop was better with data instead of opinion. Why is "the data shows it" more trustworthy than "it felt better" when building something that has to work every time?</p>
+    <textarea class="answer" data-key="p6_data_vs_opinion" aria-label="Data versus opinion"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Explain the difference between <code>motor(0,0)</code> and <code>ao()</code> in your own words. Which one brakes, and which one coasts?</p>
+    <textarea class="answer" data-key="p7_q1_brake_vs_coast" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Why does coasting tend to make the robot drift off a straight line?</p>
+    <textarea class="answer" data-key="p7_q2_drift" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> What is the <code>msleep(50)</code> after the brake for? What is it NOT for?</p>
+    <textarea class="answer" data-key="p7_q3_settle" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "A reliable robot is built on data, not hope. This means that before I trust a behavior in a real match, I should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Does Settle Time Matter?</h3>
+    <ul>
+      <li>Try the brake version with <code>msleep(50)</code>, then again with no pause, then with <code>msleep(200)</code>.</li>
+      <li>Does more settle time change the consistency? What's the smallest pause that still holds well?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Faster Speed, Bigger Difference?</h3>
+    <ul>
+      <li>Run both versions again at a higher motor power. Does coasting get even less consistent when the robot is moving faster? Why would that be?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Stack Five Moves</h3>
+    <ul>
+      <li>Make the robot do five forward-and-brake moves in a row in one run. Does the braking version land where you'd predict after all five? Compare to coasting.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Build a "stop_and_hold" Function</h3>
+    <ul>
+      <li>Wrap the brake-and-settle lines into their own function (prototype above, definition below) so you can reuse one clean call every time you stop.</li>
+      <li>What did you name it? Where would you use it across the whole game?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Check It Against Reality</h3>
+    <ul>
+      <li>Look up one real, credible source (a robotics or automotive article/spec sheet — not a forum post) about why sudden braking causes more positional error than gradual braking. Note where you found it.</li>
+      <li>Log your 5 trial results in a spreadsheet instead of just this table. Does a spreadsheet make the pattern easier to spot than the table did?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 2 Big Idea 2 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit2_bigidea2";
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 2 · Big Idea 2 — Brake vs. Coast",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

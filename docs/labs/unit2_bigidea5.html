@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 2 · Big Idea 5 — Tuning the Follow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 2 · Big Idea 5</p>
+    <h1>Tuning the Follow</h1>
+    <p class="sub">Student Lab · Speed, Precision, and the mav Command</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine make increasingly intelligent decisions?</dd></div>
+      <div class="row"><dt>Focus</dt><dd>Precision control, speed ratios, and tuning with data</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems are tuned and optimized using evidence, not guesses.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>The mav command · Velocity vs. Power · Ratios · Experimental Tuning</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Optimizing your line-follow from Unit 2</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · calibrated Tophat (analog 0) · taped line · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Your robot already follows a line — but does it follow it <em>well</em>? Does it wobble wildly, or glide smoothly? Today you'll find out, by treating your line-follow like an engineer treats an engine: you'll change the speeds in a careful, organized way and measure what happens. Along the way you'll trade in your old <code>motor()</code> command for a more precise one — <code>mav()</code> — that gives you far finer control over speed.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>There's no single "right" speed. The best line-follow is found by testing — changing one thing at a time and letting the robot's behavior tell you what works.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Use <code>mav()</code> to drive motors by velocity (ticks per second) instead of percent power.</li>
+      <li>Explain why <code>mav()</code> gives much finer speed control than <code>motor()</code>.</li>
+      <li>Run an organized experiment changing total speed and the gap between wheel speeds.</li>
+      <li>Use your results to tune your line-follow to its best performance.</li>
+    </ul>
+
+    <!-- ===== NEW CS CONCEPT BOXES ===== -->
+    <h3 class="sub">New This Time: The mav Command</h3>
+    <div class="concept">
+      <div class="chead">mav — move at velocity</div>
+      <div class="cbody">
+        <p>You've used <code>motor(port, power)</code>, where power is a percent from −100 to 100. Now meet its precise cousin:</p>
+        <div class="code small">mav(0, 750);   <span class="c">// move motor 0 at 750 ticks per second</span></div>
+        <p><code>mav</code> stands for <strong>move at velocity</strong>. Instead of a percent, you give it a speed in <em>ticks per second</em> — the same ticks your encoder counts. Its range is −1500 to 1500.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Why mav is 15× more precise</div>
+      <div class="cbody">
+        <p>Look at the two ranges side by side:</p>
+        <div class="code small">motor:  -100  ...  100     <span class="c">// 100 steps each direction</span>
+mav:   -1500  ... 1500     <span class="c">// 1500 steps each direction</span></div>
+        <p>That's <strong>15 times</strong> as many speed values to choose from. With <code>motor</code>, the smallest change you can make is 1 percent. With <code>mav</code>, you can fine-tune speed in much smaller steps — which matters a lot when you're trying to stop a line-follow from wobbling.</p>
+        <p class="muted">To convert your old <code>motor</code> numbers to <code>mav</code>, multiply by 15: <code>motor</code> 50 becomes <code>mav</code> 750; <code>motor</code> 100 becomes <code>mav</code> 1500 (the top speed).</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Swapping motor for mav in line_follow</div>
+      <div class="cbody">
+        <p>Your steering logic doesn't change at all — only the command and the numbers do:</p>
+        <div class="code small">if (analog(0) &gt; MIDPOINT) {   <span class="c">// on black, steer right</span>
+    mav(0, <span class="hl">750</span>);            <span class="c">// was motor(0, 50)</span>
+    mav(1, <span class="hl">300</span>);            <span class="c">// was motor(1, 20)</span>
+} else {                       <span class="c">// on white, steer left</span>
+    mav(0, <span class="hl">300</span>);
+    mav(1, <span class="hl">750</span>);
+}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Activate: Coarse vs. Fine Control</h2>
+    <p>Imagine a faucet with only 3 settings: off, trickle, blast. Now imagine one with a smooth dial you can turn to any flow you want. Which one lets you fill a cup to exactly the right level without overflowing? The dial — because it gives you <em>finer control</em>. <code>motor</code> is the 3-setting faucet compared to <code>mav</code>'s smooth dial.</p>
+    <div class="callout navy">
+      <p class="ctitle">Think it through</p>
+      <p>When your line-follow wobbles, you want to make a <em>small</em> speed change to calm it down. Why is that easier with 1500 possible speeds than with 100?</p>
+    </div>
+    <p class="q">Why does having more possible speed values (finer control) help you tune a robot that's wobbling? Use the faucet idea if it helps.</p>
+    <textarea class="answer" data-key="p1_fine_control" aria-label="Fine control reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Total Speed and the Gap</h2>
+    <p>Your line-follow has two numbers that matter: the <strong>fast wheel</strong> speed and the <strong>slow wheel</strong> speed. Two different things change how the robot behaves:</p>
+    <ul>
+      <li><strong>Total speed</strong> — how fast both wheels go overall. Faster covers ground quicker, but gives the robot less time to react, so it can overshoot and jitter.</li>
+      <li><strong>The gap</strong> — the difference between fast and slow. A bigger gap turns harder each correction; a smaller gap turns gently.</li>
+    </ul>
+    <div class="callout gold">
+      <p class="ctitle">The experiment plan</p>
+      <p>You'll run two organized series. In <strong>Series 1</strong>, the gap stays at 30 (×15 = 450 in mav terms) while total speed climbs. In <strong>Series 2</strong>, the gap widens to 40 (×15 = 600) and total speed climbs again. By changing one thing at a time, you'll see what each does.</p>
+    </div>
+    <p class="q">Predict: as total speed goes up, do you think the robot will follow the line <em>better</em> or <em>worse</em>? Why?</p>
+    <textarea class="answer" data-key="p2_predict_speed" aria-label="Speed prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Series 1: Hold the Gap, Raise the Speed</h2>
+    <p>Start from your Unit 2 speeds and raise both wheels by 10 (×15 = 150 in mav) each trial, keeping the gap at 30 (×15 = 450). After each run, rate how well the robot followed the line: <strong>poor / ok / great</strong>. Also note if it jittered.</p>
+
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Same line, same start</p>
+      <p>Run every trial on the same line from the same starting spot, so the only thing changing is the speed. That's what makes it a fair test.</p>
+    </div>
+
+    <table class="grid">
+      <caption>Series 1 — Gap of 30 (mav gap 450)</caption>
+      <thead><tr><th style="width:12%">Trial</th><th style="width:30%">Fast / Slow (mav)</th><th style="width:28%">Rating (poor/ok/great)</th><th>Jitter? notes</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><div class="seedmono">750 / 300</div></td><td><input type="text" data-key="s1_t1_rating" /></td><td><input type="text" data-key="s1_t1_notes" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><div class="seedmono">900 / 450</div></td><td><input type="text" data-key="s1_t2_rating" /></td><td><input type="text" data-key="s1_t2_notes" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><div class="seedmono">1050 / 600</div></td><td><input type="text" data-key="s1_t3_rating" /></td><td><input type="text" data-key="s1_t3_notes" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><div class="seedmono">1200 / 750</div></td><td><input type="text" data-key="s1_t4_rating" /></td><td><input type="text" data-key="s1_t4_notes" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><div class="seedmono">1350 / 900</div></td><td><input type="text" data-key="s1_t5_rating" /></td><td><input type="text" data-key="s1_t5_notes" /></td></tr>
+        <tr><td><div class="seed">6</div></td><td><div class="seedmono">1500 / 1050</div></td><td><input type="text" data-key="s1_t6_rating" /></td><td><input type="text" data-key="s1_t6_notes" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">As total speed went up (gap held at 450), what happened to how well the robot followed? At what speed did it start to struggle?</p>
+    <textarea class="answer" data-key="p3_series1_finding" aria-label="Series 1 finding"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Series 2: Widen the Gap</h2>
+    <p>Now widen the gap to 40 (×15 = 600) — the slow wheel drops, so each correction turns harder. Climb the total speed again and rate each trial the same way.</p>
+    <table class="grid">
+      <caption>Series 2 — Gap of 40 (mav gap 600)</caption>
+      <thead><tr><th style="width:12%">Trial</th><th style="width:30%">Fast / Slow (mav)</th><th style="width:28%">Rating (poor/ok/great)</th><th>Jitter? notes</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">1</div></td><td><div class="seedmono">750 / 150</div></td><td><input type="text" data-key="s2_t1_rating" /></td><td><input type="text" data-key="s2_t1_notes" /></td></tr>
+        <tr><td><div class="seed">2</div></td><td><div class="seedmono">900 / 300</div></td><td><input type="text" data-key="s2_t2_rating" /></td><td><input type="text" data-key="s2_t2_notes" /></td></tr>
+        <tr><td><div class="seed">3</div></td><td><div class="seedmono">1050 / 450</div></td><td><input type="text" data-key="s2_t3_rating" /></td><td><input type="text" data-key="s2_t3_notes" /></td></tr>
+        <tr><td><div class="seed">4</div></td><td><div class="seedmono">1200 / 600</div></td><td><input type="text" data-key="s2_t4_rating" /></td><td><input type="text" data-key="s2_t4_notes" /></td></tr>
+        <tr><td><div class="seed">5</div></td><td><div class="seedmono">1350 / 750</div></td><td><input type="text" data-key="s2_t5_rating" /></td><td><input type="text" data-key="s2_t5_notes" /></td></tr>
+        <tr><td><div class="seed">6</div></td><td><div class="seedmono">1500 / 900</div></td><td><input type="text" data-key="s2_t6_rating" /></td><td><input type="text" data-key="s2_t6_notes" /></td></tr>
+      </tbody>
+    </table>
+    <p class="q">Compare Series 2 to Series 1. Did the wider gap (harder turns) help the robot stay on the line, or make it wobble more? At what speed?</p>
+    <textarea class="answer" data-key="p4_series2_finding" aria-label="Series 2 finding"></textarea>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Find Your Best Setting</h2>
+    <p>Now you're the engineer. Using what your two series showed, pick your own fast and slow <code>mav</code> values and try to get the smoothest, most reliable follow you can. Test, adjust, test again. Your goal: the best line-follow on your robot.</p>
+    <table class="grid">
+      <thead><tr><th style="width:10%">Try</th><th style="width:30%">Your fast / slow (mav)</th><th>How well did it follow?</th></tr></thead>
+      <tbody id="tuneBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">What was your best fast/slow setting, and why do you think it worked best on your robot?</p>
+    <textarea class="answer tall" data-key="p5_best_setting" aria-label="Best setting"></textarea>
+    <p class="q">Your best numbers are probably different from a neighbor's. Why might the same settings work differently on two robots?</p>
+    <textarea class="answer" data-key="p5_why_different" aria-label="Why different robots differ"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Intelligent systems are tuned and optimized using evidence, not guesses.</p>
+    </div>
+    <p>You didn't find your best settings by guessing — you ran an organized experiment, changed one thing at a time, and let the data guide you. This is exactly how real intelligent systems get good. Engineers tuning a self-driving car, or researchers training an AI model, adjust settings (called <em>parameters</em>), measure the result, and adjust again — thousands of times. The "intelligence" of a system is often the result of careful tuning, not a single lucky setting.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">You changed only one thing at a time (first speed, then the gap). Why would changing both at once make it hard to know what actually helped?</p>
+    <textarea class="answer" data-key="p6_one_at_a_time" aria-label="One at a time"></textarea>
+    <p class="q">Engineers tuning a real system test settings over and over instead of picking one and hoping. Why is repeated, measured tuning more trustworthy than a single guess?</p>
+    <textarea class="answer" data-key="p6_repeated_tuning" aria-label="Repeated tuning"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What does <code>mav()</code> do, and how is it different from <code>motor()</code>? Why is it more precise?</p>
+    <textarea class="answer" data-key="p7_q1_mav" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> In your experiment, what was the effect of raising the <em>total speed</em> on how well the robot followed the line?</p>
+    <textarea class="answer" data-key="p7_q2_total_speed" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> What did changing the <em>gap</em> between the fast and slow wheel do to the robot's turning?</p>
+    <textarea class="answer" data-key="p7_q3_gap" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: "Intelligent systems are tuned using evidence, not guesses. This means that to make a robot perform its best, I should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Find the Breaking Point</h3>
+    <ul>
+      <li>Push the total speed as high as it will go and still follow the line. What's the fastest your robot can reliably go before it loses the line?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Tiny Gaps</h3>
+    <ul>
+      <li>Try a very small gap (like 750 / 700). What does an almost-no-turn correction do? Now a huge gap (1500 / 0). Describe both.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Make the Speeds Variables</h3>
+    <ul>
+      <li>Put your best fast and slow speeds in two <code>int</code> variables at the top (like <code>FAST</code> and <code>SLOW</code>). Now you can re-tune by changing two numbers in one place. Why is that better?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Looking Ahead: Knowing When to Stop</h3>
+    <ul>
+      <li>Your follow is smooth now — but it runs for a fixed number of ticks. What if the robot needs to stop when it reaches an object instead? What kind of sensor would tell it something is ahead? (Next lab.)</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 2 Big Idea 5 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit2_bigidea5";
+
+  (function buildRows() {
+    const tune = document.getElementById("tuneBody");
+    for (let i = 1; i <= 5; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="tune' + i + '_speeds" aria-label="Tune ' + i + ' speeds"></td>' +
+        '<td><input type="text" data-key="tune' + i + '_result" aria-label="Tune ' + i + ' result"></td>';
+      tune.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 2 · Big Idea 5 — Tuning the Follow",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

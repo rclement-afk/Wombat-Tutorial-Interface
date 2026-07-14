@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 3 · Big Idea 3 — Build Your Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 110px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .steps { list-style: none; padding: 0; margin: 8px 0; counter-reset: s; }
+  .steps li { display: flex; align-items: center; gap: 10px; margin: 7px 0; }
+  .steps li::before { counter-increment: s; content: counter(s) "."; font-weight: 700; color: var(--navy); min-width: 22px; font-size: 16px; }
+  .steps input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .steps input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .group-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; color: var(--navy); font-size: 17px; margin: 14px 0 2px; }
+
+  .checklist { list-style: none; padding: 0; margin: 10px 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; margin: 8px 0; padding: 9px 12px; background: #eef0f5; border-radius: 8px; }
+  .checklist li::before { content: "\2610"; color: var(--navy); font-size: 19px; line-height: 1; }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid code { font-size: 14px; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .checklist li { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .filetab { background: #ddd !important; color: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 3 · Big Idea 3</p>
+    <h1>Build Your Library</h1>
+    <p class="sub">Student Lab · Write Once, Use Everywhere</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine act on the world, not just move through it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Reusable Code Is Organized Into Libraries</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Complex intelligent systems are built from organized, reusable building blocks.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Libraries · Header Files · #include · Code Organization · Documentation</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Packaging every tool you've built for use in any mission</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Computer with the KIPR IDE · your programs from earlier labs · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>You've built a lot of useful functions — <code>move_arm</code>, <code>move_claw</code>, <code>back_until_pressed</code>, <code>Tick_Drive</code>, <code>line_follow</code> — but every time you start a new program, you've had to type them all again. That ends today. You'll gather all your best functions into one <strong>library</strong>: a single file you write once and pull into <em>any</em> program with one line. Real programmers don't rewrite their tools; they build a toolbox and carry it everywhere.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A library lets you write a function once and reuse it in every program forever. Your <code>main</code> stays short and readable, and all your tools live in one organized place.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Switch the KIPR IDE to Advanced mode to see source and header files.</li>
+      <li>Create a header-file library named after yourself and add it to your project.</li>
+      <li>Move your reusable functions into the library, organized and documented.</li>
+      <li>Include your library with <code>#include</code> and call its functions from <code>main</code>.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: Advanced mode ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Turn On Advanced Mode</h2>
+    <p>The IDE normally hides its more powerful features to keep things simple. To work with libraries, you need <strong>Advanced</strong> mode. This is a setting on the <em>user</em> — so it must be turned on for any user you want to have advanced features.</p>
+    <ol class="steps" style="counter-reset:s;">
+      <li style="display:list-item; list-style:none;"><strong>1.</strong>&nbsp; Click the <strong>menu button</strong> in the <strong>upper-left</strong> corner.</li>
+      <li style="display:list-item; list-style:none;"><strong>2.</strong>&nbsp; Open <strong>User Preferences</strong>.</li>
+      <li style="display:list-item; list-style:none;"><strong>3.</strong>&nbsp; Change the interface setting to <strong>Advanced</strong>.</li>
+      <li style="display:list-item; list-style:none;"><strong>4.</strong>&nbsp; Go <strong>back to the project menu</strong>.</li>
+    </ol>
+    <div class="callout navy">
+      <p class="ctitle">What changed?</p>
+      <p>Back in your project, look at the <strong>right side of the screen</strong>. You'll see <strong>new areas</strong> that weren't there before — including places for your project's source files and header files. That's where your library will live.</p>
+    </div>
+    <p class="q">After switching to Advanced and returning to your project, what new areas appeared on the right side of the screen that you didn't see before?</p>
+    <textarea class="answer" data-key="p1_new_areas" aria-label="New areas observed"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: Concept library ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: What a Library Is</h2>
+    <div class="concept">
+      <div class="chead">A library is a file full of reusable functions</div>
+      <div class="cbody">
+        <p>Every program you've written already uses a library: the very first line, <code>#include &lt;kipr/wombat.h&gt;</code>, pulls in KIPR's library — that's where <code>motor</code>, <code>analog</code>, <code>set_servo_position</code>, and all the rest come from. You never wrote those; you <em>included</em> them.</p>
+        <p>Today you build your <strong>own</strong> library the same way: a file holding your functions, that you pull into any program with one <code>#include</code> line.</p>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">A header file holds the code; #include pastes it in</div>
+      <div class="cbody">
+        <p>Your library will be a <strong>header file</strong> — its name ends in <code>.h</code>. When you write:</p>
+        <div class="code small">#include &lt;<span class="hl">yourname</span>.h&gt;   <span class="c">// pulls your whole library into this program</span></div>
+        <p>...the IDE drops everything from your header right into your program before it builds. Your functions become available, just like KIPR's. Because your library lives in the same project folder, the IDE knows where to find it.</p>
+      </div>
+    </div>
+    <p class="q">You've been using <code>#include &lt;kipr/wombat.h&gt;</code> all along. Now that you know what it does, explain in your own words what an <code>#include</code> line actually does.</p>
+    <textarea class="answer" data-key="p2_include_meaning" aria-label="What include does"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: Create the library file ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Create Your Library File</h2>
+    <p>In the new file area on the right, create a new <strong>header file</strong>. Name it after yourself, using your <strong>first name</strong> followed by <code>.h</code> — for example, <code>maria.h</code> or <code>devon.h</code>. This is <em>your</em> library.</p>
+    <table class="grid">
+      <thead><tr><th style="width:55%">Your library file name</th><th>Write it here</th></tr></thead>
+      <tbody>
+        <tr><td><div class="seed">your first name + .h</div></td><td><input type="text" data-key="p3_filename" aria-label="Library filename" placeholder="e.g. maria.h" /></td></tr>
+      </tbody>
+    </table>
+    <div class="callout gold">
+      <p class="ctitle">It's portable</p>
+      <p>Once your library exists, you can take it anywhere. Select it and use the <strong>File menu</strong> to <strong>download</strong> it, then drop it into any other project. Write your tools once, carry them forever.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 4: Fill the library ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Move Your Functions Into the Library</h2>
+    <p>Now fill your header with every reusable function you've built. Organize it in three clear sections, in this order: <strong>variables at the top</strong>, then <strong>function prototypes</strong>, then <strong>function definitions</strong>. This is the same structure you've used all along — now it lives in your library.</p>
+
+    <span class="filetab">yourname.h</span>
+    <div class="code">// ============================================================
+//  yourname.h  —  My Botball function library
+//  Every reusable tool I've built, in one place.
+// ============================================================
+
+// ---- VARIABLES (my robot's tuned values) ----
+// These live here so the whole library can use them. You can also
+// move them into main() if you'd rather set them per program.
+int ARM_MIN   = <span class="hl">____</span>;
+int ARM_MAX   = <span class="hl">____</span>;
+int CLAW_OPEN = <span class="hl">____</span>;
+int CLAW_SHUT = <span class="hl">____</span>;
+int MIDPOINT  = <span class="hl">____</span>;
+int FAST = <span class="hl">____</span>;
+int SLOW = <span class="hl">____</span>;
+
+// ---- FUNCTION PROTOTYPES (the promises) ----
+void move_arm(int position);
+void move_claw(int position);
+void back_until_pressed();
+void Tick_Drive(int ticks);
+void line_follow(int ticks);
+
+// ---- FUNCTION DEFINITIONS (the recipes) ----
+
+// move_arm: Smoothly moves the arm servo (port 0) to a position.
+//   - Clamps the value into the safe range so the servo can't be
+//     forced past a hard stop and burned out.
+//   - Steps one position at a time for smooth motion.
+//   Pass in the arm position you want (e.g. ARM_MAX to raise).
+void move_arm(int position) {
+    if (position &gt; ARM_MAX) position = ARM_MAX;
+    if (position &lt; ARM_MIN) position = ARM_MIN;
+    while (get_servo_position(0) != position) {
+        if (get_servo_position(0) &lt; position) set_servo_position(0, get_servo_position(0) + 1);
+        else                                   set_servo_position(0, get_servo_position(0) - 1);
+        msleep(1);
+    }
+}
+
+// move_claw: Smoothly moves the claw servo (port 1) to a position.
+//   Works just like move_arm, but for the claw. Clamps between
+//   CLAW_SHUT and CLAW_OPEN so the claw never strains.
+//   Pass in CLAW_OPEN to open, CLAW_SHUT to close on a cube.
+void move_claw(int position) {
+    if (position &gt; CLAW_OPEN) position = CLAW_OPEN;
+    if (position &lt; CLAW_SHUT) position = CLAW_SHUT;
+    while (get_servo_position(1) != position) {
+        if (get_servo_position(1) &lt; position) set_servo_position(1, get_servo_position(1) + 1);
+        else                                   set_servo_position(1, get_servo_position(1) - 1);
+        msleep(1);
+    }
+}
+
+// back_until_pressed: Drives the robot straight backward until the
+//   touch sensor on digital(0) is pressed against a wall, then stops.
+//   Use it to return to a wall and reset to a known position.
+void back_until_pressed() {
+    while (digital(0) == 0) {
+        motor(0, -50);
+        motor(1, -50);
+        msleep(10);
+    }
+    motor(0, 0); motor(1, 0); msleep(50);
+}
+
+// Tick_Drive: Drives the robot straight forward a measured distance.
+//   Pass in the number of encoder ticks to travel. Clears the
+//   counter, drives until it reaches 'ticks', then brakes.
+void Tick_Drive(int ticks) {
+    cmpc(0);
+    while (gmpc(0) &lt; ticks) {
+        motor(0, 50);
+        motor(1, 50);
+    }
+    motor(0, 0); motor(1, 0); msleep(50);
+}
+
+// line_follow: Follows a line for a measured distance using the
+//   Tophat sensor on analog(0). Steers with mav based on whether
+//   the reading is above MIDPOINT (black) or below (white).
+//   Pass in the number of ticks to follow before stopping.
+void line_follow(int ticks) {
+    cmpc(0);
+    while (gmpc(0) &lt; ticks) {
+        if (analog(0) &gt; MIDPOINT) { mav(0, FAST); mav(1, SLOW); }
+        else                      { mav(0, SLOW); mav(1, FAST); }
+    }
+    motor(0, 0); motor(1, 0); msleep(50);
+}</div>
+
+    <div class="callout navy">
+      <p class="ctitle">Comment like a teacher</p>
+      <p>Notice every function has a comment explaining what it does, written for someone who has <em>never seen it before</em>. That's your job here: above each function, write a clear note saying what it does, what you pass in, and what happens. One day that "someone" will be you, six months from now — and you'll be glad you wrote it.</p>
+    </div>
+    <p class="q">Pick one of your functions. Write the comment you'd put above it to explain it to a brand-new user who has never seen your code.</p>
+    <textarea class="answer tall" data-key="p4_your_comment" aria-label="Your function comment"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: Use it from main ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Include It and Call Every Function</h2>
+    <p>Now the payoff. In your main program, add your library with an <code>#include</code> line at the top — right under the KIPR one. Then your <code>main</code> can call any function in your library. Test <strong>every</strong> function once to prove the library works.</p>
+
+    <span class="filetab">main.c</span>
+    <div class="code">#include &lt;kipr/wombat.h&gt;   <span class="c">// KIPR's library</span>
+#include &lt;<span class="hl">yourname</span>.h&gt;     <span class="c">// YOUR library — all your tools, in one line</span>
+
+int main() {
+    enable_servo(0);
+    enable_servo(1);
+
+    <span class="c">// Call each library function once to test it:</span>
+    Tick_Drive(2000);        <span class="c">// drive forward a measured distance</span>
+    back_until_pressed();    <span class="c">// back into the wall</span>
+    line_follow(1500);       <span class="c">// follow the line a while</span>
+    move_claw(CLAW_OPEN);    <span class="c">// open the claw</span>
+    move_arm(ARM_MIN);       <span class="c">// lower the arm</span>
+    move_claw(CLAW_SHUT);    <span class="c">// close on a cube</span>
+    move_arm(ARM_MAX);       <span class="c">// raise it up</span>
+
+    return 0;
+}</div>
+    <p class="muted">See how short and readable <code>main</code> is now? Every line says <em>what</em> happens, and the <em>how</em> lives in your library. That's the power of organizing your code.</p>
+
+    <h3 class="sub">Test Each Function</h3>
+    <p>Run your program and check off each function as you confirm it works from the library.</p>
+    <ul class="checklist">
+      <li><code>Tick_Drive()</code> drove the measured distance</li>
+      <li><code>back_until_pressed()</code> backed into the wall and stopped</li>
+      <li><code>line_follow()</code> followed the line</li>
+      <li><code>move_arm()</code> moved the arm smoothly and safely</li>
+      <li><code>move_claw()</code> opened and closed the claw</li>
+    </ul>
+    <p class="q">Did every function work when called from your library? If one didn't, what was the problem and how did you fix it?</p>
+    <textarea class="answer" data-key="p5_all_worked" aria-label="All worked"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: Connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Complex intelligent systems are built from organized, reusable building blocks.</p>
+    </div>
+    <p>No one builds a giant intelligent system as one enormous program. They build small, tested, reusable pieces and organize them into libraries — then combine those pieces into something big. The code that runs a self-driving car, a phone, or an AI model is built on layers of libraries, most written by other people, each one a tool someone built once and shared. Today you took your own scattered tools and organized them into a library. That's exactly how real software is built: not by rewriting everything, but by standing on well-organized, reusable parts.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">Why is it better to keep your functions in one library than to copy-paste them into every new program? Think about what happens when you find a bug.</p>
+    <textarea class="answer" data-key="p6_one_library" aria-label="One library benefit"></textarea>
+    <p class="q">You wrote comments for a user who's never seen your code. Why is clear documentation so important when code is meant to be reused by others — or by your future self?</p>
+    <textarea class="answer" data-key="p6_documentation" aria-label="Documentation importance"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: Reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> What is a library, and what does the <code>#include</code> line do?</p>
+    <textarea class="answer" data-key="p7_q1_library" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What three sections did you organize your library into, and in what order?</p>
+    <textarea class="answer" data-key="p7_q2_sections" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> How does moving your functions into a library make your <code>main</code> program easier to read?</p>
+    <textarea class="answer" data-key="p7_q3_readable" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Complex intelligent systems are built from organized, reusable building blocks. This means that a good programmer spends time..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Add a Helper</h3>
+    <ul>
+      <li>Write one brand-new function (like <code>stop_and_hold()</code> or <code>open_then_lower()</code>) and add it to your library, fully commented. Call it from <code>main</code>.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Share It</h3>
+    <ul>
+      <li>Download your library through the File menu and trade with a partner. Can you read and use <em>their</em> functions from <em>their</em> comments alone? What made it easy or hard?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — A Combined Behavior</h3>
+    <ul>
+      <li>Write a function in your library that <em>calls other library functions</em> — for example, <code>grab_cube()</code> that opens, lowers, closes, and raises. Why is building big functions from small ones powerful?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Looking Ahead: Turns</h3>
+    <ul>
+      <li>Soon you'll need the robot to turn exactly 90° left and right. What would you name those functions, and where will they go once you've perfected them?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Whose Code Is It?</h3>
+    <ul>
+      <li>You just shared your library with a partner (Extension B). If you posted it online for any team to download, what could they do with it — use it as-is? Modify it and call it theirs? Sell it?</li>
+      <li>Write one sentence saying what you <em>would</em> and <em>wouldn't</em> allow, and give your library a one-line "license" note at the top of the file.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+
+    <h3 class="sub">Extension F — Ready for Strangers?</h3>
+    <ul>
+      <li>Extension B had one partner try your library. Now imagine every Botball team in your region wanted to use it. What would you need to add or change (documentation, defaults, error-checking) before a total stranger could use it without you there to explain anything?</li>
+      <li>Would your library work unmodified on a different KIPR controller model, or would some functions need adjusting? Sketch what "version 2" would need before a public release.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_f" aria-label="Extension F"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 3 Big Idea 3 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit3_bigidea3";
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 3 · Big Idea 3 — Build Your Library",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

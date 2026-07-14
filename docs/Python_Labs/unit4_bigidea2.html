@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 4 · Big Idea 2 — Squaring Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #ffe9e9; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--red); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--red); background: #fbeef0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--red); margin: 0 0 4px; }
+  .callout.navy .ctitle { color: var(--navy); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .truth { width: auto; border-collapse: collapse; margin: 10px 0; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+  .truth th, .truth td { border: 1px solid var(--line); padding: 6px 16px; text-align: center; }
+  .truth th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+  .truth td.t { color: var(--green, #2e7d32); font-weight: 600; }
+  .truth .yes { background: #eaf6ea; font-weight: 700; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--red) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .safety, .truth { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead, .truth th { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 4 · Big Idea 2</p>
+    <h1>Squaring Up</h1>
+    <p class="sub">Student Lab · Two Sensors, Two Wheels, One Straight Line</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine know where it is and where it is going?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A Robot Can Correct Its Own Heading</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Intelligent systems use feedback from multiple inputs to correct themselves.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Two Sensors at Once · Boolean Operators (and) · Independent Conditions</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Squaring up in the right starting box to set up the spilled cubes</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · two front IR sensors · right starting box with two tape lines · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>A robot that drives "mostly straight" slowly turns crooked — and a crooked robot misses everything it's aiming for. Today you'll fix that with a <strong>square-up</strong>: using <em>two</em> front sensors, the robot lines itself up perfectly straight against a tape line, fixing its own heading. This is your setup move for the spilled-cubes mission — squaring up in the right starting box so you can bulldoze straight and true.</p>
+    <div class="callout gold">
+      <p class="ctitle">Honest heads-up: this is a first cut</p>
+      <p>There are <strong>a lot</strong> of ways to square up, and many are smoother and smarter than this one. We're starting with the simplest version that works, so you can see the idea clearly. Once you understand it, you'll have plenty of ideas to make it better — and that's the point.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Mount and name two front IR sensors, one per side.</li>
+      <li>Let each wheel react to its <em>own</em> sensor independently.</li>
+      <li>Use the boolean <code>and</code> operator to check two conditions at once.</li>
+      <li>Square the robot up to a line, skip a gap, and square up on a second line.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: setup ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Set Up Two Front Sensors</h2>
+    <p>Until now you had one line sensor. Square-up needs <strong>two</strong> — one watching each front corner — so the robot can tell if one side reached the line before the other. Move your existing sensor to one side and add a second on the other.</p>
+    <div class="callout navy">
+      <p class="ctitle">Wiring and names</p>
+      <p>Mount one IR sensor at the front-left, one at the front-right. Plug them in so:</p>
+      <p><code>IR_LEFT</code> = <code>k.analog(0)</code> &nbsp;·&nbsp; <code>IR_RIGHT</code> = <code>k.analog(1)</code></p>
+      <p>You'll add these names to your library as variables, so your code reads <code>k.analog(IR_LEFT)</code> instead of a bare number — much easier to understand.</p>
+    </div>
+    <div class="code small"><span class="c"># add these to your library, with your other variables</span>
+IR_LEFT  = 0    <span class="c"># front-left IR sensor on analog port 0</span>
+IR_RIGHT = 1    <span class="c"># front-right IR sensor on analog port 1</span></div>
+    <div class="callout">
+      <p class="ctitle">The key pairing</p>
+      <p>Each sensor controls the wheel on <em>its own side</em>: <code>IR_LEFT</code> drives the <strong>left</strong> wheel <code>k.motor(0)</code>, and <code>IR_RIGHT</code> drives the <strong>right</strong> wheel <code>k.motor(1)</code>. If these get crossed, the robot will chase the line the wrong way — so double-check.</p>
+    </div>
+    <p class="q">Why does squaring up need two sensors instead of one? What can two sensors tell the robot that one cannot?</p>
+    <textarea class="answer" data-key="p1_two_sensors" aria-label="Why two sensors"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: the idea ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Each Wheel Watches Its Own Sensor</h2>
+    <div class="concept">
+      <div class="chead">The simple idea</div>
+      <div class="cbody">
+        <p>Picture the robot rolling toward a tape line at a slight angle. One front corner reaches the black line before the other. Here's the trick: <strong>each wheel only cares about the sensor on its own side.</strong></p>
+        <ul>
+          <li>If a side's sensor is still on <strong>white</strong> (below the midpoint), that wheel keeps <strong>driving forward</strong>.</li>
+          <li>The instant that sensor hits <strong>black</strong> (above the midpoint), that wheel <strong>freezes</strong>.</li>
+        </ul>
+        <p>So the side that's behind keeps creeping forward while the side that arrived waits — and the robot naturally straightens out until both sides are on the line. Then it's square.</p>
+      </div>
+    </div>
+    <div class="callout navy">
+      <p class="ctitle">Remember your color convention</p>
+      <p>Black reads <em>higher</em> than white. So "still on white" means <code>k.analog(...) &lt; MIDPOINT</code>, and "reached black" means the reading has climbed above <code>MIDPOINT</code>.</p>
+    </div>
+    <p class="q">If the robot approaches the line tilted with its left corner ahead, which wheel reaches black first and freezes? What does the other wheel keep doing until the robot is square?</p>
+    <textarea class="answer" data-key="p2_tilt" aria-label="Tilt reasoning"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: boolean && ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — New Tool: The and Operator</h2>
+    <div class="concept">
+      <div class="chead">and means "both must be true"</div>
+      <div class="cbody">
+        <p>The square-up is finished only when <strong>both</strong> sensors are on black at the same time. You need a way to check two conditions together — that's the <strong>logical AND</strong> operator, written <code>and</code> in Python.</p>
+        <div class="code small">k.analog(IR_LEFT) &gt; MIDPOINT and k.analog(IR_RIGHT) &gt; MIDPOINT
+<span class="c"># true ONLY when BOTH sensors are on black</span></div>
+        <p>It's true only if the thing on its left is true <em>and</em> the thing on its right is true. If either side is still on white, the whole thing is false.</p>
+        <table class="truth">
+          <thead><tr><th>Left on black?</th><th>Right on black?</th><th><code>and</code> result</th></tr></thead>
+          <tbody>
+            <tr><td>no</td><td>no</td><td>false</td></tr>
+            <tr><td>yes</td><td>no</td><td>false</td></tr>
+            <tr><td>no</td><td>yes</td><td>false</td></tr>
+            <tr class="yes"><td>yes</td><td>yes</td><td>true</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="concept">
+      <div class="chead">Keep looping until both are on black</div>
+      <div class="cbody">
+        <p>You want the loop to <em>keep going</em> while it's NOT yet done. Python's <code>not</code> keyword flips true and false, so "keep going while we are not yet both-on-black" looks like:</p>
+        <div class="code small">while not (k.analog(IR_LEFT) &gt; MIDPOINT and k.analog(IR_RIGHT) &gt; MIDPOINT):
+    <span class="c"># ... keep squaring up ...</span></div>
+        <p>When both sensors finally read black, the inside becomes true, <code>not</code> flips it to false, and the loop stops.</p>
+      </div>
+    </div>
+    <p class="q">In your own words, what does <code>and</code> do? Why is it the right operator for "stop when BOTH sensors are on the line"?</p>
+    <textarea class="answer" data-key="p3_and_meaning" aria-label="AND meaning"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: build square_up ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Build: The square_up Function</h2>
+    <p>Put it together. The loop runs until both sensors are on black. Inside, each wheel has its <strong>own</strong> <code>if</code> statement, checking its own sensor and either driving or freezing. Use a slow speed so it has time to react.</p>
+    <div class="code">#!/usr/bin/python3
+<span class="c"># Unit 4 · Big Idea 2 — Squaring Up</span>
+<span class="c"># Name: _______________________   Date: ___________</span>
+
+import os, sys
+sys.path.append("/usr/lib")
+import _kipr as k
+<span class="hl">from yourname import *</span>     <span class="c"># has IR_LEFT, IR_RIGHT, MIDPOINT</span>
+
+def main():
+    square_up()    <span class="c"># straighten up against the line</span>
+
+def square_up():
+    <span class="c"># keep going until BOTH sensors are on black</span>
+    while not (k.analog(IR_LEFT) &gt; MIDPOINT and k.analog(IR_RIGHT) &gt; MIDPOINT):
+
+        <span class="c"># LEFT wheel watches the LEFT sensor</span>
+        if k.analog(IR_LEFT) &lt; MIDPOINT:   <span class="c"># still on white?</span>
+            k.motor(0, 30)                  <span class="c"># drive the left wheel forward</span>
+        else:                                <span class="c"># reached black</span>
+            k.motor(0, 0)                    <span class="c"># freeze the left wheel</span>
+
+        <span class="c"># RIGHT wheel watches the RIGHT sensor</span>
+        if k.analog(IR_RIGHT) &lt; MIDPOINT:  <span class="c"># still on white?</span>
+            k.motor(1, 30)                   <span class="c"># drive the right wheel forward</span>
+        else:                                <span class="c"># reached black</span>
+            k.motor(1, 0)                    <span class="c"># freeze the right wheel</span>
+
+        k.msleep(10)   <span class="c"># small pause so we don't overwork the controller</span>
+
+    k.motor(0, 0); k.motor(1, 0)   <span class="c"># both on black — full stop, squared up</span>
+
+main()</div>
+    <div class="safety no-print">
+      <p class="ctitle">⚠ Start slow, hands ready</p>
+      <p>Use a low speed (around 30) and keep a hand near the robot the first run. If a wheel drives the wrong way or never stops, check your sensor-to-wheel pairing and your MIDPOINT.</p>
+    </div>
+    <p class="q">Run it from a slight angle. Did the robot straighten out and stop square on the line? Describe what each wheel did.</p>
+    <textarea class="answer" data-key="p4_squareup_result" aria-label="Square up result"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: two-line sequence ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Apply: Square Up on Two Lines</h2>
+    <p>Now the full move for the spilled-cubes setup. Starting in the right starting box, the robot squares up on the <strong>first</strong> line, drives forward just enough to <strong>clear that tape</strong>, then squares up again to land on the <strong>second</strong> line — straight and true both times.</p>
+    <div class="callout gold">
+      <p class="ctitle">Use your model from last lab</p>
+      <p>To skip over the first tape, drive a few inches with the <code>Drive</code> function you built: <code>Drive(3.0)</code> moves about 3 inches past the line so your sensors clear it before the second square-up. Adjust the number if your tape spacing is different.</p>
+    </div>
+    <div class="code">def main():
+    square_up()      <span class="c"># straighten up on the FIRST line</span>
+    Drive(3.0)       <span class="c"># skip forward over the tape (about 3 inches)</span>
+    square_up()      <span class="c"># straighten up on the SECOND line</span></div>
+    <p class="muted">See how clean this reads? Three lines, three clear actions — because <code>square_up</code> and <code>Drive</code> already do the hard work. That's your library paying off.</p>
+    <h3 class="sub">Run Log</h3>
+    <table class="grid">
+      <thead><tr><th style="width:8%">Try</th><th style="width:46%">What happened (squared line 1? cleared tape? squared line 2?)</th><th>What you changed</th></tr></thead>
+      <tbody id="runBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">Did your <code>Drive(3.0)</code> clear the first tape cleanly? If the second square-up started while a sensor was still on the first line, what would go wrong — and how would you fix the skip distance?</p>
+    <textarea class="answer" data-key="p5_skip" aria-label="Skip distance"></textarea>
+  </section>
+
+  <!-- ===== Phase 6: connect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: The AI Literacy Bridge</h2>
+    <div class="callout">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Intelligent systems use feedback from multiple inputs to correct themselves.</p>
+    </div>
+    <p>Your robot didn't just drive blindly — it <em>watched two sensors and corrected its own heading</em> until it was straight. That's a feedback loop: sense, compare, adjust, repeat, until a goal is met. It's everywhere in intelligent systems. A plane's autopilot constantly nudges itself level using multiple sensors; a thermostat watches temperature and corrects; a robot vacuum squares itself to walls. None of them assume they're aligned — they measure and fix it. You just built the same idea from two sensors and two <code>if</code> statements.</p>
+    <p class="muted">Read each scenario. Think it through, then write your answer.</p>
+    <p class="q">How is your square-up a "feedback loop"? Name the sense → adjust → repeat steps your robot went through.</p>
+    <textarea class="answer" data-key="p6_feedback" aria-label="Feedback loop"></textarea>
+    <p class="q">We said this is just one simple way to square up. Now that you've built it, describe one way you think it could be done <em>better</em> or smoother.</p>
+    <textarea class="answer" data-key="p6_better" aria-label="Better way"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: reflection ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Explain how letting each wheel watch its own sensor makes the robot straighten out.</p>
+    <textarea class="answer" data-key="p7_q1_each_wheel" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What does the <code>and</code> operator do, and why did the loop need it to know when to stop?</p>
+    <textarea class="answer" data-key="p7_q2_and" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Why did you use <code>Drive(3.0)</code> between the two square-ups instead of just squaring up twice in a row?</p>
+    <textarea class="answer" data-key="p7_q3_skip" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Intelligent systems use feedback from multiple inputs to correct themselves. This means that to stay on course, a robot should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Add square_up to Your Library</h3>
+    <ul>
+      <li>Move <code>square_up</code> into your library, fully commented, so any mission can call it. Where does it belong among your other functions?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Tune the Speed</h3>
+    <ul>
+      <li>Try the square-up at speed 20, then 50. Does slower square up more accurately? Does faster overshoot the line? Find your best speed.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Bulldoze Setup</h3>
+    <ul>
+      <li>This square-up sets you up to bulldoze the spilled cubes. After squaring on the second line, what would your robot do next to push cubes? Sketch the plan in library calls.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — The Better Way</h3>
+    <ul>
+      <li>Take your idea from Phase 6 for a smoother square-up and try to build it. What changed? Was it actually better?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — A Basic Building Block of AI</h3>
+    <ul>
+      <li>Your square-up used a sense → compare → adjust loop. Many real AI systems (a self-driving car staying in its lane, a drone stabilizing itself) use this same repeating loop as a basic building block of their decision-making.</li>
+      <li>In your own words, describe how a sense-compare-adjust loop like yours could "drive" a bigger AI system — like a self-driving car deciding when to brake.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 4 Big Idea 2 — Student Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit4_bigidea2";
+
+  (function buildRows() {
+    const run = document.getElementById("runBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="run' + i + '_what" aria-label="Run ' + i + ' what"></td>' +
+        '<td><input type="text" data-key="run' + i + '_changed" aria-label="Run ' + i + ' changed"></td>';
+      run.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 4 · Big Idea 2 — Squaring Up",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>

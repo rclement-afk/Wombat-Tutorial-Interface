@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 4 · Big Idea 5 — The Long Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #9E1B32; --red-dark: #7d1526; --navy: #1F2D5A; --gold: #C8A14B;
+    --ink: #1c1c1e; --grey: #6b7280; --line: #d8dbe2; --bg: #f0f0f0;
+    --panel: #ffffff; --field: #fcfcfd; --field-focus: #fffdf5;
+    --code-bg: #1f2330; --code-ink: #e7e3d8; --code-green: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Barlow', system-ui, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  .topbar { position: sticky; top: 0; z-index: 50; background: var(--navy); color: #fff; border-bottom: 3px solid var(--gold); }
+  .topbar-inner { max-width: 920px; margin: 0 auto; padding: 10px 22px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .topbar .brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .04em; text-transform: uppercase; margin-right: auto; color: #fff; }
+  .topbar .brand span { color: var(--gold); }
+  .pin-field { display: flex; align-items: center; gap: 9px; }
+  .pin-field label { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: .05em; text-transform: uppercase; color: #d7dcea; }
+  .pin-field input { width: 120px; font-size: 18px; font-weight: 600; letter-spacing: .14em; text-align: center; padding: 8px 10px; border-radius: 8px; border: 2px solid transparent; background: #fff; color: var(--navy); font-family: 'Barlow', sans-serif; }
+  .pin-field input:focus { outline: none; border-color: var(--gold); }
+  .submit-btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--red); border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer; transition: background .15s ease, transform .05s ease; }
+  .submit-btn:hover { background: var(--red-dark); }
+  .submit-btn:active { transform: translateY(1px); }
+  .status { width: 100%; font-family: 'Barlow', sans-serif; font-size: 14.5px; padding: 2px 2px 0; min-height: 0; color: #d7dcea; }
+  .status.ok { color: #b9e6b0; } .status.warn { color: #ffd9a0; } .status.err { color: #ffb3b3; }
+
+  .sheet { max-width: 920px; margin: 22px auto 80px; padding: 0 22px; }
+
+  .hero { background: linear-gradient(135deg, var(--navy) 0%, #16204a 100%); color: #fff; border-radius: 14px; padding: 26px 30px; border-bottom: 5px solid var(--gold); }
+  .hero .eyebrow { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; color: #f4d9a0; margin: 0 0 4px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 38px; line-height: 1.04; margin: 0 0 6px; letter-spacing: .01em; }
+  .hero .sub { font-size: 18px; font-style: italic; color: #e9edf7; margin: 0; }
+
+  .meta { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .meta dl { margin: 0; }
+  .meta .row { display: grid; grid-template-columns: 215px 1fr; }
+  .meta .row:nth-child(odd) { background: #eef0f5; }
+  .meta dt { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; font-size: 15px; color: var(--navy); padding: 9px 16px; }
+  .meta dd { margin: 0; padding: 9px 16px; font-size: 16px; border-left: 1px solid var(--line); }
+
+  section { margin-top: 30px; }
+  .phase-head { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 25px; color: var(--navy); letter-spacing: .01em; padding-bottom: 6px; border-bottom: 2.5px solid var(--navy); margin: 0 0 4px; }
+  .phase-head .pnum { color: var(--red); font-weight: 700; }
+  h3.sub { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: var(--navy); margin: 18px 0 6px; }
+  p { margin: 8px 0; }
+  .muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+  ul, ol { margin: 8px 0; padding-left: 24px; } li { margin: 4px 0; } .obj li { margin: 5px 0; }
+  code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+  .callout { border: 1px solid var(--line); border-left: 6px solid var(--navy); background: #eef1f7; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .callout.red { border-left-color: var(--red); background: #fbeef0; }
+  .callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+  .callout .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: .02em; color: var(--navy); margin: 0 0 4px; }
+  .callout.red .ctitle { color: var(--red); } .callout.gold .ctitle { color: #8a6d22; }
+  .callout p { margin: 4px 0; }
+  .callout code { color: inherit; }
+
+  .reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+  .reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  .reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+  .concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+  .concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+  .concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+  .code { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 16px 18px; margin: 12px 0; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; }
+  .code.small { font-size: 13.5px; }
+  .code .c { color: var(--code-green); }
+  .code .hl { color: #f4c95d; }
+  .code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+  .answer { width: 100%; font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 1.5; color: var(--ink); background: var(--field); border: 1.5px solid var(--line); border-radius: 9px; padding: 10px 12px; resize: vertical; min-height: 76px; }
+  .answer:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+  .answer.tall { min-height: 120px; }
+  .q { font-weight: 600; margin: 16px 0 6px; } .q .n { color: var(--red); }
+
+  .grid { width: 100%; border-collapse: collapse; margin: 12px 0; border: 1px solid var(--line); }
+  .grid th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: .02em; padding: 8px 8px; text-align: left; vertical-align: bottom; }
+  .grid td { border: 1px solid var(--line); padding: 0; }
+  .grid td .label { padding: 8px 10px; font-size: 15px; background: #eef0f5; font-weight: 500; }
+  .grid input { width: 100%; border: none; background: transparent; font-family: 'Barlow', sans-serif; font-size: 15.5px; padding: 9px 10px; }
+  .grid input:focus { outline: none; background: var(--field-focus); box-shadow: inset 0 0 0 2px var(--gold); }
+  .grid .seed { padding: 9px 10px; font-size: 15px; color: var(--grey); }
+  .grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+  .grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+  .grid code { font-size: 14px; }
+  .grid caption { caption-side: top; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; padding: 4px 0 2px; color: var(--navy); }
+
+  .sketch { width: 100%; height: 340px; border: 2px dashed var(--navy); border-radius: 12px; background:
+      repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+      repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px), #fff;
+    position: relative; margin: 12px 0; }
+  .sketch .tag { position: absolute; left: 10px; top: 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 13px; color: var(--navy); background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); }
+  .sketch .startbox { position: absolute; right: 14px; bottom: 14px; width: 96px; height: 60px; border: 2px solid var(--red); border-radius: 6px; background: rgba(158,27,50,.07); display: flex; align-items: center; justify-content: center; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 12px; color: var(--red); }
+  .sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+  .namebar { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .namebar .nb { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; }
+  .namebar label { font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .namebar input { flex: 1; font-family: 'Barlow', sans-serif; font-size: 16px; padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--field); }
+  .namebar input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); box-shadow: 0 0 0 3px rgba(200,161,75,.18); }
+
+  .pin-reminder { background: #fff6e0; border: 1px solid var(--gold); border-radius: 10px; padding: 12px 16px; margin: 0 0 6px; font-size: 15.5px; }
+  .pin-reminder strong { color: var(--navy); }
+
+  .bottom-submit { margin-top: 36px; text-align: center; padding: 24px; background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: 12px; }
+  .bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+  .bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+  .credit { text-align: center; color: var(--grey); font-size: 13.5px; margin: 26px 0 0; letter-spacing: .02em; }
+
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 0; }
+    .meta, .callout, .concept, .grid, .bottom-submit, .sketch, .reset-box { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .code { background: #f2f2f2 !important; color: #1a1a1a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #ccc; }
+    .code .c { color: #3c7a3c !important; } .code .hl { color: #8a6d22 !important; }
+    .grid th, .concept .chead { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sketch, .reset-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .answer, .grid input, .namebar input, .pin-field input { border: none !important; border-bottom: 1px solid #999 !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; color: #000 !important; }
+    .answer { min-height: auto; }
+    .print-pin { display: block !important; }
+  }
+  .print-pin { display: none; }
+
+  @media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <div class="hero">
+    <p class="eyebrow">Unit 4 · Big Idea 5 · Capstone</p>
+    <h1>The Long Run</h1>
+    <p class="sub">Student Lab · Reliability Across a Whole Mission</p>
+  </div>
+
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Unit Guiding Question</dt><dd>How can a machine know where it is and where it is going?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>Systems Must Handle Uncertainty Across a Long Run</dd></div>
+      <div class="row"><dt>AI Literacy Thread</dt><dd>Reliable systems constantly re-check reality and reset their accumulated error.</dd></div>
+      <div class="row"><dt>CS1 Concepts</dt><dd>Integration · Error Correction · Robust Sequencing · State Reset</dd></div>
+      <div class="row"><dt>Game Context</dt><dd>Touch Botguy and return both cones to the starting box — one run</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>Explorer robot · full library · Botguy · two cones · the game field · this lab sheet</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Every lab so far taught you that the real world is imperfect — motors overshoot, turns drift, batteries fade, models are never exact. A short move can hide those errors. But a <strong>long run</strong> with many steps? The tiny errors pile up until the robot is completely lost. Today's capstone is the reliability answer: a long, multi-part mission where the robot <strong>constantly re-checks reality and wipes out its accumulated error</strong> along the way. You'll touch Botguy and return both cones to the starting box — and stay accurate the whole time by squaring up again and again.</p>
+    <div class="callout red">
+      <p class="ctitle">The Big Idea of This Unit</p>
+      <p>You cannot stop errors from happening. But you <em>can</em> keep resetting them. A reliable robot doesn't trust its own dead reckoning across a long run — it keeps re-referencing known features (walls, tape lines) to zero out drift before it grows dangerous.</p>
+    </div>
+    <h3 class="sub">By the end of this activity you will be able to:</h3>
+    <ul class="obj">
+      <li>Plan a long, multi-objective run that avoids obstacles.</li>
+      <li>Use square-ups as deliberate error-reset checkpoints.</li>
+      <li>Combine your whole library into one reliable competition run.</li>
+      <li>Explain how re-referencing known features keeps a long run accurate.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1: the mission ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — The Mission &amp; Its Rules</h2>
+    <div class="callout">
+      <p class="ctitle">The run</p>
+      <p><strong>Start</strong> in the <strong>right starting box</strong>. In one continuous run: <strong>touch Botguy</strong>, then <strong>move both cones back into the starting box</strong>, and finish.</p>
+    </div>
+    <h3 class="sub">The rules that make it hard</h3>
+    <ul>
+      <li><strong>Verify your start:</strong> begin with a <strong>backward touch</strong> (<code>back_until_pressed</code>) against the wall — this confirms you're really in the starting box and resets your origin before you move.</li>
+      <li><strong>Avoid the large cube:</strong> there's a large cube on the pallet right next to the starting box. Your path must <strong>not touch it</strong>. Plan around it.</li>
+      <li><strong>Stay accurate:</strong> your run must include <strong>at least 6 square-ups</strong>, placed as error-reset checkpoints throughout.</li>
+    </ul>
+    <p class="q">Say the mission back in your own words, including the three rules. Why does starting with a backward touch make the whole rest of the run more trustworthy?</p>
+    <textarea class="answer" data-key="p1_restate" aria-label="Restate mission"></textarea>
+  </section>
+
+  <!-- ===== Phase 2: the reset concept ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: The Square-Up Is an Error Reset</h2>
+    <div class="concept">
+      <div class="chead">Error accumulates — resets erase it</div>
+      <div class="cbody">
+        <p>Think back to the 8-turn drift test: one turn looked fine, but eight turns stacked a tiny error into a big one. The same thing happens across a long run — every drive and turn adds a little error, and it never goes away on its own. It just <strong>grows</strong>.</p>
+        <p>A square-up fixes this. When the robot squares up against a tape line, it forces itself into a <em>known, exact</em> position and heading — no matter how crooked it had drifted. All the accumulated error is <strong>wiped back to zero</strong>. The robot gets a fresh, trustworthy starting point for the next leg.</p>
+      </div>
+    </div>
+    <div class="reset-box">
+      <p class="rtitle">Error Reset Checkpoint</p>
+      <p style="margin:0;">Every time you call <code>square_up()</code> (or <code>back_until_pressed()</code>), think of it as a checkpoint that says: "I don't care how much I drifted — I now know <em>exactly</em> where I am again." That's why this run needs at least six of them.</p>
+    </div>
+    <p class="q">In your own words, why does error "accumulate" over a long run? How does a square-up reset it?</p>
+    <textarea class="answer" data-key="p2_reset" aria-label="Reset concept"></textarea>
+  </section>
+
+  <!-- ===== Phase 3: map the path ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Plan: Map the Path</h2>
+    <p>Draw your whole run. Mark the right starting box (drawn for you), Botguy, both cones, and the large cube you must avoid. Sketch the path: out to Botguy, over to the cones, and back to the box — routed clear of the large cube.</p>
+    <div class="sketch" aria-label="Field path sketch area">
+      <span class="tag">Sketch: Botguy, both cones, the large cube to avoid, and your path</span>
+      <div class="startbox">RIGHT<br>START BOX</div>
+    </div>
+    <p class="sketch-note no-print">Draw on the printed copy, or describe your planned path below.</p>
+    <textarea class="answer" data-key="p3_path" aria-label="Path description" placeholder="Where is Botguy? Where are the cones? Where is the large cube? What path avoids it?"></textarea>
+  </section>
+
+  <!-- ===== Phase 4: place the resets ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Plan: Place Your 6+ Error Resets</h2>
+    <p>Now walk your path and decide <em>where</em> each square-up goes. Good reset points are right before something precise (touching Botguy, grabbing a cone, entering the box) — so you're accurate exactly when it matters. List each leg of the run and mark where you reset.</p>
+    <table class="grid">
+      <caption>Plan each leg — mark your resets (need at least 6)</caption>
+      <thead><tr><th style="width:8%">#</th><th style="width:52%">Leg of the run (what the robot does)</th><th style="width:18%">Library call(s)</th><th>Reset here?</th></tr></thead>
+      <tbody id="planBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">How many square-ups did you plan, and where did you put them? Why did you choose those spots instead of others?</p>
+    <textarea class="answer" data-key="p4_reset_placement" aria-label="Reset placement"></textarea>
+  </section>
+
+  <!-- ===== Phase 5: build ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Build: The Run in main()</h2>
+    <p>Write your run in <code>main()</code>, translating your plan into library calls. Start with the backward touch, then follow your path — and put a <code>square_up()</code> at each reset checkpoint you planned. Scoring is optional here; you can <code>printf</code> milestones if you like, but the real goal is a <strong>reliable, accurate run</strong>.</p>
+    <div class="code">// Unit 4 · Big Idea 5 — The Long Run
+// Name: _______________________   Date: ___________
+
+#include &lt;kipr/wombat.h&gt;
+#include &lt;<span class="hl">yourname</span>.h&gt;     <span class="c">// your full library</span>
+
+int main() {
+    enable_servo(0);
+    enable_servo(1);
+
+    <span class="c">// ===== VERIFY START =====</span>
+    back_until_pressed();       <span class="c">// backward touch: confirm we're in the box, reset origin</span>
+    square_up();                <span class="c">// RESET #1 — known heading before we move</span>
+
+    <span class="c">// ===== LEG 1: to Botguy (avoid the large cube!) =====</span>
+    <span class="hl">// Drive(...) / Turn(...) around the large cube to Botguy</span>
+    square_up();                <span class="c">// RESET #2 — square up before the precise touch</span>
+    <span class="hl">// ...touch Botguy...</span>
+
+    <span class="c">// ===== LEG 2: to the first cone =====</span>
+    <span class="hl">// Drive(...) / Turn(...) to cone 1</span>
+    square_up();                <span class="c">// RESET #3</span>
+    <span class="hl">// ...collect / push cone 1...</span>
+
+    <span class="c">// ===== LEG 3: to the second cone =====</span>
+    <span class="hl">// Drive(...) / Turn(...) to cone 2</span>
+    square_up();                <span class="c">// RESET #4</span>
+    <span class="hl">// ...collect / push cone 2...</span>
+
+    <span class="c">// ===== LEG 4: back to the starting box =====</span>
+    <span class="hl">// Drive(...) / Turn(...) toward the box</span>
+    square_up();                <span class="c">// RESET #5</span>
+    <span class="hl">// ...bring the cones into the box...</span>
+    square_up();                <span class="c">// RESET #6 — final alignment in the box</span>
+
+    return 0;
+}</div>
+    <div class="callout gold">
+      <p class="ctitle">Requirement check</p>
+      <p>At least <strong>6</strong> square-ups, a <strong>backward touch</strong> to start, a path that <strong>avoids the large cube</strong>, and it must <strong>touch Botguy</strong> and <strong>return both cones</strong>. The skeleton shows six reset points — fill the driving/turning/collecting from your Phase 3–4 plan.</p>
+    </div>
+  </section>
+
+  <!-- ===== Phase 6: run & measure reliability ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Run It, Then Test Its Reliability</h2>
+    <p>Get it working one leg at a time. Then do the real reliability test: run the <em>whole</em> thing several times from the same start, and see how <strong>consistent</strong> it is. A reliable run succeeds the same way every time.</p>
+    <div class="callout">
+      <p class="ctitle">Reliability = repeatability</p>
+      <p>A run that works once might be luck. A run that works 4 times out of 4 is <em>reliable</em>. Your square-up resets are what turn a lucky run into a repeatable one.</p>
+    </div>
+    <table class="grid">
+      <caption>Run it 4+ times — how consistent is it?</caption>
+      <thead><tr><th style="width:10%">Run</th><th style="width:30%">Touched Botguy?</th><th style="width:30%">Both cones in the box?</th><th>Where it drifted / what you fixed</th></tr></thead>
+      <tbody id="runBody"><!-- rows injected --></tbody>
+    </table>
+    <p class="q">How many of your runs fully succeeded? If a run failed, was it because a square-up was missing where you needed one? Where would adding a reset help?</p>
+    <textarea class="answer" data-key="p6_reliability" aria-label="Reliability finding"></textarea>
+  </section>
+
+  <!-- ===== Phase 7: connect & reflect ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Connect &amp; Reflect</h2>
+    <div class="callout red">
+      <p class="ctitle">AI Literacy Thread</p>
+      <p>Reliable systems constantly re-check reality and reset their accumulated error.</p>
+    </div>
+    <p>Your robot succeeded across a long run not by being perfect, but by <em>never trusting its own drift for too long</em>. Every square-up pulled it back to a known truth. This is one of the deepest ideas in reliable autonomy. A spacecraft re-checks its position against the stars. A self-driving car re-locates itself against lane lines and landmarks constantly. A surveyor re-references known benchmarks. None of them assume their internal estimate is still correct — they keep measuring reality and correcting. You just built that same discipline into a robot: act, but keep re-checking the world and resetting your error before it grows.</p>
+    <p class="muted">Complete the reflection on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Why does error accumulate over a long run, and why can't you just "drive more carefully" to avoid it?</p>
+    <textarea class="answer" data-key="p7_q1_accumulate" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> How does a square-up reset accumulated error? Why did this run need at least six of them?</p>
+    <textarea class="answer" data-key="p7_q2_reset" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Why is a run that succeeds 4 out of 4 times better than one that scores higher but only works sometimes?</p>
+    <textarea class="answer" data-key="p7_q3_repeatable" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete in 2–3 sentences: "Reliable systems constantly re-check reality and reset their error. This means that over a long mission, a robot should..."</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Remove a Reset</h3>
+    <ul>
+      <li>Delete one of your square-ups and run it several times. Does the run get less reliable? Which reset mattered most?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Score It</h3>
+    <ul>
+      <li>Add score tracking with <code>printf</code> like the red-cube run. Touching Botguy and returning cones are worth real points — report your total.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Handle a Failure</h3>
+    <ul>
+      <li>What if the robot misses a cone? Sketch a recovery: how could it back up, re-square, and try again instead of continuing blindly?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Fewer, Smarter Resets</h3>
+    <ul>
+      <li>Could you succeed with only 4 well-placed resets instead of 6? Where would the <em>most valuable</em> resets be, and why?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+
+    <h3 class="sub">Extension E — Splitting the Work</h3>
+    <ul>
+      <li>If you'd built today's Long Run with a partner instead of solo, how would you split the work into roles — for example, one person tunes <code>Drive</code>/<code>Turn</code> constants while the other plans the reset sequence?</li>
+      <li>What collaborative tool (a shared doc, GitHub, a group chat) would help you combine your work without overwriting each other's changes?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_e" aria-label="Extension E"></textarea>
+
+    <h3 class="sub">Extension F — Build a Status Screen</h3>
+    <ul>
+      <li>The graphics library lets you open a real drawing window and put shapes and text on it. Try building a simple run-status screen:
+        <div class="code small">graphics_open(320, 240);
+graphics_clear();
+
+<span class="c">// progress bar frame + filled portion (vector graphics: rectangles)</span>
+graphics_rectangle(10, 10, 210, 30, 255, 255, 255);
+graphics_rectangle_fill(10, 10, 110, 30, 0, 200, 0);  <span class="c">// ~50% filled</span>
+
+<span class="c">// pass/fail indicator (vector graphics: circle)</span>
+graphics_circle_fill(260, 20, 12, 0, 200, 0);
+
+<span class="c">// a label (text)</span>
+graphics_print_string("RUN STATUS", 10, 50, 255, 255, 255, 1.0);
+
+graphics_update();   <span class="c">// nothing appears on screen until you call this</span></div>
+      </li>
+      <li>Use <code>graphics_line()</code> to plot 2-3 points of a sensor reading over time as connected line segments — a simple live trend graph.</li>
+      <li>Update your progress bar's filled width as your mission runs (recall <code>graphics_rectangle_fill</code> from above), instead of drawing it once at a fixed size. What would you need to know to calculate how "full" the bar should be at any moment?</li>
+      <li><code>graphics_blit_enc()</code> can display a real bitmap image — a small array of pixel color values — instead of shapes. What's the difference between drawing a rectangle with <code>graphics_rectangle_fill</code> (a formula the computer calculates) and displaying a bitmap with <code>graphics_blit_enc</code> (stored pixel-by-pixel data)?</li>
+      <li><code>get_key_state()</code> and <code>get_mouse_position()</code> read live keyboard/mouse input from the same graphics window. Add a check so your status screen only advances to the next step when a specific key is pressed — a simple interactive interface, not just a fixed display.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_f" aria-label="Extension F"></textarea>
+  </section>
+
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <p class="credit">KIPR · Botball Explorer · Unit 4 Big Idea 5 — Capstone Lab</p>
+</main>
+
+<script>
+  const MISSION_ID = "unit4_bigidea5";
+
+  (function buildRows() {
+    const plan = document.getElementById("planBody");
+    for (let i = 1; i <= 8; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td class="num">' + i + '</td>' +
+        '<td><input type="text" data-key="plan' + i + '_leg" aria-label="Plan ' + i + ' leg"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_call" aria-label="Plan ' + i + ' call"></td>' +
+        '<td><input type="text" data-key="plan' + i + '_reset" aria-label="Plan ' + i + ' reset" style="text-align:center"></td>';
+      plan.appendChild(tr);
+    }
+    const run = document.getElementById("runBody");
+    for (let i = 1; i <= 4; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="run' + i + '_botguy" aria-label="Run ' + i + ' botguy"></td>' +
+        '<td><input type="text" data-key="run' + i + '_cones" aria-label="Run ' + i + ' cones"></td>' +
+        '<td><input type="text" data-key="run' + i + '_drift" aria-label="Run ' + i + ' drift"></td>';
+      run.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => { answers[el.getAttribute("data-key")] = el.value; });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data; try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) el.value = data.answers[k];
+      });
+    }
+  }
+  function saveDraft() {
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ pin: pinInput.value.trim(), answers: collectAnswers() })); } catch (e) {}
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) { if (e.target.matches("[data-key], #pin")) saveDraft(); });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Unit 4 · Big Idea 5 — The Long Run",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) { setStatus("Enter your PIN at the top before you submit.", "warn"); pinInput.focus(); return; }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+</body>
+</html>
