@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 Botball Fall Scoring — Stack Attack</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1b2a;
+      --surface:   #132036;
+      --border:    #1e3a5f;
+      --teal:      #00c4b4;
+      --teal-dim:  #008f83;
+      --text:      #e8f0fe;
+      --muted:     #8ba4c0;
+      --red:       #ef4444;
+      --green:     #22c55e;
+      --gold:      #f59e0b;
+      --radius:    10px;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      background: #0a1628;
+      border-bottom: 2px solid var(--teal);
+      padding: 0.7rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+    }
+    nav a { color: var(--text); text-decoration: none; font-size: 0.9rem; }
+    nav a:hover { color: var(--teal); }
+    .nav-logo { font-weight: 700; font-size: 1.05rem; color: var(--teal); display: flex; align-items: center; gap: 0.5rem; }
+
+    /* ── Page wrapper ─────────────────────────────────────── */
+    .page { max-width: 980px; margin: 0 auto; padding: 1.4rem 1rem 4rem; }
+
+    .page-header { margin-bottom: 1.4rem; }
+    .page-header h1 { font-size: 1.55rem; color: var(--teal); }
+    .page-header p  { font-size: 0.88rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── Setup screen ─────────────────────────────────────── */
+    #setupScreen { max-width: 520px; }
+
+    .setup-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .setup-card h2 { font-size: 1rem; color: var(--teal); margin-bottom: 1rem; }
+
+    .field { margin-bottom: 0.8rem; }
+    .field label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.28rem; }
+    .field input, .field select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 0.45rem 0.7rem;
+      font-size: 0.92rem;
+    }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--teal); }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+      margin-top: 0.5rem;
+    }
+    .mission-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 0.55rem 0.7rem;
+      cursor: pointer;
+      transition: border-color 0.12s;
+    }
+    .mission-check:hover { border-color: var(--teal); }
+    .mission-check.selected { border-color: var(--teal); background: rgba(0,196,180,0.07); }
+    .mission-check input[type=checkbox] { accent-color: var(--teal); margin-top: 2px; flex-shrink: 0; }
+    .mission-check .mc-name { font-size: 0.85rem; font-weight: 600; }
+    .mission-check .mc-pts  { font-size: 0.75rem; color: var(--muted); }
+
+    .diff-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 20px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .diff-basic        { background: #1a4a2a; color: #4ade80; }
+    .diff-intermediate { background: #3a2e00; color: #fbbf24; }
+    .diff-advanced     { background: #3a1a1a; color: #f87171; }
+    .diff-expert       { background: #2a1040; color: #c084fc; }
+
+    .btn-start {
+      width: 100%;
+      background: var(--teal);
+      color: #0d1b2a;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s;
+    }
+    .btn-start:hover { background: var(--teal-dim); }
+    .btn-start:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Scoring screen ───────────────────────────────────── */
+    #scoringScreen { display: none; }
+
+    .score-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.1rem;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .score-header h2 { font-size: 1.1rem; }
+    .team-badge {
+      background: var(--teal);
+      color: #0d1b2a;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+    }
+
+    /* Timer */
+    .timer-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+      flex-wrap: wrap;
+    }
+    .timer-display {
+      font-size: 2.1rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+      min-width: 70px;
+    }
+    .timer-display.warning { color: var(--gold); }
+    .timer-display.danger  { color: var(--red); animation: blink 0.5s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0.3; } }
+    .timer-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .btn-timer {
+      background: var(--border);
+      border: 1px solid #2a5080;
+      color: var(--text);
+      border-radius: 7px;
+      padding: 0.38rem 0.85rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .btn-timer:hover       { background: #2a5080; }
+    .btn-timer.btn-go      { background: var(--green); color: #0d1b2a; }
+    .btn-timer.btn-go:hover{ background: #16a34a; }
+    .btn-timer.btn-stop    { background: var(--red); color: #fff; }
+    .timer-phase { font-size: 0.82rem; color: var(--muted); }
+
+    /* Score total */
+    .total-bar {
+      background: linear-gradient(135deg, #0a2240 0%, var(--surface) 100%);
+      border: 2px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 0.7rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.1rem;
+    }
+    .total-label { font-size: 0.85rem; color: var(--muted); }
+    .total-score { font-size: 2rem; font-weight: 800; color: var(--teal); }
+
+    /* Scoring area cards */
+    .areas { display: flex; flex-direction: column; gap: 0.9rem; }
+
+    .area-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .area-card.locked { opacity: 0.45; pointer-events: none; }
+
+    .area-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      background: rgba(0,196,180,0.06);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+    .area-header h3 { font-size: 0.95rem; font-weight: 700; }
+    .area-subtotal {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--teal);
+      min-width: 50px;
+      text-align: right;
+    }
+    .area-unlock {
+      font-size: 0.75rem;
+      color: var(--gold);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid var(--gold);
+      margin-left: 0.6rem;
+      white-space: nowrap;
+    }
+
+    .area-body { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.65rem; }
+
+    /* Score row */
+    .score-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .score-row-label { font-size: 0.85rem; }
+    .score-row-label .unit { font-size: 0.75rem; color: var(--muted); }
+
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 0; border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    .counter button {
+      background: var(--border);
+      border: none;
+      color: var(--text);
+      width: 32px;
+      height: 32px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.1s;
+      flex-shrink: 0;
+    }
+    .counter button:hover  { background: #2a5080; }
+    .counter button:active { background: var(--teal); color: #0d1b2a; }
+    .counter .count-val {
+      min-width: 36px;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: var(--bg);
+      padding: 0 4px;
+      height: 32px;
+      line-height: 32px;
+    }
+
+    .row-pts {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--teal);
+      min-width: 44px;
+      text-align: right;
+    }
+
+    /* Checkbox rows (for binary events like Botguy) */
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+    }
+    .check-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--teal); cursor: pointer; }
+    .check-row label { cursor: pointer; flex: 1; }
+    .check-row .row-pts { margin-left: auto; }
+
+    /* Multiplier note */
+    .mult-note {
+      font-size: 0.75rem;
+      color: var(--gold);
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 5px;
+      padding: 0.3rem 0.6rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Bonus unlocked banner */
+    .bonus-banner {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.35);
+      border-radius: 6px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.78rem;
+      color: #86efac;
+      display: none;
+    }
+    .bonus-banner.show { display: block; }
+
+    /* Final summary */
+    #summaryScreen { display: none; }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .summary-card h2 { font-size: 1rem; color: var(--teal); margin-bottom: 0.85rem; }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-total {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--teal);
+      text-align: center;
+      padding: 1rem 0 0.5rem;
+    }
+    .btn-reset {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.65rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 0.6rem;
+    }
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.65rem 1.4rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 520px) {
+      .score-row { grid-template-columns: 1fr auto auto; }
+      .timer-display { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html">
+    <span class="nav-logo">
+      <img src="kipr-logo.png" alt="KIPR" height="26" style="vertical-align:middle;">
+      Botball 2026
+    </span>
+  </a>
+  <a href="index.html">Home</a>
+  <a href="2026-missions.html">2026 Missions</a>
+  <a href="labs/index.html">Labs</a>
+  <a href="scoring.html">Scoring</a>
+</nav>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════════
+       SETUP SCREEN
+  ════════════════════════════════════════════════════════ -->
+  <div id="setupScreen">
+    <div class="page-header">
+      <h1>⚖️ Stack Attack Scoring</h1>
+      <p>2026 Botball Fall Tournament · Set up the team and select missions before the round starts.</p>
+    </div>
+
+    <div class="setup-card">
+      <h2>Team Info</h2>
+      <div class="field">
+        <label>Team Name</label>
+        <input id="teamName" type="text" placeholder="e.g. Robo Warriors">
+      </div>
+      <div class="field">
+        <label>Team Number</label>
+        <input id="teamNumber" type="text" placeholder="e.g. 1234">
+      </div>
+      <div class="field">
+        <label>Round</label>
+        <select id="roundType">
+          <option value="Seeding Round 1">Seeding Round 1</option>
+          <option value="Seeding Round 2">Seeding Round 2</option>
+          <option value="Seeding Round 3">Seeding Round 3</option>
+          <option value="Double Elimination">Double Elimination</option>
+          <option value="Alliance Match">Alliance Match</option>
+          <option value="Practice">Practice</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="setup-card">
+      <h2>Select Planned Missions
+        <span style="font-size:0.75rem;font-weight:400;color:var(--muted);margin-left:8px;">
+          Check which missions your team plans to attempt — bonuses unlock automatically when the base is complete.
+        </span>
+      </h2>
+      <div class="mission-grid" id="missionGrid"></div>
+    </div>
+
+    <button class="btn-start" id="btnStart" onclick="startScoring()">Start Scoring →</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       SCORING SCREEN
+  ════════════════════════════════════════════════════════ -->
+  <div id="scoringScreen">
+
+    <div class="score-header">
+      <div>
+        <h2 id="scoringTitle">Scoring</h2>
+        <div style="font-size:0.82rem;color:var(--muted)" id="scoringRound"></div>
+      </div>
+      <div class="team-badge" id="teamBadge"></div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer-bar">
+      <div class="timer-display" id="timerDisplay">2:00</div>
+      <div>
+        <div class="timer-phase" id="timerPhase">Ready to start</div>
+        <div class="timer-btns" style="margin-top:0.35rem;">
+          <button class="btn-timer btn-go" onclick="startTimer()">▶ Start</button>
+          <button class="btn-timer" onclick="pauseTimer()">⏸ Pause</button>
+          <button class="btn-timer btn-stop" onclick="endRound()">⏹ End Round</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Running total -->
+    <div class="total-bar">
+      <span class="total-label">Running Total</span>
+      <span class="total-score" id="runningTotal">0</span>
+    </div>
+
+    <!-- Scoring areas injected here -->
+    <div class="areas" id="areasContainer"></div>
+
+    <div style="margin-top:1.2rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+      <button class="btn-reset" onclick="endRound()">Finish &amp; See Summary</button>
+      <button class="btn-secondary" onclick="resetAll()">↩ New Team</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       SUMMARY SCREEN
+  ════════════════════════════════════════════════════════ -->
+  <div id="summaryScreen">
+    <div class="page-header">
+      <h1>📋 Round Summary</h1>
+    </div>
+    <div class="summary-card" id="summaryContent"></div>
+    <div style="margin-top:0.5rem;">
+      <button class="btn-reset" onclick="resetAll()">↩ New Team / New Round</button>
+      <button class="btn-secondary" onclick="goBack()">← Back to Scoring</button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// MISSION DEFINITIONS
+// Each mission has:
+//   id, name, difficulty, basePoints (used to describe base task)
+//   areas: the scoring areas it contributes to (drives area unlock)
+//   unlocks: what opens when base is complete
+// ═══════════════════════════════════════════════════════════
+const MISSIONS = [
+  { id: "push_off",      name: "Push Game Piece Off Black Tape",         diff: "basic",        desc: "Cubes/poms pushed off starting black tape into a Warehouse Floor area" },
+  { id: "poms_sorted",   name: "Sorted Poms to Warehouse Floor",         diff: "basic",        desc: "Push orange & blue poms into sorted Warehouse Floor areas" },
+  { id: "cubes_pallet",  name: "Small Yellow Crates onto Interior Dock Pallet", diff: "basic", desc: "2 small yellow crates onto a pallet on the Interior/Internal Loading Dock" },
+  { id: "poms_multi",    name: "Poms to Multiple Warehouse Areas",       diff: "intermediate", desc: "Push poms into multiple Warehouse Floor areas (sorted)" },
+  { id: "poms_bins_u",   name: "Poms into Packaging Bins (Unsorted)",    diff: "intermediate", desc: "Place packaging material (poms) into baskets, unsorted" },
+  { id: "cubes_stack",   name: "Unsorted Crates Stack on Warehouse Floor",diff: "intermediate",desc: "Stack unsorted cubes on your warehouse floor" },
+  { id: "bins_center",   name: "Move Packaging Bins to Packaging Area",  diff: "intermediate", desc: "Move packaging bins (baskets) into the Packaging Center" },
+  { id: "poms_matched",  name: "Matched Poms from Upper Warehouse to Bin",diff:"intermediate", desc: "Retrieve matched orange+blue poms from upper warehouse into a basket" },
+  { id: "brown_crates",  name: "Retrieve Brown Crates to Your Side",     diff: "intermediate", desc: "Retrieve 4\" Brown Crates from Shared Warehouse Area onto your side" },
+  { id: "botguy_box",    name: "Move Botguy to a Start Box",             diff: "intermediate", desc: "Move Botguy to either your Lower or Upper Starting Box" },
+  { id: "shared_door",   name: "Open Shared Warehouse & Retrieve Botguy",diff: "intermediate", desc: "Open Shared Warehouse doors and retrieve Botguy to your side" },
+  { id: "cube_pallet_upper", name: "Cube & Pallet from Upper Warehouse to Loading Dock", diff:"intermediate", desc: "Move the cube and pallet from the upper warehouse onto either loading dock" },
+  { id: "pallets_dock",  name: "Multiple Pallets on Loading Docks",      diff: "intermediate", desc: "Place multiple pallets on interior and/or exterior dock (unlocks stacked cubes bonus)" },
+  { id: "drums_side",    name: "Retrieve Delivered Drums to Your Side",  diff: "intermediate", desc: "Retrieve drums from Drum Delivery Zone and place on your side" },
+  { id: "drums_posts",   name: "Drums onto Drum Storage Uprights",       diff: "advanced",     desc: "Place drums vertically onto drum storage posts" },
+  { id: "sorted_camera", name: "Camera-Sorted Stacks on Pallets",        diff: "expert",       desc: "Use camera to make sorted stacks on pallets on interior or exterior dock" },
+  { id: "drums_sorted",  name: "8 Drums Sorted onto Drum Storage Posts", diff: "expert",       desc: "Place all 8 drums sorted by color onto drum storage uprights" },
+];
+
+// ═══════════════════════════════════════════════════════════
+// SCORING AREA DEFINITIONS
+// Each area has rows that feed into a subtotal.
+// Some rows have a `unlockedBy` mission id — they start locked
+// and unlock when that mission's base is checked complete.
+// ═══════════════════════════════════════════════════════════
+const AREA_DEFS = [
+  {
+    id: "startbox", label: "Starting Boxes",
+    rows: [
+      { id: "botguy_start", type: "check",   label: "Botguy in Upper Start Box",  pts: 20, multiplied: false },
+      { id: "botguy_lower", type: "check",   label: "Botguy in Lower Start Box",  pts: 20, multiplied: false },
+      { id: "cubes_start",  type: "counter", label: "Small Cubes in Start Box",   pts: 2,  unit: "× 2 pts ea" },
+      { id: "baskets_start",type: "counter", label: "Baskets in Start Box",       pts: 15, unit: "× 15 pts ea" },
+    ],
+    multiplierNote: "Botguy scores are ×2 in tournament — counted at face value here for Seeding.",
+    missionId: null, // always visible
+  },
+  {
+    id: "warehouse", label: "Warehouse Floor",
+    rows: [
+      { id: "wh_both_poms",  type: "counter", label: "Stations with Both Pom Colors", pts: 0, unit: "stations (multiplier — see note)", isMultiplierOnly: true },
+      { id: "wh_poms",       type: "counter", label: "Poms in Warehouse Floor areas", pts: 2, unit: "× 2 pts ea" },
+    ],
+    multiplierNote: "Multiplier for 'both pom colors' stations is set by judge at scoring — add bonus manually to total if applicable.",
+    missionId: "poms_sorted",
+  },
+  {
+    id: "lower_storage", label: "Lower Storage (Internal Loading Dock)",
+    rows: [
+      { id: "ls_pallets",  type: "counter", label: "Pallets",           pts: 0, unit: "pallets (multiplier — see note)", isMultiplierOnly: true },
+      { id: "ls_cubes",    type: "counter", label: "Cubes on Pallets",  pts: 5, unit: "× 5 pts ea" },
+      { id: "ls_botguy",   type: "check",   label: "Botguy in Lower Storage", pts: 20, multiplied: false },
+      { id: "ls_cones",    type: "counter", label: "Traffic Cones Stored", pts: 25, unit: "× 25 pts ea" },
+    ],
+    multiplierNote: "Pallets multiply cubes scored — multiplier value set by judge. Cubes on pallets also worth ×5.",
+    missionId: "cubes_pallet",
+  },
+  {
+    id: "storage_posts", label: "Drum Storage Posts",
+    rows: [
+      { id: "sp_pipes",    type: "counter", label: "Drums (2\" PVC Pipes) on Posts", pts: 30, unit: "× 30 pts ea" },
+    ],
+    multiplierNote: null,
+    missionId: "drums_posts",
+  },
+  {
+    id: "pom_sorter", label: "Pom Sorter (Packaging Bins / Baskets)",
+    rows: [
+      { id: "ps_sorted_baskets",   type: "counter", label: "Sorted Baskets",           pts: 0,  unit: "sorted baskets (multiplier)", isMultiplierOnly: true },
+      { id: "ps_returned_baskets", type: "counter", label: "Returned Baskets",          pts: 0,  unit: "returned baskets (multiplier)", isMultiplierOnly: true },
+      { id: "ps_unsorted_poms",    type: "counter", label: "Unsorted Poms in Baskets", pts: 5,  unit: "× 5 pts ea" },
+      { id: "ps_sorted_poms",      type: "counter", label: "Sorted Poms in Baskets",   pts: 10, unit: "× 10 pts ea" },
+    ],
+    multiplierNote: "Sorted basket multiplier and returned basket multiplier are set by judge. Sorted poms need ≥2 same color, one color only.",
+    missionId: "poms_bins_u",
+  },
+  {
+    id: "upper_storage", label: "Upper Warehouse / Upper Storage",
+    rows: [
+      { id: "us_pallets",  type: "counter", label: "Pallets",             pts: 0,  unit: "pallets (multiplier)", isMultiplierOnly: true },
+      { id: "us_cubes",    type: "counter", label: "Cubes on Pallets",   pts: 10, unit: "× 10 pts ea" },
+      { id: "us_cones",    type: "counter", label: "Traffic Cones",      pts: 15, unit: "× 15 pts ea" },
+    ],
+    multiplierNote: "Pallets multiply cubes — multiplier set by judge. Clean deck bonus (all poms removed from upper warehouse) may apply.",
+    missionId: "cube_pallet_upper",
+  },
+  {
+    id: "internal_dock", label: "Raised / Internal Loading Dock",
+    rows: [
+      { id: "id_pallets",    type: "counter", label: "Pallets (×2 ea)",       pts: 2,  unit: "× 2 pts ea" },
+      { id: "id_cubes",      type: "counter", label: "Cubes (not on pallet)", pts: 5,  unit: "× 5 pts ea" },
+      { id: "id_cubes_pal",  type: "counter", label: "Cubes on Pallets",      pts: 10, unit: "× 10 pts ea" },
+    ],
+    multiplierNote: null,
+    missionId: "pallets_dock",
+  },
+  {
+    id: "outdoor_dock", label: "Outdoor / External Loading Docks",
+    rows: [
+      { id: "od_sorted_high",  type: "counter", label: "Highest # Sorted Cubes on a Single Pallet", pts: 0, unit: "cubes (multiplier)", isMultiplierOnly: true },
+      { id: "od_unsorted",     type: "counter", label: "Unsorted Cubes",                 pts: 5,  unit: "× 5 pts ea" },
+      { id: "od_sorted",       type: "counter", label: "Sorted Cubes",                   pts: 10, unit: "× 10 pts ea" },
+      { id: "od_cubes_pal",    type: "counter", label: "Cubes on Pallets",               pts: 5,  unit: "× 5 pts ea" },
+    ],
+    multiplierNote: "Sorted cubes on a pallet earn a multiplier based on the highest count on a single pallet — set by judge.",
+    missionId: "sorted_camera",
+  },
+];
+
+// ═══════════════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════════════
+let selectedMissions = new Set();
+let counts = {};         // rowId → value
+let checks = {};         // rowId → bool
+let timerInterval = null;
+let secondsLeft = 120;
+let timerRunning = false;
+let teamInfo = {};
+
+// ─── Setup screen: build mission checkboxes ──────────────
+function buildMissionGrid() {
+  const grid = document.getElementById("missionGrid");
+  grid.innerHTML = "";
+  MISSIONS.forEach(m => {
+    const div = document.createElement("label");
+    div.className = "mission-check";
+    div.dataset.id = m.id;
+    const diffLabel = m.diff.charAt(0).toUpperCase() + m.diff.slice(1);
+    div.innerHTML = `
+      <input type="checkbox" value="${m.id}" onchange="toggleMission('${m.id}', this)">
+      <div>
+        <div class="mc-name">${m.name} <span class="diff-badge diff-${m.diff}">${diffLabel}</span></div>
+        <div class="mc-pts">${m.desc}</div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+function toggleMission(id, el) {
+  const label = el.closest("label");
+  if (el.checked) { selectedMissions.add(id); label.classList.add("selected"); }
+  else            { selectedMissions.delete(id); label.classList.remove("selected"); }
+}
+
+// ─── Start scoring ────────────────────────────────────────
+function startScoring() {
+  teamInfo = {
+    name:   document.getElementById("teamName").value.trim() || "Team",
+    number: document.getElementById("teamNumber").value.trim() || "—",
+    round:  document.getElementById("roundType").value,
+  };
+
+  // Init state
+  counts = {}; checks = {};
+  AREA_DEFS.forEach(a => a.rows.forEach(r => {
+    if (r.type === "counter") counts[r.id] = 0;
+    if (r.type === "check")   checks[r.id] = false;
+  }));
+  secondsLeft = 120;
+  timerRunning = false;
+
+  document.getElementById("timerDisplay").className = "timer-display";
+  document.getElementById("timerDisplay").textContent = "2:00";
+  document.getElementById("timerPhase").textContent = "Ready to start";
+
+  document.getElementById("teamBadge").textContent =
+    `${teamInfo.name} · #${teamInfo.number}`;
+  document.getElementById("scoringTitle").textContent = "Scoring Round";
+  document.getElementById("scoringRound").textContent = teamInfo.round;
+
+  buildAreas();
+  recalcTotal();
+
+  document.getElementById("setupScreen").style.display = "none";
+  document.getElementById("summaryScreen").style.display = "none";
+  document.getElementById("scoringScreen").style.display = "block";
+}
+
+// ─── Build scoring areas ──────────────────────────────────
+function buildAreas() {
+  const container = document.getElementById("areasContainer");
+  container.innerHTML = "";
+
+  AREA_DEFS.forEach(area => {
+    const planned = !area.missionId || selectedMissions.has(area.missionId);
+    const card = document.createElement("div");
+    card.className = "area-card" + (planned ? "" : " locked");
+    card.id = "area-" + area.id;
+
+    const unlockTag = !planned
+      ? `<span class="area-unlock">🔒 Not planned</span>` : "";
+
+    card.innerHTML = `
+      <div class="area-header" onclick="toggleArea('${area.id}')">
+        <h3>${area.label}${unlockTag}</h3>
+        <span class="area-subtotal" id="sub-${area.id}">0 pts</span>
+      </div>
+      <div class="area-body" id="body-${area.id}">
+        ${area.rows.map(r => buildRow(r)).join("")}
+        ${area.multiplierNote
+          ? `<div class="mult-note">ℹ️ ${area.multiplierNote}</div>` : ""}
+        <div class="bonus-banner" id="bonus-${area.id}">
+          ✅ Base mission complete — bonus scoring unlocked!
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function buildRow(r) {
+  if (r.type === "counter") {
+    const grayed = r.isMultiplierOnly
+      ? "style='opacity:0.6'" : "";
+    return `
+      <div class="score-row" ${grayed}>
+        <div class="score-row-label">
+          ${r.label}
+          ${r.unit ? `<span class="unit"> (${r.unit})</span>` : ""}
+        </div>
+        <div class="counter">
+          <button onclick="dec('${r.id}')">−</button>
+          <span class="count-val" id="val-${r.id}">0</span>
+          <button onclick="inc('${r.id}')">+</button>
+        </div>
+        <span class="row-pts" id="pts-${r.id}">0 pts</span>
+      </div>`;
+  }
+  if (r.type === "check") {
+    return `
+      <div class="check-row">
+        <input type="checkbox" id="chk-${r.id}" onchange="toggleCheck('${r.id}', this)">
+        <label for="chk-${r.id}">${r.label}</label>
+        <span class="row-pts" id="pts-${r.id}">0 pts</span>
+      </div>`;
+  }
+  return "";
+}
+
+function toggleArea(areaId) {
+  const body = document.getElementById("body-" + areaId);
+  body.style.display = body.style.display === "none" ? "" : "none";
+}
+
+// ─── Counter controls ─────────────────────────────────────
+function inc(id) { counts[id] = (counts[id] || 0) + 1; update(id); }
+function dec(id) { counts[id] = Math.max(0, (counts[id] || 0) - 1); update(id); }
+
+function update(rowId) {
+  const el = document.getElementById("val-" + rowId);
+  if (el) el.textContent = counts[rowId];
+  updateRowPts(rowId);
+  checkBonuses();
+  recalcTotal();
+}
+
+function toggleCheck(rowId, el) {
+  checks[rowId] = el.checked;
+  updateRowPts(rowId);
+  checkBonuses();
+  recalcTotal();
+}
+
+function updateRowPts(rowId) {
+  const ptsEl = document.getElementById("pts-" + rowId);
+  if (!ptsEl) return;
+  const pts = getRowPts(rowId);
+  ptsEl.textContent = pts + " pts";
+}
+
+function getRowPts(rowId) {
+  // Find row definition
+  for (const area of AREA_DEFS) {
+    for (const r of area.rows) {
+      if (r.id !== rowId) continue;
+      if (r.isMultiplierOnly) return 0;
+      if (r.type === "counter") return (counts[rowId] || 0) * r.pts;
+      if (r.type === "check")   return checks[rowId] ? r.pts : 0;
+    }
+  }
+  return 0;
+}
+
+// ─── Bonus unlock logic ───────────────────────────────────
+// "Base complete" = the area with this missionId has at least 1
+// non-multiplier row with a positive value.
+function checkBonuses() {
+  AREA_DEFS.forEach(area => {
+    if (!area.missionId) return;
+    const baseComplete = area.rows.some(r => {
+      if (r.isMultiplierOnly) return false;
+      if (r.type === "counter") return (counts[r.id] || 0) > 0;
+      if (r.type === "check")   return checks[r.id];
+      return false;
+    });
+    const banner = document.getElementById("bonus-" + area.id);
+    if (banner) banner.className = "bonus-banner" + (baseComplete ? " show" : "");
+  });
+}
+
+// ─── Subtotals & grand total ──────────────────────────────
+function getAreaTotal(area) {
+  return area.rows.reduce((sum, r) => sum + getRowPts(r.id), 0);
+}
+
+function recalcTotal() {
+  let grand = 0;
+  AREA_DEFS.forEach(area => {
+    const sub = getAreaTotal(area);
+    grand += sub;
+    const el = document.getElementById("sub-" + area.id);
+    if (el) el.textContent = sub + " pts";
+  });
+  const el = document.getElementById("runningTotal");
+  if (el) el.textContent = grand;
+}
+
+// ─── Timer ────────────────────────────────────────────────
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  document.getElementById("timerPhase").textContent = "Game in progress";
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) { clearInterval(timerInterval); timerRunning = false; endRound(); }
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById("timerPhase").textContent = "Paused";
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60);
+  const s = secondsLeft % 60;
+  const el = document.getElementById("timerDisplay");
+  el.textContent = `${m}:${String(s).padStart(2, "0")}`;
+  el.className = "timer-display" +
+    (secondsLeft <= 10 ? " danger" : secondsLeft <= 30 ? " warning" : "");
+
+  const phase = document.getElementById("timerPhase");
+  if (secondsLeft === 115) phase.textContent = "🔔 Lights off (5s)";
+  if (secondsLeft === 110) phase.textContent = "🥁 Drums releasing...";
+  if (secondsLeft <= 10 && secondsLeft > 0) phase.textContent = "⚠️ Finish & stop motors!";
+}
+
+// ─── End round / summary ──────────────────────────────────
+function endRound() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  showSummary();
+}
+
+function showSummary() {
+  const grand = AREA_DEFS.reduce((s, a) => s + getAreaTotal(a), 0);
+
+  let html = `
+    <h2>Team: ${teamInfo.name} · #${teamInfo.number} · ${teamInfo.round}</h2>
+    <div class="summary-total">${grand} pts</div>
+    <hr style="border-color:var(--border);margin:0.8rem 0;">`;
+
+  AREA_DEFS.forEach(area => {
+    const sub = getAreaTotal(area);
+    if (sub === 0) return;
+    html += `<div class="summary-row"><span>${area.label}</span><strong>${sub} pts</strong></div>`;
+    area.rows.forEach(r => {
+      const rpts = getRowPts(r.id);
+      if (rpts === 0) return;
+      html += `<div class="summary-row" style="padding-left:1rem;font-size:0.82rem;color:var(--muted)">
+        <span>${r.label}</span><span>${rpts} pts</span></div>`;
+    });
+  });
+
+  html += `
+    <div style="margin-top:1rem;padding:0.7rem;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:6px;font-size:0.8rem;color:#fbbf24;">
+      ⚠️ Multiplier bonuses (pallets, sorted baskets, station bonuses) are set by judges at the table and are not included in this total.
+    </div>`;
+
+  document.getElementById("summaryContent").innerHTML = html;
+  document.getElementById("scoringScreen").style.display = "none";
+  document.getElementById("summaryScreen").style.display = "block";
+}
+
+function goBack() {
+  document.getElementById("summaryScreen").style.display = "none";
+  document.getElementById("scoringScreen").style.display = "block";
+}
+
+function resetAll() {
+  clearInterval(timerInterval);
+  selectedMissions.clear();
+  document.getElementById("scoringScreen").style.display = "none";
+  document.getElementById("summaryScreen").style.display = "none";
+  document.getElementById("setupScreen").style.display = "block";
+  // Uncheck all missions
+  document.querySelectorAll(".mission-check input").forEach(c => {
+    c.checked = false;
+    c.closest("label").classList.remove("selected");
+  });
+}
+
+// ─── Init ─────────────────────────────────────────────────
+buildMissionGrid();
+</script>
+</body>
+</html>
