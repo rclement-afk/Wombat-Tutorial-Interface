@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wombat Remote — KIPR Botball 2026</title>
+  <style>
+    /* ── Base (matches your site's dark navy theme) ─────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0d1b2a;
+      color: #e8f0fe;
+      min-height: 100vh;
+    }
+
+    /* ── Nav bar (matches your site) ───────────────────────────── */
+    nav {
+      background: #0a1628;
+      border-bottom: 2px solid #00c4b4;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    nav a { color: #e8f0fe; text-decoration: none; font-size: 0.95rem; }
+    nav a:hover { color: #00c4b4; }
+    nav .logo { font-weight: 700; font-size: 1.1rem; color: #00c4b4; }
+
+    /* ── Page layout ────────────────────────────────────────────── */
+    .page { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+    h1 { font-size: 1.6rem; color: #00c4b4; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 0.9rem; color: #8ba4c0; margin-bottom: 1.5rem; }
+
+    /* ── Config bar ─────────────────────────────────────────────── */
+    .config {
+      background: #132036;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .config label { font-size: 0.85rem; color: #8ba4c0; white-space: nowrap; }
+    .config input {
+      flex: 1; min-width: 130px;
+      background: #0d1b2a; border: 1px solid #1e3a5f;
+      color: #e8f0fe; border-radius: 6px;
+      padding: 0.4rem 0.7rem; font-size: 0.9rem;
+    }
+    .config input:focus { outline: none; border-color: #00c4b4; }
+    .config button {
+      background: #00c4b4; color: #0d1b2a;
+      border: none; border-radius: 6px;
+      padding: 0.4rem 0.9rem; font-weight: 700;
+      cursor: pointer; font-size: 0.85rem;
+    }
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #555; flex-shrink: 0;
+    }
+    .status-dot.online  { background: #22c55e; }
+    .status-dot.offline { background: #ef4444; }
+
+    /* ── Section cards ──────────────────────────────────────────── */
+    .card {
+      background: #132036;
+      border: 1px solid #1e3a5f;
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.1rem;
+    }
+    .card h2 {
+      font-size: 1rem; color: #00c4b4;
+      margin-bottom: 0.85rem;
+      border-bottom: 1px solid #1e3a5f;
+      padding-bottom: 0.5rem;
+    }
+
+    /* ── Drive pad ──────────────────────────────────────────────── */
+    .dpad {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 8px;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+    .dpad-btn {
+      background: #1e3a5f;
+      border: 2px solid #2a5080;
+      border-radius: 10px;
+      color: #e8f0fe;
+      font-size: 1.4rem;
+      padding: 18px 0;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      transition: background 0.1s, transform 0.1s;
+      text-align: center;
+    }
+    .dpad-btn:active, .dpad-btn.pressed {
+      background: #00c4b4;
+      color: #0d1b2a;
+      transform: scale(0.94);
+    }
+    .dpad-stop {
+      background: #7f1d1d;
+      border-color: #ef4444;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .dpad-stop:active { background: #ef4444; color: #fff; }
+    .dpad-empty { visibility: hidden; }
+    /* grid placement */
+    .btn-fwd   { grid-column: 2; grid-row: 1; }
+    .btn-left  { grid-column: 1; grid-row: 2; }
+    .btn-stop  { grid-column: 2; grid-row: 2; }
+    .btn-right { grid-column: 3; grid-row: 2; }
+    .btn-back  { grid-column: 2; grid-row: 3; }
+
+    /* ── Servo panel ────────────────────────────────────────────── */
+    .servo-row {
+      display: flex; align-items: center; gap: 0.7rem;
+      margin-bottom: 0.85rem;
+    }
+    .servo-label { width: 62px; font-size: 0.85rem; color: #8ba4c0; flex-shrink: 0; }
+    .servo-row input[type=range] {
+      flex: 1; accent-color: #00c4b4;
+    }
+    .servo-val { width: 42px; font-size: 0.85rem; text-align: right; color: #e8f0fe; }
+    .servo-read {
+      background: transparent; border: 1px solid #1e3a5f;
+      color: #8ba4c0; border-radius: 5px;
+      padding: 2px 7px; font-size: 0.78rem; cursor: pointer;
+      white-space: nowrap;
+    }
+    .servo-read:hover { border-color: #00c4b4; color: #00c4b4; }
+
+    /* ── Program launcher ───────────────────────────────────────── */
+    .prog-status {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; color: #8ba4c0; margin-bottom: 0.85rem;
+    }
+    .prog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .prog-btn {
+      background: #1e3a5f; border: 1px solid #2a5080;
+      color: #e8f0fe; border-radius: 8px;
+      padding: 0.6rem 0.8rem; font-size: 0.88rem;
+      cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 0.4rem;
+      transition: background 0.15s;
+    }
+    .prog-btn:hover { background: #00c4b4; color: #0d1b2a; border-color: #00c4b4; }
+    .prog-btn span { font-size: 1rem; }
+    .stop-btn {
+      background: #7f1d1d; border: 1px solid #ef4444;
+      color: #fca5a5; border-radius: 8px;
+      padding: 0.6rem 1rem; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; margin-top: 0.75rem; width: 100%;
+      transition: background 0.15s;
+    }
+    .stop-btn:hover { background: #ef4444; color: #fff; }
+    .stop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html">
+    <img src="kipr-logo.png" alt="KIPR" height="28" style="vertical-align:middle; margin-right:6px;">
+    <span class="logo">Botball 2026</span>
+  </a>
+  <a href="index.html">Home</a>
+  <a href="2026-missions.html">2026 Missions</a>
+  <a href="labs/index.html">Labs</a>
+  <a href="Python_Labs/index.html">Python Labs</a>
+</nav>
+
+<!-- ── Page content ── -->
+<div class="page">
+  <h1>🤖 Wombat Remote</h1>
+  <p class="subtitle">Drive, control servos, and launch programs wirelessly.</p>
+
+  <!-- Config -->
+  <div class="config">
+    <div class="status-dot" id="statusDot"></div>
+    <label>Wombat IP:</label>
+    <input id="ipInput" type="text" placeholder="192.168.1.100" value="">
+    <label>Port:</label>
+    <input id="portInput" type="text" value="9000" style="max-width:70px;">
+    <button onclick="saveConfig()">Connect</button>
+    <span id="statusText" style="font-size:0.82rem;color:#8ba4c0;">Not connected</span>
+  </div>
+
+  <!-- Drive Pad -->
+  <div class="card">
+    <h2>🕹️ Drive Control</h2>
+    <div class="dpad">
+      <div class="dpad-btn btn-fwd"   id="btn-fwd"   >▲</div>
+      <div class="dpad-btn btn-left"  id="btn-left"  >◀</div>
+      <div class="dpad-btn dpad-stop btn-stop" id="btn-stop">STOP</div>
+      <div class="dpad-btn btn-right" id="btn-right" >▶</div>
+      <div class="dpad-btn btn-back"  id="btn-back"  >▼</div>
+    </div>
+  </div>
+
+  <!-- Servos -->
+  <div class="card">
+    <h2>⚙️ Servo Control</h2>
+    <div id="servoPanel"></div>
+  </div>
+
+  <!-- Programs -->
+  <div class="card">
+    <h2>▶️ Program Launcher</h2>
+    <div class="prog-status">
+      <div class="status-dot" id="progDot"></div>
+      <span id="progStatus">No program running</span>
+    </div>
+    <div class="prog-grid" id="progGrid"></div>
+    <button class="stop-btn" id="stopProgBtn" disabled onclick="stopProgram()">
+      ⏹ Stop Program
+    </button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// CONFIG — edit your program names here
+// ════════════════════════════════════════════════════════════
+const PROGRAMS = [
+  "autonomous",
+  "calibration_test",
+  "arm_sequence",
+  // add more program names here (must match filenames on Wombat)
+];
+
+const DRIVE_SPEED = 60;   // motor power for forward/back (0–100)
+const TURN_SPEED  = 50;   // motor power for turns
+const LEFT_PORT   = 0;    // Wombat motor port for left wheel
+const RIGHT_PORT  = 1;    // Wombat motor port for right wheel
+// ════════════════════════════════════════════════════════════
+
+// ── State ──────────────────────────────────────────────────
+let baseURL = "";
+let progRunning = false;
+let statusPollTimer = null;
+
+// ── Config / connection ────────────────────────────────────
+function saveConfig() {
+  const ip   = document.getElementById("ipInput").value.trim();
+  const port = document.getElementById("portInput").value.trim();
+  baseURL = `http://${ip}:${port}`;
+  localStorage.setItem("wombat_ip",   ip);
+  localStorage.setItem("wombat_port", port);
+  ping();
+}
+
+async function ping() {
+  const dot  = document.getElementById("statusDot");
+  const text = document.getElementById("statusText");
+  try {
+    const res = await fetch(`${baseURL}/ao`, { signal: AbortSignal.timeout(2000) });
+    dot.className  = "status-dot online";
+    text.textContent = "Connected ✓";
+  } catch {
+    dot.className  = "status-dot offline";
+    text.textContent = "Cannot reach Wombat";
+  }
+}
+
+// Restore saved IP on load
+window.addEventListener("load", () => {
+  const ip   = localStorage.getItem("wombat_ip")   || "";
+  const port = localStorage.getItem("wombat_port") || "9000";
+  document.getElementById("ipInput").value   = ip;
+  document.getElementById("portInput").value = port;
+  if (ip) { baseURL = `http://${ip}:${port}`; ping(); }
+
+  buildServos();
+  buildPrograms();
+  startStatusPoll();
+});
+
+// ── Generic request (fire and forget) ─────────────────────
+function cmd(path) {
+  if (!baseURL) return alert("Set your Wombat IP and click Connect first.");
+  fetch(`${baseURL}${path}`).catch(() => {});
+}
+
+// ── Drive pad ──────────────────────────────────────────────
+const driveMap = {
+  "btn-fwd":   () => cmd(`/drive?left=${DRIVE_SPEED}&right=${DRIVE_SPEED}`),
+  "btn-back":  () => cmd(`/drive?left=${-DRIVE_SPEED}&right=${-DRIVE_SPEED}`),
+  "btn-left":  () => cmd(`/drive?left=${-TURN_SPEED}&right=${TURN_SPEED}`),
+  "btn-right": () => cmd(`/drive?left=${TURN_SPEED}&right=${-TURN_SPEED}`),
+  "btn-stop":  () => cmd("/ao"),
+};
+
+function addDriveListeners(id) {
+  const el = document.getElementById(id);
+  if (!el || id === "btn-stop") return;
+
+  const press   = () => { el.classList.add("pressed");    driveMap[id]?.(); };
+  const release = () => { el.classList.remove("pressed"); cmd("/ao"); };
+
+  el.addEventListener("mousedown",  press);
+  el.addEventListener("touchstart", press,   { passive: true });
+  el.addEventListener("mouseup",    release);
+  el.addEventListener("mouseleave", release);
+  el.addEventListener("touchend",   release);
+}
+
+["btn-fwd","btn-back","btn-left","btn-right"].forEach(addDriveListeners);
+document.getElementById("btn-stop").addEventListener("click", () => cmd("/ao"));
+
+// ── Servo panel ────────────────────────────────────────────
+function buildServos() {
+  const panel = document.getElementById("servoPanel");
+  [0, 1, 2, 3].forEach(port => {
+    const row = document.createElement("div");
+    row.className = "servo-row";
+    row.innerHTML = `
+      <span class="servo-label">Servo ${port}</span>
+      <input type="range" min="0" max="2047" value="1024"
+             id="servo-slider-${port}"
+             oninput="onServoSlide(${port}, this.value)">
+      <span class="servo-val" id="servo-val-${port}">1024</span>
+      <button class="servo-read" onclick="readServo(${port})">Read</button>
+    `;
+    panel.appendChild(row);
+  });
+}
+
+function onServoSlide(port, value) {
+  document.getElementById(`servo-val-${port}`).textContent = value;
+  cmd(`/servo?port=${port}&pos=${value}`);
+}
+
+async function readServo(port) {
+  if (!baseURL) return;
+  try {
+    const res  = await fetch(`${baseURL}/servo_get?port=${port}`);
+    const data = await res.json();
+    const pos  = data.pos ?? 0;
+    document.getElementById(`servo-slider-${port}`).value = pos;
+    document.getElementById(`servo-val-${port}`).textContent = pos;
+  } catch {
+    alert("Could not read servo. Is the Wombat server running?");
+  }
+}
+
+// ── Program launcher ───────────────────────────────────────
+function buildPrograms() {
+  const grid = document.getElementById("progGrid");
+  PROGRAMS.forEach(name => {
+    const btn = document.createElement("button");
+    btn.className = "prog-btn";
+    btn.innerHTML = `<span>▶</span> ${name}`;
+    btn.onclick = () => launchProgram(name);
+    grid.appendChild(btn);
+  });
+}
+
+function launchProgram(name) {
+  cmd(`/run_program?name=${encodeURIComponent(name)}`);
+  setProgRunning(true);
+}
+
+function stopProgram() {
+  cmd("/stop_program");
+  setProgRunning(false);
+}
+
+function setProgRunning(running) {
+  progRunning = running;
+  document.getElementById("progDot").className =
+    "status-dot " + (running ? "online" : "");
+  document.getElementById("progStatus").textContent =
+    running ? "Program running…" : "No program running";
+  document.getElementById("stopProgBtn").disabled = !running;
+}
+
+// Poll the Wombat every 2s to see if the program finished on its own
+async function startStatusPoll() {
+  setInterval(async () => {
+    if (!baseURL || !progRunning) return;
+    try {
+      const res  = await fetch(`${baseURL}/program_status`);
+      const data = await res.json();
+      if (!data.running) setProgRunning(false);
+    } catch {}
+  }, 2000);
+}
+</script>
+</body>
+</html>
