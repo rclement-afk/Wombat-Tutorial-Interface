@@ -43,6 +43,7 @@
       );
     }
     .hero-inner { position: relative; z-index: 1; max-width: 700px; }
+    .hero-text { position: relative; }
     .hero-eyebrow {
       font-family: var(--font-display);
       font-size: 0.85rem;
@@ -72,12 +73,16 @@
     }
     .hero-botguy {
       position: absolute;
-      right: 6%;
-      bottom: 0;
-      height: min(360px, 45vw);
-      opacity: 0.18;
+      right: -8%;
+      top: 50%;
+      transform: translateY(-50%);
+      height: min(280px, 55vw);
+      opacity: 0.14;
       filter: grayscale(1) brightness(2);
       pointer-events: none;
+    }
+    @media (max-width: 640px) {
+      .hero-botguy { display: none; }
     }
 
     /* Card grid */
@@ -207,12 +212,14 @@
   </a>
 
   <section class="hero">
-    <img src="botguy.png" alt="" class="hero-botguy">
     <div class="hero-inner">
-      <p class="hero-eyebrow">KIPR — Kiss Institute for Practical Robotics</p>
-      <img src="kipr-logo.png" alt="KIPR Logo" class="hero-logo">
-      <h1>Botball <span>2026</span></h1>
-      <p class="hero-sub">Official competition resources, mission guides, and scoring references for the 2026 season.</p>
+      <div class="hero-text">
+        <img src="botguy.png" alt="" class="hero-botguy">
+        <p class="hero-eyebrow">KIPR — Kiss Institute for Practical Robotics</p>
+        <img src="kipr-logo.png" alt="KIPR Logo" class="hero-logo">
+        <h1>Botball <span>2026</span></h1>
+        <p class="hero-sub">Official competition resources, mission guides, and scoring references for the 2026 season.</p>
+      </div>
       <div class="card-grid">
         <a class="doc-card" href="2026-missions.html">
           <span class="card-num">Season Document</span>
