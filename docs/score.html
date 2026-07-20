@@ -274,8 +274,9 @@
     border:2px solid var(--line); flex:none;
     display:inline-flex; align-items:center; justify-content:center;
     font-size:10px; color:transparent;
+    transition: background-color .12s ease, border-color .12s ease;
   }
-  .stage.done .check-dot{ background:currentColor; border-color:currentColor; color:#fff; }
+  .stage.done .check-dot{ background:#1A1512; border-color:#1A1512; color:#fff; }
   .stage.locked .stage-label:after{
     content:"locked";
     font-weight:600; color:var(--ink-soft); opacity:.6; margin-left:4px;
