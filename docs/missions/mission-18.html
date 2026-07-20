@@ -150,6 +150,7 @@
   </style>
 </head>
 <body>
+  <a class="back-btn" href="../2026-missions.html">All Missions</a>
   <nav class="nav">
     <a class="nav-brand" href="../index.html">
       <img src="../kipr-logo.png" alt="KIPR">
@@ -182,7 +183,7 @@
       <div class="sc-meta">Difficulty 6</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>Botguy is IN the Loading Zone.</p></div>
+        <div class="comp-desc"><p>Botguy is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone.</p></div>
       </div>
       <div class="comp-row">
         <div class="score-card comp-bonus">
@@ -191,29 +192,29 @@
       <div class="sc-meta">Difficulty 7</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>Botguy is IN the Loading Zone AND at least one Traffic Cone is IN the Loading Zone.</p></div>
+        <div class="comp-desc"><p>Botguy is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone AND at least one Traffic Cone is <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> the Loading Zone.</p></div>
       </div>
       <div class='comp-row'><div class="score-card comp-advanced">
       <div class="sc-label">ADVANCED BONUS</div>
       <div class="sc-points">15 pts</div>
       <div class="sc-meta">Difficulty 8</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
-    </div><div class='comp-desc'><p>Botguy is IN the Loading Zone AND both Traffic Cones are IN the Loading Zone.</p></div></div>
+    </div><div class='comp-desc'><p>Botguy is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone AND both Traffic Cones are <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> the Loading Zone.</p></div></div>
     </div>
 
     <div class="examples-grid">
       <div class="ex-col">
         <div class="ex-head scores">✓ Examples That Score</div>
-        <ul><li>Botguy is IN the Loading Zone.</li><li>Botguy and one Traffic Cone are IN the Loading Zone.</li><li>Botguy and both Traffic Cones are IN the Loading Zone.</li></ul>
+        <ul><li>Botguy is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone.</li><li>Botguy and one Traffic Cone are <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> the Loading Zone.</li><li>Botguy and both Traffic Cones are <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone.</li></ul>
       </div>
       <div class="ex-col">
         <div class="ex-head no-scores">✗ Examples That Do Not Score</div>
-        <ul><li>Botguy is outside the Loading Zone.</li><li>Botguy is touching only the exterior boundary of the Loading Zone.</li><li>A Traffic Cone is IN the Loading Zone but Botguy is not.</li><li>Botguy and only one Traffic Cone are IN the Loading Zone for the Advanced Bonus.</li></ul>
+        <ul><li>Botguy is outside the Loading Zone.</li><li>Botguy is touching only the exterior boundary of the Loading Zone.</li><li>A Traffic Cone is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone but Botguy is not.</li><li>Botguy and only one Traffic Cone are <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> the Loading Zone for the Advanced Bonus.</li></ul>
       </div>
     </div>
 
     <div class="section-head">Judge Notes</div>
-    <ul class="notes-list"><li>This is a final position scored mission.</li><li>IN is determined using the IN definition.</li><li>The Base Mission must be satisfied to score the Bonus Mission.</li><li>The Bonus Mission must be satisfied to score the Advanced Bonus Mission.</li><li>Any Traffic Cone may be used to satisfy the Bonus Mission.</li><li>Both Traffic Cones must satisfy the IN definition to score the Advanced Bonus Mission.</li><li>Botguy and the Traffic Cones are not required to be touching one another.</li></ul>
+    <ul class="notes-list"><li>This is a final position scored mission.</li><li>IN is determined using the <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> definition.</li><li>The Base Mission must be satisfied to score the Bonus Mission.</li><li>The Bonus Mission must be satisfied to score the Advanced Bonus Mission.</li><li>Any Traffic Cone may be used to satisfy the Bonus Mission.</li><li>Both Traffic Cones must be <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> the Loading Zone to score the Advanced Bonus Mission.</li><li>Botguy and the Traffic Cones are not required to be touching one another.</li></ul>
 
     
 
@@ -244,5 +245,35 @@
       <span></span>
     </div>
   </div>
+
+  <!-- Definition Modal -->
+  <div class="def-modal-overlay" id="defModal">
+    <div class="def-modal">
+      <div class="def-modal-head">
+        <span class="def-modal-term" id="defModalTerm"></span>
+        <button class="def-modal-close" onclick="closeDefModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="def-modal-body" id="defModalBody"></div>
+    </div>
+  </div>
+  <script>
+    const DEFS = {"IN THE ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "IN A ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "FULLY WITHIN": ("FULLY WITHIN", "An object or robot is considered FULLY WITHIN an area when every part of the object or robot lies within the interior vertical projection of that area"s boundaries."), "ON TOP OF": ("ON TOP OF", "An object is considered ON TOP OF another object when it is in direct physical contact with the uppermost surface of the target object. Additional support from a robot is permitted unless otherwise specified."), "TOUCHING": ("TOUCHING", "Two objects are considered TOUCHING only when they are in direct physical contact with one another. Contact through a robot, field element, or another game object does not constitute TOUCHING."), "OFF": ("OFF", "An object is considered OFF a line, tape, boundary, or zone edge when no portion of the object is touching that line, tape, boundary, or zone edge."), "IN": ("IN", "An object is considered IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone, unless otherwise specified."), "SIMULTANEOUSLY": ("SIMULTANEOUSLY", "Two or more conditions are considered SIMULTANEOUS if all required conditions are true at the same moment in time. No minimum duration is required unless otherwise specified."), "CONTROLLED OBJECT": ("CONTROLLED OBJECT", "A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control."), "COMPLETELY": ("COMPLETELY", "Refers to an object being entirely clear of another object or boundary — no portion of the object is touching or overlapping the boundary or enclosure.")};
+    function openDefModal(term) {
+      const entry = DEFS[term];
+      if (!entry) return;
+      document.getElementById("defModalTerm").textContent = entry[0];
+      document.getElementById("defModalBody").textContent = entry[1];
+      document.getElementById("defModal").classList.add("active");
+    }
+    function closeDefModal() {
+      document.getElementById("defModal").classList.remove("active");
+    }
+    document.getElementById("defModal").addEventListener("click", function(e) {
+      if (e.target === this) closeDefModal();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") closeDefModal();
+    });
+  </script>
 </body>
 </html>

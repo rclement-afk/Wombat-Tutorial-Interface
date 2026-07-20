@@ -150,6 +150,7 @@
   </style>
 </head>
 <body>
+  <a class="back-btn" href="../2026-missions.html">All Missions</a>
   <nav class="nav">
     <a class="nav-brand" href="../index.html">
       <img src="../kipr-logo.png" alt="KIPR">
@@ -182,7 +183,7 @@
       <div class="sc-meta">Difficulty 1</div>
       <div class="sc-meta"><span class="badge badge-live">⚡ Live Judged</span></div>
     </div>
-        <div class="comp-desc"><p>All three Unstraight Cubes satisfy the OFF definition.</p></div>
+        <div class="comp-desc"><p>All three Unstraight Cubes satisfy the OFF definition (cubes are <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> the black line).</p></div>
       </div>
       <div class="comp-row">
         <div class="score-card comp-bonus">
@@ -191,7 +192,7 @@
       <div class="sc-meta">Difficulty 4</div>
       <div class="sc-meta"><span class="badge badge-live">⚡ Live Judged</span></div>
     </div>
-        <div class="comp-desc"><p>Two Unstraight Cubes form a scoring stack — one Unstraight Cube is ON TOP OF another.</p></div>
+        <div class="comp-desc"><p>Two Unstraight Cubes form a scoring stack — one Unstraight Cube is <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> another.</p></div>
       </div>
       <div class='comp-row'><div class="score-card comp-advanced">
       <div class="sc-label">ADVANCED BONUS</div>
@@ -204,16 +205,16 @@
     <div class="examples-grid">
       <div class="ex-col">
         <div class="ex-head scores">✓ Examples That Score</div>
-        <ul><li>All three Unstraight Cubes are OFF the black tape.</li><li>One Unstraight Cube is ON TOP OF another Unstraight Cube.</li><li>All three Unstraight Cubes participate in valid ON TOP OF relationships (traditional stack or pyramid).</li></ul>
+        <ul><li>All three Unstraight Cubes are <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> the black line.</li><li>One Unstraight Cube is <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> another Unstraight Cube.</li><li>All three Unstraight Cubes participate in valid <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> relationships (traditional stack or pyramid).</li></ul>
       </div>
       <div class="ex-col">
         <div class="ex-head no-scores">✗ Examples That Do Not Score</div>
-        <ul><li>One or more Unstraight Cubes are touching the black tape.</li><li>Two Unstraight Cubes touching side-by-side without ON TOP OF.</li><li>An Unstraight Cube stacked with a cube from another mission area.</li><li>Only two Unstraight Cubes participate in the Advanced Bonus stack.</li></ul>
+        <ul><li>One or more Unstraight Cubes are touching the black line.</li><li>Two Unstraight Cubes touching side-by-side without <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span>.</li><li>An Unstraight Cube stacked with a cube from another mission area.</li><li>Only two Unstraight Cubes participate in the Advanced Bonus stack.</li></ul>
       </div>
     </div>
 
     <div class="section-head">Judge Notes</div>
-    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is live scored.</li><li>The Advanced Bonus Mission is final position scored.</li><li>OFF is determined using the OFF definition.</li><li>ON TOP OF is determined using the ON TOP OF definition.</li><li>All cubes used for scoring must originate from the Unstraight Cube area.</li><li>The Advanced Bonus Mission requires all three Unstraight Cubes to participate in the scoring stack at final scoring.</li></ul>
+    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is live scored.</li><li>The Advanced Bonus Mission is final position scored.</li><li>OFF is determined using the <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> definition.</li><li>ON TOP OF is determined using the <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> definition.</li><li>All cubes used for scoring must originate from the Unstraight Cube area.</li><li>The Advanced Bonus Mission requires all three Unstraight Cubes to participate in the scoring stack at final scoring.</li></ul>
 
     
 
@@ -244,5 +245,35 @@
       <a href="mission-14.html" class="nav-btn">Mission 14 →</a>
     </div>
   </div>
+
+  <!-- Definition Modal -->
+  <div class="def-modal-overlay" id="defModal">
+    <div class="def-modal">
+      <div class="def-modal-head">
+        <span class="def-modal-term" id="defModalTerm"></span>
+        <button class="def-modal-close" onclick="closeDefModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="def-modal-body" id="defModalBody"></div>
+    </div>
+  </div>
+  <script>
+    const DEFS = {"IN THE ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "IN A ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "FULLY WITHIN": ("FULLY WITHIN", "An object or robot is considered FULLY WITHIN an area when every part of the object or robot lies within the interior vertical projection of that area"s boundaries."), "ON TOP OF": ("ON TOP OF", "An object is considered ON TOP OF another object when it is in direct physical contact with the uppermost surface of the target object. Additional support from a robot is permitted unless otherwise specified."), "TOUCHING": ("TOUCHING", "Two objects are considered TOUCHING only when they are in direct physical contact with one another. Contact through a robot, field element, or another game object does not constitute TOUCHING."), "OFF": ("OFF", "An object is considered OFF a line, tape, boundary, or zone edge when no portion of the object is touching that line, tape, boundary, or zone edge."), "IN": ("IN", "An object is considered IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone, unless otherwise specified."), "SIMULTANEOUSLY": ("SIMULTANEOUSLY", "Two or more conditions are considered SIMULTANEOUS if all required conditions are true at the same moment in time. No minimum duration is required unless otherwise specified."), "CONTROLLED OBJECT": ("CONTROLLED OBJECT", "A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control."), "COMPLETELY": ("COMPLETELY", "Refers to an object being entirely clear of another object or boundary — no portion of the object is touching or overlapping the boundary or enclosure.")};
+    function openDefModal(term) {
+      const entry = DEFS[term];
+      if (!entry) return;
+      document.getElementById("defModalTerm").textContent = entry[0];
+      document.getElementById("defModalBody").textContent = entry[1];
+      document.getElementById("defModal").classList.add("active");
+    }
+    function closeDefModal() {
+      document.getElementById("defModal").classList.remove("active");
+    }
+    document.getElementById("defModal").addEventListener("click", function(e) {
+      if (e.target === this) closeDefModal();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") closeDefModal();
+    });
+  </script>
 </body>
 </html>

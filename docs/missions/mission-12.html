@@ -150,6 +150,7 @@
   </style>
 </head>
 <body>
+  <a class="back-btn" href="../2026-missions.html">All Missions</a>
   <nav class="nav">
     <a class="nav-brand" href="../index.html">
       <img src="../kipr-logo.png" alt="KIPR">
@@ -182,7 +183,7 @@
       <div class="sc-meta">Difficulty 6</div>
       <div class="sc-meta"><span class="badge badge-live">⚡ Live Judged</span></div>
     </div>
-        <div class="comp-desc"><p>Two spilled cubes form a scoring stack — one spilled cube is ON TOP OF another spilled cube. Both cubes must originate from the spilled cube area.</p></div>
+        <div class="comp-desc"><p>Two spilled cubes form a scoring stack — one spilled cube is <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> another spilled cube. Both cubes must originate from the spilled cube area.</p></div>
       </div>
       <div class="comp-row">
         <div class="score-card comp-bonus">
@@ -191,7 +192,7 @@
       <div class="sc-meta">Difficulty 3</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>The scoring stack remains intact and the lower cube of the stack is touching black tape.</p></div>
+        <div class="comp-desc"><p>The scoring stack remains intact and the lower cube of the stack is touching the black line.</p></div>
       </div>
       
     </div>
@@ -199,16 +200,16 @@
     <div class="examples-grid">
       <div class="ex-col">
         <div class="ex-head scores">✓ Examples That Score</div>
-        <ul><li>One spilled cube is ON TOP OF another spilled cube.</li><li>A robot is supporting one or both cubes while the ON TOP OF relationship exists.</li><li>The scoring stack exists and the lower cube is touching black tape.</li></ul>
+        <ul><li>One spilled cube is <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> another spilled cube.</li><li>A robot is supporting one or both cubes while the <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> relationship exists.</li><li>The scoring stack exists and the lower cube is touching the black line.</li></ul>
       </div>
       <div class="ex-col">
         <div class="ex-head no-scores">✗ Examples That Do Not Score</div>
-        <ul><li>Two spilled cubes touching side-by-side.</li><li>A spilled cube stacked on a cube that did not originate from the spilled cube area.</li><li>The stack no longer exists at final scoring.</li><li>The upper cube is touching black tape but the lower cube is not.</li></ul>
+        <ul><li>Two spilled cubes touching side-by-side.</li><li>A spilled cube stacked on a cube that did not originate from the spilled cube area.</li><li>The stack no longer exists at final scoring.</li><li>The upper cube is touching the black line but the lower cube is not.</li></ul>
       </div>
     </div>
 
     <div class="section-head">Judge Notes</div>
-    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is final position scored.</li><li>ON TOP OF is determined using the ON TOP OF definition.</li><li>Both cubes used for scoring must originate from the spilled cube area.</li><li>The stack must still exist at final scoring to receive Bonus Mission points.</li><li>The lower cube must be touching black tape to satisfy the Bonus Mission.</li></ul>
+    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is final position scored.</li><li>ON TOP OF is determined using the <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> definition.</li><li>Both cubes used for scoring must originate from the spilled cube area.</li><li>The stack must still exist at final scoring to receive Bonus Mission points.</li><li>The lower cube must be touching the black line to satisfy the Bonus Mission.</li></ul>
 
     
 
@@ -239,5 +240,35 @@
       <a href="mission-13.html" class="nav-btn">Mission 13 →</a>
     </div>
   </div>
+
+  <!-- Definition Modal -->
+  <div class="def-modal-overlay" id="defModal">
+    <div class="def-modal">
+      <div class="def-modal-head">
+        <span class="def-modal-term" id="defModalTerm"></span>
+        <button class="def-modal-close" onclick="closeDefModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="def-modal-body" id="defModalBody"></div>
+    </div>
+  </div>
+  <script>
+    const DEFS = {"IN THE ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "IN A ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "FULLY WITHIN": ("FULLY WITHIN", "An object or robot is considered FULLY WITHIN an area when every part of the object or robot lies within the interior vertical projection of that area"s boundaries."), "ON TOP OF": ("ON TOP OF", "An object is considered ON TOP OF another object when it is in direct physical contact with the uppermost surface of the target object. Additional support from a robot is permitted unless otherwise specified."), "TOUCHING": ("TOUCHING", "Two objects are considered TOUCHING only when they are in direct physical contact with one another. Contact through a robot, field element, or another game object does not constitute TOUCHING."), "OFF": ("OFF", "An object is considered OFF a line, tape, boundary, or zone edge when no portion of the object is touching that line, tape, boundary, or zone edge."), "IN": ("IN", "An object is considered IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone, unless otherwise specified."), "SIMULTANEOUSLY": ("SIMULTANEOUSLY", "Two or more conditions are considered SIMULTANEOUS if all required conditions are true at the same moment in time. No minimum duration is required unless otherwise specified."), "CONTROLLED OBJECT": ("CONTROLLED OBJECT", "A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control."), "COMPLETELY": ("COMPLETELY", "Refers to an object being entirely clear of another object or boundary — no portion of the object is touching or overlapping the boundary or enclosure.")};
+    function openDefModal(term) {
+      const entry = DEFS[term];
+      if (!entry) return;
+      document.getElementById("defModalTerm").textContent = entry[0];
+      document.getElementById("defModalBody").textContent = entry[1];
+      document.getElementById("defModal").classList.add("active");
+    }
+    function closeDefModal() {
+      document.getElementById("defModal").classList.remove("active");
+    }
+    document.getElementById("defModal").addEventListener("click", function(e) {
+      if (e.target === this) closeDefModal();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") closeDefModal();
+    });
+  </script>
 </body>
 </html>

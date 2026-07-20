@@ -150,6 +150,7 @@
   </style>
 </head>
 <body>
+  <a class="back-btn" href="../2026-missions.html">All Missions</a>
   <nav class="nav">
     <a class="nav-brand" href="../index.html">
       <img src="../kipr-logo.png" alt="KIPR">
@@ -182,7 +183,7 @@
       <div class="sc-meta">Difficulty 8</div>
       <div class="sc-meta"><span class="badge badge-live">⚡ Live Judged</span></div>
     </div>
-        <div class="comp-desc"><p>Place all four Green and Yellow Cubes onto a single pallet. A cube is on the pallet if touching the upper surface or ON TOP OF another cube that is on the pallet.</p></div>
+        <div class="comp-desc"><p>Place all four Green and Yellow Cubes onto a single pallet. A cube is on the pallet if touching the upper surface or <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> another cube that is on the pallet.</p></div>
       </div>
       <div class="comp-row">
         <div class="score-card comp-bonus">
@@ -191,7 +192,7 @@
       <div class="sc-meta">Difficulty 4</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>The pallet is touching the interior of a starting box and is not touching any black tape.</p></div>
+        <div class="comp-desc"><p>The pallet is <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> a starting box and is not touching any black line.</p></div>
       </div>
       
     </div>
@@ -199,16 +200,16 @@
     <div class="examples-grid">
       <div class="ex-col">
         <div class="ex-head scores">✓ Examples That Score</div>
-        <ul><li>All four cubes touching the pallet.</li><li>A four-cube vertical stack on the pallet.</li><li>Any arrangement where all four cubes are part of a single palletized load.</li><li>The pallet touching the interior of a starting box, not touching black tape.</li></ul>
+        <ul><li>All four cubes touching the pallet.</li><li>A four-cube vertical stack on the pallet.</li><li>Any arrangement where all four cubes are part of a single palletized load.</li><li>The pallet <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> a starting box, not touching the black line.</li></ul>
       </div>
       <div class="ex-col">
         <div class="ex-head no-scores">✗ Examples That Do Not Score</div>
-        <ul><li>Three cubes on the pallet and one cube elsewhere.</li><li>The pallet is touching black tape.</li><li>The pallet is not touching the interior of a starting box.</li></ul>
+        <ul><li>Three cubes on the pallet and one cube elsewhere.</li><li>The pallet is touching the black line.</li><li>The pallet is not <span class="def-term" onclick="openDefModal(&quot;FULLY WITHIN&quot;)">FULLY WITH<span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span></span> a starting box.</li></ul>
       </div>
     </div>
 
     <div class="section-head">Judge Notes</div>
-    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is final position scored.</li><li>ON TOP OF is determined using the ON TOP OF definition.</li><li>The arrangement of the cubes is irrelevant — every cube must be part of a single palletized load.</li><li>The cubes are not required to remain on the pallet after the Base Mission has been scored.</li></ul>
+    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is final position scored.</li><li>ON TOP OF is determined using the <span class="def-term" onclick="openDefModal(&quot;ON TOP OF&quot;)">ON TOP OF</span> definition.</li><li>The arrangement of the cubes is irrelevant — every cube must be part of a single palletized load.</li><li>The cubes are not required to remain on the pallet after the Base Mission has been scored.</li></ul>
 
     
 
@@ -239,5 +240,35 @@
       <a href="mission-07.html" class="nav-btn">Mission 7 →</a>
     </div>
   </div>
+
+  <!-- Definition Modal -->
+  <div class="def-modal-overlay" id="defModal">
+    <div class="def-modal">
+      <div class="def-modal-head">
+        <span class="def-modal-term" id="defModalTerm"></span>
+        <button class="def-modal-close" onclick="closeDefModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="def-modal-body" id="defModalBody"></div>
+    </div>
+  </div>
+  <script>
+    const DEFS = {"IN THE ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "IN A ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "FULLY WITHIN": ("FULLY WITHIN", "An object or robot is considered FULLY WITHIN an area when every part of the object or robot lies within the interior vertical projection of that area"s boundaries."), "ON TOP OF": ("ON TOP OF", "An object is considered ON TOP OF another object when it is in direct physical contact with the uppermost surface of the target object. Additional support from a robot is permitted unless otherwise specified."), "TOUCHING": ("TOUCHING", "Two objects are considered TOUCHING only when they are in direct physical contact with one another. Contact through a robot, field element, or another game object does not constitute TOUCHING."), "OFF": ("OFF", "An object is considered OFF a line, tape, boundary, or zone edge when no portion of the object is touching that line, tape, boundary, or zone edge."), "IN": ("IN", "An object is considered IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone, unless otherwise specified."), "SIMULTANEOUSLY": ("SIMULTANEOUSLY", "Two or more conditions are considered SIMULTANEOUS if all required conditions are true at the same moment in time. No minimum duration is required unless otherwise specified."), "CONTROLLED OBJECT": ("CONTROLLED OBJECT", "A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control."), "COMPLETELY": ("COMPLETELY", "Refers to an object being entirely clear of another object or boundary — no portion of the object is touching or overlapping the boundary or enclosure.")};
+    function openDefModal(term) {
+      const entry = DEFS[term];
+      if (!entry) return;
+      document.getElementById("defModalTerm").textContent = entry[0];
+      document.getElementById("defModalBody").textContent = entry[1];
+      document.getElementById("defModal").classList.add("active");
+    }
+    function closeDefModal() {
+      document.getElementById("defModal").classList.remove("active");
+    }
+    document.getElementById("defModal").addEventListener("click", function(e) {
+      if (e.target === this) closeDefModal();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") closeDefModal();
+    });
+  </script>
 </body>
 </html>

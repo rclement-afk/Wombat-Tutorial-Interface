@@ -150,6 +150,7 @@
   </style>
 </head>
 <body>
+  <a class="back-btn" href="../2026-missions.html">All Missions</a>
   <nav class="nav">
     <a class="nav-brand" href="../index.html">
       <img src="../kipr-logo.png" alt="KIPR">
@@ -182,7 +183,7 @@
       <div class="sc-meta">Difficulty 5</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>One Blue Pom is IN a basket.</p></div>
+        <div class="comp-desc"><p>One Blue Pom is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> a basket.</p></div>
       </div>
       <div class="comp-row">
         <div class="score-card comp-bonus">
@@ -191,7 +192,7 @@
       <div class="sc-meta">Difficulty 5</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>Two or more Blue Poms are IN the same basket.</p></div>
+        <div class="comp-desc"><p>Two or more Blue Poms are <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the same basket.</p></div>
       </div>
       
     </div>
@@ -199,7 +200,7 @@
     <div class="examples-grid">
       <div class="ex-col">
         <div class="ex-head scores">✓ Examples That Score</div>
-        <ul><li>One Blue Pom is IN a basket.</li><li>One Blue Pom partially extends into the interior space of a basket.</li><li>Two or more Blue Poms are IN the same basket.</li></ul>
+        <ul><li>One Blue Pom is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> a basket.</li><li>One Blue Pom partially extends into the interior space of a basket.</li><li>Two or more Blue Poms are <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the same basket.</li></ul>
       </div>
       <div class="ex-col">
         <div class="ex-head no-scores">✗ Examples That Do Not Score</div>
@@ -208,7 +209,7 @@
     </div>
 
     <div class="section-head">Judge Notes</div>
-    <ul class="notes-list"><li>This is a final position scored mission.</li><li>IN is determined using the IN definition.</li><li>Any basket on the field may be used.</li><li>Basket Exclusivity Rule: If attempting both Mission 11 and Mission 15, different baskets must be used for each.</li></ul>
+    <ul class="notes-list"><li>This is a final position scored mission.</li><li>IN is determined using the <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> definition.</li><li>Any basket on the field may be used.</li><li>Basket Exclusivity Rule: If attempting both Mission 11 and Mission 15, different baskets must be used for each.</li></ul>
 
     <div class="special-notice">⚠️ Basket Exclusivity: If your team attempts both Mission 11 and Mission 15, each mission must use a different basket.</div>
 
@@ -239,5 +240,35 @@
       <a href="mission-16.html" class="nav-btn">Mission 16 →</a>
     </div>
   </div>
+
+  <!-- Definition Modal -->
+  <div class="def-modal-overlay" id="defModal">
+    <div class="def-modal">
+      <div class="def-modal-head">
+        <span class="def-modal-term" id="defModalTerm"></span>
+        <button class="def-modal-close" onclick="closeDefModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="def-modal-body" id="defModalBody"></div>
+    </div>
+  </div>
+  <script>
+    const DEFS = {"IN THE ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "IN A ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "FULLY WITHIN": ("FULLY WITHIN", "An object or robot is considered FULLY WITHIN an area when every part of the object or robot lies within the interior vertical projection of that area"s boundaries."), "ON TOP OF": ("ON TOP OF", "An object is considered ON TOP OF another object when it is in direct physical contact with the uppermost surface of the target object. Additional support from a robot is permitted unless otherwise specified."), "TOUCHING": ("TOUCHING", "Two objects are considered TOUCHING only when they are in direct physical contact with one another. Contact through a robot, field element, or another game object does not constitute TOUCHING."), "OFF": ("OFF", "An object is considered OFF a line, tape, boundary, or zone edge when no portion of the object is touching that line, tape, boundary, or zone edge."), "IN": ("IN", "An object is considered IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone, unless otherwise specified."), "SIMULTANEOUSLY": ("SIMULTANEOUSLY", "Two or more conditions are considered SIMULTANEOUS if all required conditions are true at the same moment in time. No minimum duration is required unless otherwise specified."), "CONTROLLED OBJECT": ("CONTROLLED OBJECT", "A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control."), "COMPLETELY": ("COMPLETELY", "Refers to an object being entirely clear of another object or boundary — no portion of the object is touching or overlapping the boundary or enclosure.")};
+    function openDefModal(term) {
+      const entry = DEFS[term];
+      if (!entry) return;
+      document.getElementById("defModalTerm").textContent = entry[0];
+      document.getElementById("defModalBody").textContent = entry[1];
+      document.getElementById("defModal").classList.add("active");
+    }
+    function closeDefModal() {
+      document.getElementById("defModal").classList.remove("active");
+    }
+    document.getElementById("defModal").addEventListener("click", function(e) {
+      if (e.target === this) closeDefModal();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") closeDefModal();
+    });
+  </script>
 </body>
 </html>
