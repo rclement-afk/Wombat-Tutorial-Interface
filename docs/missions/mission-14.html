@@ -147,10 +147,108 @@
       .comp-row { grid-template-columns: 160px 1fr; }
       .examples-grid { grid-template-columns: 1fr; }
     }
-  </style>
+  
+    /* ── Definition Modal ── */
+    .def-term {
+      cursor: pointer;
+      border-bottom: 2px dotted #922B21;
+      font-weight: 700;
+      color: inherit;
+    }
+    .def-term:hover { color: #922B21; }
+
+    .def-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 9999;
+      padding: 1rem;
+      /* Centre on desktop, slide up from bottom on mobile */
+      align-items: center;
+      justify-content: center;
+    }
+    .def-overlay.open { display: flex; }
+
+    .def-box {
+      background: #fff;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+      overflow: hidden;
+      animation: def-pop 0.16s ease;
+      /* On mobile, keep it near the bottom */
+    }
+    @keyframes def-pop {
+      from { opacity: 0; transform: scale(0.93) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0);    }
+    }
+
+    .def-head {
+      background: #922B21;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      gap: 0.5rem;
+    }
+    .def-head-term {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .def-close {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.75);
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0.2rem;
+      /* Large tap target for phones */
+      min-width: 36px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .def-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .def-body {
+      padding: 1rem 1.1rem 1.25rem;
+      font-size: 0.925rem;
+      color: #444;
+      line-height: 1.65;
+    }
+
+    /* Phone: slide up from bottom edge */
+    @media (max-width: 600px) {
+      .def-overlay {
+        align-items: flex-end;
+        padding: 0;
+      }
+      .def-box {
+        border-radius: 12px 12px 0 0;
+        max-width: 100%;
+        animation: def-slide 0.2s ease;
+      }
+      @keyframes def-slide {
+        from { transform: translateY(100%); }
+        to   { transform: translateY(0); }
+      }
+      .def-head-term { font-size: 1rem; }
+      .def-body { font-size: 0.95rem; padding: 1rem 1.1rem 2rem; }
+    }
+    </style>
 </head>
 <body>
-  <a class="back-btn" href="../2026-missions.html">All Missions</a>
   <nav class="nav">
     <a class="nav-brand" href="../index.html">
       <img src="../kipr-logo.png" alt="KIPR">
@@ -183,7 +281,7 @@
       <div class="sc-meta">Difficulty 2</div>
       <div class="sc-meta"><span class="badge badge-live">⚡ Live Judged</span></div>
     </div>
-        <div class="comp-desc"><p>Both Traffic Cones satisfy the <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> definition.</p></div>
+        <div class="comp-desc"><p>Both Traffic Cones satisfy the <span class="def-term" data-term="OFF">OFF</span> definition.</p></div>
       </div>
       <div class="comp-row">
         <div class="score-card comp-bonus">
@@ -192,7 +290,7 @@
       <div class="sc-meta">Difficulty 4</div>
       <div class="sc-meta"><span class="badge badge-final">📋 Final Position</span></div>
     </div>
-        <div class="comp-desc"><p>A Traffic Cone is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone. The Base Mission must be satisfied to score the Bonus Mission.</p></div>
+        <div class="comp-desc"><p>A Traffic Cone is <span class="def-term" data-term="IN">IN</span> the Loading Zone. The Base Mission must be satisfied to score the Bonus Mission.</p></div>
       </div>
       
     </div>
@@ -200,18 +298,18 @@
     <div class="examples-grid">
       <div class="ex-col">
         <div class="ex-head scores">✓ Examples That Score</div>
-        <ul><li>Both Traffic Cones are <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> the black line.</li><li>A Traffic Cone is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone while the other remains elsewhere on the field.</li><li>The same Traffic Cone used for Base Mission is placed <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone.</li></ul>
+        <ul><li>Both Traffic Cones are <span class="def-term" data-term="OFF">OFF</span> the black line.</li><li>A Traffic Cone is <span class="def-term" data-term="IN">IN</span> the Loading Zone while the other remains elsewhere on the field.</li><li>The same Traffic Cone used for Base Mission is placed <span class="def-term" data-term="IN">IN</span> the Loading Zone.</li></ul>
       </div>
       <div class="ex-col">
         <div class="ex-head no-scores">✗ Examples That Do Not Score</div>
-        <ul><li>Either Traffic Cone is touching black line.</li><li>Only one Traffic Cone is <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> the black line.</li><li>A Traffic Cone is <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> the Loading Zone but the second cone is still touching black line.</li><li>The Base Mission has not been satisfied.</li></ul>
+        <ul><li>Either Traffic Cone is touching black line.</li><li>Only one Traffic Cone is <span class="def-term" data-term="OFF">OFF</span> the black line.</li><li>A Traffic Cone is <span class="def-term" data-term="IN">IN</span> the Loading Zone but the second cone is still touching black line.</li><li>The Base Mission has not been satisfied.</li></ul>
       </div>
     </div>
 
     <div class="section-head">Judge Notes</div>
-    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is final position scored.</li><li>OFF is determined using the <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> definition.</li><li>IN is determined using the <span class="def-term" onclick="openDefModal(&quot;IN&quot;)">IN</span> definition.</li><li>Both Traffic Cones must satisfy the <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> definition before the Bonus Mission may be scored.</li><li>A Traffic Cone is not considered <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> the tape if any portion is touching the tape.</li></ul>
+    <ul class="notes-list"><li>The Base Mission is live scored.</li><li>The Bonus Mission is final position scored.</li><li><span class="def-term" data-term="OFF">OFF</span> is determined using the <span class="def-term" data-term="OFF">OFF</span> definition.</li><li><span class="def-term" data-term="IN">IN</span> is determined using the <span class="def-term" data-term="IN">IN</span> definition.</li><li>Both Traffic Cones must satisfy the <span class="def-term" data-term="OFF">OFF</span> definition before the Bonus Mission may be scored.</li><li>A Traffic Cone is not considered <span class="def-term" data-term="OFF">OFF</span> the tape if any portion is touching the tape.</li></ul>
 
-    <div class="special-notice">⚠️ Exception: A Traffic Cone is not considered <span class="def-term" onclick="openDefModal(&quot;OFF&quot;)">OFF</span> the tape if any portion of the Traffic Cone is touching the tape.</div>
+    <div class="special-notice">⚠️ Exception: A Traffic Cone is not considered <span class="def-term" data-term="OFF">OFF</span> the tape if any portion of the Traffic Cone is touching the tape.</div>
 
     <div class="summary-bar">
       <div class="summary-head">Scoring<br>Summary</div>
@@ -241,34 +339,71 @@
     </div>
   </div>
 
-  <!-- Definition Modal -->
-  <div class="def-modal-overlay" id="defModal">
-    <div class="def-modal">
-      <div class="def-modal-head">
-        <span class="def-modal-term" id="defModalTerm"></span>
-        <button class="def-modal-close" onclick="closeDefModal()" aria-label="Close">✕</button>
+  <!-- Definition Pop-up -->
+  <div class="def-overlay" id="defOverlay" role="dialog" aria-modal="true" aria-labelledby="defTerm">
+    <div class="def-box">
+      <div class="def-head">
+        <span class="def-head-term" id="defTerm"></span>
+        <button class="def-close" id="defClose" aria-label="Close definition">✕</button>
       </div>
-      <div class="def-modal-body" id="defModalBody"></div>
+      <div class="def-body" id="defBody"></div>
     </div>
   </div>
+
   <script>
-    const DEFS = {"IN THE ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "IN A ZONE": ("IN A ZONE", "A robot is considered IN A ZONE when it is touching the specified zone and is not touching any black line boundary or any adjacent zone."), "FULLY WITHIN": ("FULLY WITHIN", "An object or robot is considered FULLY WITHIN an area when every part of the object or robot lies within the interior vertical projection of that area"s boundaries."), "ON TOP OF": ("ON TOP OF", "An object is considered ON TOP OF another object when it is in direct physical contact with the uppermost surface of the target object. Additional support from a robot is permitted unless otherwise specified."), "TOUCHING": ("TOUCHING", "Two objects are considered TOUCHING only when they are in direct physical contact with one another. Contact through a robot, field element, or another game object does not constitute TOUCHING."), "OFF": ("OFF", "An object is considered OFF a line, tape, boundary, or zone edge when no portion of the object is touching that line, tape, boundary, or zone edge."), "IN": ("IN", "An object is considered IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone, unless otherwise specified."), "SIMULTANEOUSLY": ("SIMULTANEOUSLY", "Two or more conditions are considered SIMULTANEOUS if all required conditions are true at the same moment in time. No minimum duration is required unless otherwise specified."), "CONTROLLED OBJECT": ("CONTROLLED OBJECT", "A Controlled Object is any game object being carried, lifted, supported, restrained, held, pushed, pulled, trapped, or otherwise actively manipulated by a robot. Brief incidental contact does not constitute control."), "COMPLETELY": ("COMPLETELY", "Refers to an object being entirely clear of another object or boundary — no portion of the object is touching or overlapping the boundary or enclosure.")};
-    function openDefModal(term) {
-      const entry = DEFS[term];
+  (function() {
+    var DEFS = {
+  'IN THE ZONE': ['IN THE ZONE', 'A robot is IN THE ZONE when the robot is touching the interior of the specified zone and no part of the robot is touching the zone\'s boundary line.'],
+  'FULLY WITHIN': ['FULLY WITHIN', 'An object or robot is FULLY WITHIN an area when every part of the object or robot lies inside the boundary of that area — no portion may touch or cross the boundary line.'],
+  'ON TOP OF': ['ON TOP OF', 'An object is ON TOP OF another object when it is in direct physical contact with the uppermost surface of that object. Support from a robot is permitted unless a mission specifies otherwise.'],
+  'OFF': ['OFF', 'An object is OFF a line, boundary, or zone edge when no portion of the object is touching that line, boundary, or zone edge.'],
+  'TOUCHING': ['TOUCHING', 'Two objects are TOUCHING when they are in direct physical contact with one another. Contact through a third object (robot, field element, or game piece) does not count as TOUCHING.'],
+  'SIMULTANEOUSLY': ['SIMULTANEOUSLY', 'Two or more conditions are met SIMULTANEOUSLY when all required conditions are true at exactly the same moment in time. No minimum duration is required.'],
+  'COMPLETELY': ['COMPLETELY', 'An object is COMPLETELY outside an enclosure or boundary when no portion of the object is touching or overlapping that enclosure or boundary.'],
+  'IN': ['IN', 'An object is IN a container, enclosure, basket, or zone when any portion of the object extends into the interior space of that container, enclosure, basket, or zone — unless otherwise specified by a mission.']
+};
+
+    function openDef(term) {
+      var entry = DEFS[term];
       if (!entry) return;
-      document.getElementById("defModalTerm").textContent = entry[0];
-      document.getElementById("defModalBody").textContent = entry[1];
-      document.getElementById("defModal").classList.add("active");
+      document.getElementById('defTerm').textContent = entry[0];
+      document.getElementById('defBody').textContent  = entry[1];
+      var ov = document.getElementById('defOverlay');
+      ov.classList.add('open');
+      document.getElementById('defClose').focus();
+      document.body.style.overflow = 'hidden';
     }
-    function closeDefModal() {
-      document.getElementById("defModal").classList.remove("active");
+
+    function closeDef() {
+      document.getElementById('defOverlay').classList.remove('open');
+      document.body.style.overflow = '';
     }
-    document.getElementById("defModal").addEventListener("click", function(e) {
-      if (e.target === this) closeDefModal();
+
+    // Wire close button
+    document.getElementById('defClose').addEventListener('click', closeDef);
+
+    // Click outside box to close
+    document.getElementById('defOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeDef();
     });
-    document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape") closeDefModal();
+
+    // Esc to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeDef();
     });
+
+    // Wire all def-term spans via event delegation (works for dynamically added too)
+    document.addEventListener('click', function(e) {
+      var el = e.target.closest('.def-term');
+      if (el) openDef(el.dataset.term);
+    });
+
+    // Touch: prevent double-tap zoom on def terms on iOS
+    document.addEventListener('touchend', function(e) {
+      if (e.target.closest('.def-term')) e.preventDefault();
+    }, { passive: false });
+  })();
   </script>
+
 </body>
 </html>
