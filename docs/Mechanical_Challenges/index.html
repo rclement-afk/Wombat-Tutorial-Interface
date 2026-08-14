@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mechanical Design Challenges — KIPR Botball 2026</title>
+  <link rel="stylesheet" href="../shared.css">
+  <link rel="stylesheet" href="../lab-sheet.css" />
+  <style>
+  body {
+    background: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--dark);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .page-sub {
+    color: rgba(255,255,255,0.55);
+    max-width: 600px;
+    margin-bottom: 1.25rem;
+  }
+
+  .toggle-line {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 2.5rem;
+  }
+
+  .toggle-line a {
+    color: var(--red);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .toggle-line a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="nav-brand" href="../index.html">
+      <img src="../kipr-logo.png" alt="KIPR">
+      <span>Botball 2026</span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../2026-missions.html">2026 Missions</a>
+      <a href="../discovery/index.html">Discovery</a>
+      <a href="../labs/index.html">C Labs</a>
+      <a href="../Python_Labs/index.html">Python Labs</a>
+      <a href="index.html" class="active">Mechanical</a>
+      <a href="../glossary.html">Glossary</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <p class="page-eyebrow">Botball Explorer · Mechanical Design · Year One</p>
+    <h1 class="page-title">Mechanical <span>Challenges</span></h1>
+    <p class="page-sub">Twenty-eight build challenges, each one a mechanism you construct, test, and measure. Every sheet follows the same seven phases &mdash; observe, learn the concept, build, meet a need, test and iterate, connect to Botball, and reflect. Enter your PIN, work through the activity, then press Submit &amp; Download to save your results file and a printable PDF.</p>
+    <p class="toggle-line">Working on the programming side? <a href="../Python_Labs/index.html">Open the Python labs &rarr;</a></p>
+
+    <p class="unit-label">Design Foundations &middot; Challenges 1&ndash;2</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech01_design_foundations.html">
+        <span class="lab-num">Challenge 1</span>
+        <span class="lab-title">Design Foundations</span>
+        <span class="lab-desc">What engineering actually is, the five-step design process, and a first sorting problem to run it on.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech02_lift.html">
+        <span class="lab-num">Challenge 2</span>
+        <span class="lab-title">The Lift</span>
+        <span class="lab-desc">Start inside a 12&Prime; box and reach past 17&Prime;. Deployment, and why center of gravity decides whether it tips.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Effectors &middot; Challenges 3&ndash;5</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech03_pincer.html">
+        <span class="lab-num">Challenge 3</span>
+        <span class="lab-title">The Pincer</span>
+        <span class="lab-desc">Meshed gears reverse direction. Build a grabber where both arms close together instead of one shoving the object sideways.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech04_modified_pincer.html">
+        <span class="lab-num">Challenge 4</span>
+        <span class="lab-title">The Modified Pincer</span>
+        <span class="lab-desc">Gear ratios trade speed for torque, and swinging jaws tilt against a flat face. Gears are not magic.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech05_big_arm.html">
+        <span class="lab-num">Challenge 5</span>
+        <span class="lab-title">The Big Arm</span>
+        <span class="lab-desc">Degrees of freedom, torque measured in oz-in, and counterweights &mdash; all under a 120 oz-in ceiling.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Converting Motion &middot; Challenges 6&ndash;8</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech06_crank.html">
+        <span class="lab-num">Challenge 6</span>
+        <span class="lab-title">The Crank</span>
+        <span class="lab-desc">Rotation into straight-line motion. Stroke is twice the pin offset, and dead points stop everything.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech07_cam.html">
+        <span class="lab-num">Challenge 7</span>
+        <span class="lab-title">The Cam</span>
+        <span class="lab-desc">The profile decides the motion. Lift, the pause between, and the return force that keeps the follower down.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech08_four_bar.html">
+        <span class="lab-num">Challenge 8</span>
+        <span class="lab-title">The Four-Bar Linkage</span>
+        <span class="lab-desc">Four links, one of them invisible, and an arithmetic test that decides whether the motor will spin or jam.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Gears and Drives &middot; Challenges 9&ndash;14</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech09_worm_circle.html">
+        <span class="lab-num">Challenge 9</span>
+        <span class="lab-title">The Worm Gear</span>
+        <span class="lab-desc">24:1 from two parts, a right-angle turn, and a drive that holds its position with the power off.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech10_worm_pincer.html">
+        <span class="lab-num">Challenge 10</span>
+        <span class="lab-title">The Worm-Driven Pincer</span>
+        <span class="lab-desc">One worm drives two gears in opposite directions &mdash; and the grip stays clamped after the motor stops.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech11_rack_pinion.html">
+        <span class="lab-num">Challenge 11</span>
+        <span class="lab-title">The Rack and Pinion</span>
+        <span class="lab-desc">A jaw that slides cannot tilt. Prove the jaws are parallel by measuring, not by looking.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech12_coulisse.html">
+        <span class="lab-num">Challenge 12</span>
+        <span class="lab-title">The Coulisse Mechanism</span>
+        <span class="lab-desc">A pin riding in a slot makes one stroke fast and the other slow, from a wheel turning at a steady rate.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech13_bevel_drive.html">
+        <span class="lab-num">Challenge 13</span>
+        <span class="lab-title">The Bevel Drive</span>
+        <span class="lab-desc">A second way to turn a corner, and why a worm gear would ruin this one. The first build that drives.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech14_geneva.html">
+        <span class="lab-num">Challenge 14</span>
+        <span class="lab-title">The Geneva Drive</span>
+        <span class="lab-desc">Four exact stops every minute, locked in place by shape between each one. Dwell is the useful part.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Midpoint Synthesis &middot; Challenge 15</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech15_synthesis.html">
+        <span class="lab-num">Challenge 15</span>
+        <span class="lab-title">Combining Mechanisms</span>
+        <span class="lab-desc">Halfway. Chain at least two of the nine mechanisms you have built and produce more than six inches of travel.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Reaching and Lifting &middot; Challenges 16&ndash;20</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech16_planar_motion.html">
+        <span class="lab-num">Challenge 16</span>
+        <span class="lab-title">Planar Motion with Three Inputs</span>
+        <span class="lab-desc">A flat object has exactly three degrees of freedom, so it takes exactly three drives. Parallel machines versus serial ones.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech17_vertical_platform.html">
+        <span class="lab-num">Challenge 17</span>
+        <span class="lab-title">The Vertical Transitioning Platform</span>
+        <span class="lab-desc">Two pounds, five inches, one motor. Mechanical advantage gets its name here &mdash; and its price.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech18_crane.html">
+        <span class="lab-num">Challenge 18</span>
+        <span class="lab-title">The Four-Bar Linkage Crane</span>
+        <span class="lab-desc">Mechanical advantage is not a single number. Find the hardest position and size the motor for that one.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech19_gear_45.html">
+        <span class="lab-num">Challenge 19</span>
+        <span class="lab-title">Drive at 45 Degrees</span>
+        <span class="lab-desc">Gears are cut for one angle. A joint bends to any angle &mdash; and gives up a perfectly even output to do it.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech20_linear_teeth.html">
+        <span class="lab-num">Challenge 20</span>
+        <span class="lab-title">Using Linear Teeth to Increase Length</span>
+        <span class="lab-desc">Sliding stages add their reach together. Reaching past your own base is bought with stability.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Control and Precision &middot; Challenges 21&ndash;27</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech21_parallelogram.html">
+        <span class="lab-num">Challenge 21</span>
+        <span class="lab-title">The Parallelogram Elevator</span>
+        <span class="lab-desc">Up and down from a motor that never reverses. Level platform or straight path &mdash; you cannot easily have both.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech22_rack_slide.html">
+        <span class="lab-num">Challenge 22</span>
+        <span class="lab-title">The Sliding Platform</span>
+        <span class="lab-desc">Most of the work in a slide is preventing motion, not creating it. Skew, guides, and binding.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech23_gear_linkage.html">
+        <span class="lab-num">Challenge 23</span>
+        <span class="lab-title">Gear and Linkage Mechanism</span>
+        <span class="lab-desc">Park the effector, cut the power, and drag the load. Then find out whether it held because it locks or because it is stiff.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech24_worm_fundamentals.html">
+        <span class="lab-num">Challenge 24</span>
+        <span class="lab-title">One Motor, Two Speeds</span>
+        <span class="lab-desc">Split a drive train and each branch gets its own gearing. A striker spinning fast while the car crawls forward.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech25_parallelogram_mech.html">
+        <span class="lab-num">Challenge 25</span>
+        <span class="lab-title">The String-Driven Extension Arm</span>
+        <span class="lab-desc">A string can only pull. Half the mechanism is missing, and supplying it is the challenge.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech26_rotation_limiter.html">
+        <span class="lab-num">Challenge 26</span>
+        <span class="lab-title">The Shaft Rotation Limiter</span>
+        <span class="lab-desc">A mechanism built to stop. Hand crank only &mdash; and understanding exactly why is most of the lesson.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+      <a class="lab-card" href="mech27_constant_direction.html">
+        <span class="lab-num">Challenge 27</span>
+        <span class="lab-title">Keeping Direction the Same While in Rotation</span>
+        <span class="lab-desc">A Ferris wheel whose platforms never tip, held level by a sprocket at the centre that never turns.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+
+    <p class="unit-label" style="margin-top:2.5rem;">Capstone &middot; Challenge 28</p>
+    <div class="card-grid">
+      <a class="lab-card" href="mech28_pom_dispenser.html">
+        <span class="lab-num">Challenge 28 &middot; Capstone</span>
+        <span class="lab-title">The Pom Dispenser</span>
+        <span class="lab-desc">One pom at a time, steadily, for as long as the motor runs &mdash; built from at least three mechanisms you already own.</span>
+        <span class="lab-arrow">Open Challenge &rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer-strip">KIPR Botball © 2026 — All rights reserved</div>
+</body>
+</html>
