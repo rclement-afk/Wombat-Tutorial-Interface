@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mechanical · Challenge 9 — The Worm Gear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style id="labsheet-inline">
+/* ===== lab-sheet.css — inlined so this file previews standalone.
+   At packaging time this whole block is swapped back to
+   a stylesheet link to ../lab-sheet.css
+   Do not hand-edit rules in here; edit lab-sheet.css. ===== */
+/* KIPR Botball 2026 — Lab sheet shared styles
+ * Exact duplicates extracted from docs/labs and docs/Python_Labs.
+ * Page-specific rules and near-duplicate variants remain in each HTML style block.
+ *
+ * Near-duplicate candidates (not unified):
+ *   .calc-line input: 2×, 2×
+ *   .callout: 44×, 10×
+ *   .callout .ctitle: 44×, 10×
+ *   .hero: 44×, 10×
+ *   .hero .sub: 44×, 10×
+ *   .phase-head: 44×, 10×
+ *   @media print page sheets (contain @page): ~19 near-duplicate variants kept inline
+ */
+
+:root {
+    --red: #C0392B;
+    --red-dark: #922B21;
+    --navy: #1C1C1C;
+    --gold: #C0392B;
+    --ink: #1C1C1C;
+    --grey: #666666;
+    --line: #CCCCCC;
+    --bg: #F2F2F2;
+    --panel: #ffffff;
+    --field: #F8F8F8;
+    --field-focus: #FDF2F2;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+/* ---------- Sticky PIN / submit bar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 3px solid var(--gold);
+  }
+
+.topbar-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+.topbar .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-right: auto;
+    color: #fff;
+  }
+
+.topbar .brand span { color: var(--gold); }
+
+.pin-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+.pin-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #d7dcea;
+  }
+
+.pin-field input {
+    width: 120px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+  }
+
+.pin-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+.submit-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+
+.submit-btn:hover { background: var(--red-dark); }
+
+.submit-btn:active { transform: translateY(1px); }
+
+.status {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 2px 2px 0;
+    min-height: 0;
+    color: #d7dcea;
+  }
+
+.status.ok { color: #b9e6b0; }
+
+.status.warn { color: #ffd9a0; }
+
+.status.err { color: #ffb3b3; }
+
+/* ---------- Page shell ---------- */
+.sheet {
+    max-width: 920px;
+    margin: 22px auto 80px;
+    padding: 0 22px;
+  }
+
+.hero .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #f4d9a0;
+    margin: 0 0 4px;
+  }
+
+.hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+
+/* ---------- Meta table ---------- */
+.meta {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+.meta dl { margin: 0; }
+
+.meta .row {
+    display: grid;
+    grid-template-columns: 215px 1fr;
+  }
+
+.meta .row:nth-child(odd) { background: #eef0f5; }
+
+.meta dt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--navy);
+    padding: 9px 16px;
+  }
+
+.meta dd {
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+/* ---------- Sections ---------- */
+section { margin-top: 30px; }
+
+.phase-head .pnum {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+h3.sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 18px 0 6px;
+  }
+
+p { margin: 8px 0; }
+
+.muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+
+ul, ol { margin: 8px 0; padding-left: 24px; }
+
+li { margin: 4px 0; }
+
+.obj li { margin: 5px 0; }
+
+.callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+
+.callout.navy .ctitle { color: var(--navy); }
+
+.callout p { margin: 4px 0; }
+
+/* ---------- Command reference ---------- */
+.cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+.cmd-table th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 14px;
+  }
+
+.cmd-table td {
+    border-top: 1px solid var(--line);
+    padding: 9px 14px;
+    vertical-align: top;
+    font-size: 15.5px;
+  }
+
+.cmd-table tr:nth-child(even) td { background: #f7f8fa; }
+
+.cmd-table code {
+    font-family: 'Barlow', monospace;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14.5px;
+    white-space: nowrap;
+  }
+
+/* ---------- Code block ---------- */
+.code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+
+.code .c { color: var(--code-green); }
+
+/* ---------- Inputs ---------- */
+.answer {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 76px;
+  }
+
+.answer:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.q {
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+
+.q .n { color: var(--red); }
+
+.field-line { margin: 10px 0 4px; }
+
+/* ---------- Numbered short-answer rows ---------- */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  counter-reset: s;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+}
+.steps li::before {
+  counter-increment: s;
+  content: counter(s) ".";
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 22px;
+  font-size: 16px;
+}
+
+.answer.tall {
+  min-height: 120px;
+}
+
+.grid .seed {
+  padding: 9px 10px;
+  font-size: 15px;
+  color: var(--grey);
+}
+.grid caption {
+  caption-side: top;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 0 2px;
+  color: var(--navy);
+}
+
+/* ---------- Field sketch area ---------- */
+.sketch {
+  width: 100%;
+  height: 340px;
+  border: 2px dashed var(--navy);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    #fff;
+  position: relative;
+  margin: 12px 0;
+}
+.sketch .tag {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.sketch .startbox {
+  position: absolute;
+  bottom: 14px;
+  width: 96px;
+  height: 60px;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  background: rgba(158,27,50,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--red);
+}
+.sketch .startbox.right { right: 14px; }
+.sketch .startbox.left { left: 14px; }
+
+.steps input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.steps input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 17px;
+    margin: 14px 0 2px;
+  }
+
+/* ---------- Data tables (field orientation, trial log) ---------- */
+.grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+  }
+
+.grid th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .02em;
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+.grid td {
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+
+.grid td .label {
+    padding: 8px 10px;
+    font-size: 15px;
+    background: #eef0f5;
+    font-weight: 500;
+  }
+
+.grid input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    padding: 9px 10px;
+  }
+
+.grid input:focus {
+    outline: none;
+    background: var(--field-focus);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+
+.grid tr:nth-child(even) td:not(.has-label) { background: #fafbfc; }
+
+/* ---------- Name/date inline ---------- */
+.namebar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 8px 0 4px;
+  }
+
+.namebar .nb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+  }
+
+.namebar label {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+
+.namebar input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.namebar input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.pin-reminder {
+    background: #fff6e0;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+
+.pin-reminder strong { color: var(--navy); }
+
+/* ---------- Footer / bottom submit ---------- */
+.bottom-submit {
+    margin-top: 36px;
+    text-align: center;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+  }
+
+.bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+
+.bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+.credit {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13.5px;
+    margin: 26px 0 0;
+    letter-spacing: .02em;
+  }
+
+.print-pin { display: none; }
+
+@media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+.def-term{cursor:pointer;border-bottom:2px dotted var(--red);font-weight:700;color:inherit}
+
+.def-term:hover{color:var(--red)}
+
+.def-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;padding:1rem;
+               align-items:center;justify-content:center}
+
+.def-overlay.open{display:flex}
+
+.def-box{background:#fff;border-radius:6px;width:100%;max-width:480px;
+           box-shadow:0 12px 48px rgba(0,0,0,.4);overflow:hidden;animation:def-pop .16s ease}
+
+@keyframes def-pop{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.def-head{background:var(--red);color:#fff;display:flex;align-items:center;
+            justify-content:space-between;padding:.85rem 1rem;gap:.5rem}
+
+.def-head-term{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;
+                 letter-spacing:.1em;text-transform:uppercase;line-height:1.2}
+
+.def-close{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-size:1.4rem;
+             line-height:1;cursor:pointer;padding:0 .2rem;min-width:36px;min-height:36px;
+             display:flex;align-items:center;justify-content:center;border-radius:4px}
+
+.def-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.def-body{padding:1rem 1.1rem 1.25rem;font-size:.95rem;color:#444;line-height:1.65}
+
+.crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+          font-size:14px;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+
+.crumbs a{color:rgba(255,255,255,.72);text-decoration:none;padding:4px 2px;border-radius:3px}
+
+.crumbs a:hover{color:#fff;text-decoration:underline}
+
+.crumbs .sep{color:rgba(255,255,255,.35)}
+
+.crumbs .here{color:var(--gold);font-weight:700}
+
+.crumbs .gloss{margin-left:6px;color:var(--gold);border:1px solid rgba(192,57,43,.5);
+                 padding:4px 9px;border-radius:4px;font-weight:700}
+
+.crumbs .gloss:hover{background:rgba(192,57,43,.16);color:var(--gold);text-decoration:none}
+
+@media (max-width:600px){
+    .def-overlay{align-items:flex-end;padding:0}
+    .def-box{border-radius:12px 12px 0 0;max-width:100%}
+    .def-body{padding:1rem 1.1rem 2rem}
+  }
+
+@media (max-width:700px){ .crumbs{font-size:12.5px;gap:4px} .crumbs .gloss{padding:3px 7px} }
+
+@media print{ .crumbs,.def-overlay{display:none} .def-term{border-bottom:1px dotted #999} }
+
+/* inline trigger, used in running text and meta rows */
+.fieldref{cursor:pointer;border-bottom:2px dotted #C0392B;font-weight:700;color:#C0392B;white-space:nowrap}
+
+.fieldref:hover{color:#8f2b20;border-bottom-color:#8f2b20}
+
+.fieldref::after{content:"\00a0\25A6";font-size:.82em;opacity:.7}
+
+/* button trigger, used on the mission score cards */
+.fieldref.btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:3px;
+    background:#C0392B;color:#fff;padding:4px 10px;margin-left:8px;
+    font-family:'Barlow Condensed','Barlow Condensed',sans-serif;font-weight:800;font-size:.72rem;
+    letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;
+    box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+.fieldref.btn:hover{background:#d8483a;color:#fff}
+
+.fieldref.btn::after{content:"\25A6";font-size:.95em;opacity:.9;margin-left:1px}
+
+.fld-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;
+               padding:14px;align-items:center;justify-content:center}
+
+.fld-overlay.open{display:flex}
+
+.fld-box{background:#fff;border-radius:7px;width:100%;max-width:820px;overflow:hidden;
+           box-shadow:0 16px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:94vh}
+
+.fld-head{background:#1C1C1C;color:#fff;padding:.8rem 1rem;display:flex;align-items:center;
+            justify-content:space-between;gap:.6rem;flex-shrink:0}
+
+.fld-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.02rem;
+             letter-spacing:.05em;text-transform:uppercase;line-height:1.2}
+
+.fld-x{background:none;border:none;color:rgba(255,255,255,.75);font-size:1.35rem;cursor:pointer;
+         min-width:38px;min-height:38px;border-radius:4px;flex-shrink:0}
+
+.fld-x:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.fld-tabs{display:flex;gap:6px;padding:9px 12px;background:#F8F8F8;border-bottom:1px solid #CCCCCC;flex-shrink:0}
+
+.fld-tabs button{border:1px solid #CCCCCC;background:#fff;border-radius:4px;padding:6px 13px;cursor:pointer;
+                   font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+                   letter-spacing:.07em;text-transform:uppercase;color:#1C1C1C}
+
+.fld-tabs button.on{background:#1C1C1C;color:#fff;border-color:#1C1C1C}
+
+.fld-pic{overflow:auto;background:#F2F2F2}
+
+.fld-pic img{display:block;width:100%;height:auto}
+
+.fld-cap{padding:10px 14px;font-size:.9rem;color:#666666;background:#fff;border-top:1px solid #CCCCCC;flex-shrink:0}
+
+.fig{margin:16px 0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+
+.fig img{display:block;width:100%;height:auto;cursor:zoom-in;background:#fff}
+
+.fig figcaption{padding:9px 13px;font-size:15px;color:var(--grey);background:var(--field);
+                  border-top:1px solid var(--line)}
+
+.figrow{display:grid;gap:14px;margin:16px 0}
+
+.figrow.two{grid-template-columns:1fr 1fr}
+
+.figrow.three{grid-template-columns:repeat(3,1fr)}
+
+.figrow .fig{margin:0}
+
+@media (max-width:700px){ .figrow.two,.figrow.three{grid-template-columns:1fr} }
+
+.zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;
+        align-items:center;justify-content:center;padding:12px;cursor:zoom-out}
+
+.zoom.open{display:flex}
+
+.zoom img{max-width:100%;max-height:92vh;border-radius:4px}
+
+.zoom .zclose{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);color:#fff;
+                border:none;width:42px;height:42px;border-radius:6px;font-size:1.4rem;cursor:pointer}
+
+.zoom .zcap{position:absolute;bottom:14px;left:0;right:0;text-align:center;
+              color:rgba(255,255,255,.75);font-size:15px}
+
+.mainnav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+           font-size:14px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+
+.mainnav a{color:rgba(255,255,255,.66);text-decoration:none;padding:5px 2px;border-bottom:2px solid transparent}
+
+.mainnav a:hover{color:#fff}
+
+.mainnav a.here{color:var(--gold);border-bottom-color:var(--gold)}
+
+@media (max-width:820px){ .mainnav{font-size:12.5px;gap:3px 13px} }
+
+@media print{ .mainnav{display:none} }
+
+/* ---------- Shared components (used by some labs) ---------- */
+
+.callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+
+.callout.gold .ctitle { color: #8a6d22; }
+
+.code.small { font-size: 13.5px; }
+
+/* ---------- Concept box (new CS concepts) ---------- */
+.concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+
+.concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+.concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+
+.callout code { color: inherit; }
+
+.code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+.grid code { font-size: 14px; }
+
+code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+.code .hl { color: #f4c95d; }
+
+.safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+
+.callout.red { border-left-color: var(--red); background: #fbeef0; }
+
+.callout.red .ctitle { color: var(--red); }
+
+.filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+.widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+.sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+.warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+
+.calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+
+.calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+
+.calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
+
+.gate{border-left:5px solid #922B21;background:#fdf0ef;padding:13px 17px;margin:18px 0;border-radius:0 5px 5px 0}
+
+.gate .gt{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+            text-transform:uppercase;color:#922B21;margin:0 0 5px}
+
+.grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+
+.grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+
+.pl-body{padding:6px 16px 14px}
+
+.pl-body > p{margin:10px 0;font-size:1rem}
+
+.pl-head{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+
+.pl-head .pl-n{background:var(--gold);color:#ffffff;font-family:var(--font-display);font-weight:800;
+                 font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:3px;flex-shrink:0}
+
+.pl-head .pl-t{font-family:var(--font-display);font-weight:700;font-size:1.12rem;line-height:1.2}
+
+/* ---- prelab: checklist-first, almost nothing to grade ---- */
+.pl-sec{border:1px solid var(--line);border-radius:6px;margin:18px 0;overflow:hidden;background:#fff}
+
+.rec{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:9px 14px;align-items:center;
+       margin:12px 0;padding:12px 14px;background:#f2f4fa;border:1px solid var(--line);border-radius:5px}
+
+.rec input{padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
+             font-family:var(--font-body);font-size:1rem;width:100%}
+
+.rec input:focus{outline:none;border-color:var(--gold)}
+
+.rec label{font-family:var(--font-display);font-weight:700;font-size:.82rem;letter-spacing:.06em;
+             text-transform:uppercase;color:var(--navy)}
+
+.reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+
+.reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+
+.reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+.signoff{border:2px solid var(--gold);border-radius:6px;background:#FDF2F2;padding:14px 18px;margin:22px 0 0}
+
+.signoff .so-t{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+                 text-transform:uppercase;color:var(--navy);margin:0 0 8px}
+
+@media (max-width:700px){ .rec{grid-template-columns:1fr;gap:5px} }
+
+ul.tick{list-style:none;margin:10px 0 4px;padding:0}
+
+ul.tick input[type="checkbox"]{flex-shrink:0;width:23px;height:23px;margin-top:1px;accent-color:var(--red);cursor:pointer}
+
+ul.tick label{cursor:pointer;font-size:1.02rem;line-height:1.45}
+
+ul.tick li{display:flex;align-items:flex-start;gap:11px;padding:9px 11px;border:1px solid var(--line);
+             border-radius:5px;margin-bottom:7px;background:var(--field)}
+
+ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
+
+.calc .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+
+.calc .eq .lbl { font-size: 13px; color: var(--grey); }
+
+.calc .eq .op { font-weight: 700; color: var(--navy); font-size: 18px; }
+
+.calc .eq input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 15px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; text-align: center; }
+
+.calc .eq input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+.checklist { list-style: none; margin: 10px 0 4px; padding: 0; }
+
+.checklist input[type="checkbox"] { flex-shrink: 0; width: 23px; height: 23px; margin-top: 1px; accent-color: var(--red); cursor: pointer; }
+
+.checklist label { cursor: pointer; font-size: 1.02rem; line-height: 1.45; }
+
+.checklist li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 5px; margin-bottom: 7px; background: var(--field); }
+
+.concept .term { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 6px 0 2px; }
+
+.concept .term:first-child { margin-top: 0; }
+
+.console { background: #0c0f16; color: #c8f0c0; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.7; border: 1px solid #2b3445; }
+
+.console .pl { color: #6fa8dc; }
+
+.footer-strip {
+      background: rgba(0,0,0,0.4); text-align: center; padding: 1rem; font-size: 0.75rem;
+      color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+    }
+
+.formula { font-family: ui-monospace, Consolas, monospace; font-size: 16px; color: var(--navy); background: #eef1f7; border: 1px solid #cfdcef; border-radius: 8px; padding: 12px 14px; margin: 10px 0; text-align: center; font-weight: 600; }
+
+.grid .seedc { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; }
+
+.grid caption.a { color: var(--red); }
+
+.grid caption.b { color: var(--navy); }
+
+.grid tr.blind td { background: #fdf3f3; }
+
+.grid tr.blind td .label { background: #fdeaea; color: var(--red-dark); }
+
+.grid.tight th, .grid.tight .seed, .grid.tight .seedc { padding: 6px 10px; }
+
+.lab-arrow {
+      margin-top: auto; padding-top: 0.75rem; font-family: var(--font-display); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+    }
+
+.lab-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      padding: 1.75rem; text-decoration: none; display: flex; flex-direction: column; gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+    }
+
+.lab-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+
+.lab-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(192,57,43,0.4); transform: translateY(-3px); }
+
+.lab-card:hover::before { transform: scaleX(1); }
+
+.lab-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+.lab-num {
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+      color: var(--red); text-transform: uppercase;
+    }
+
+.lab-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--white); line-height: 1.1; }
+
+.page-eyebrow {
+      font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem;
+    }
+
+.page-title {
+      font-family: var(--font-display); font-weight: 800; font-size: clamp(2.25rem, 6vw, 3.5rem);
+      line-height: 1; color: var(--white); letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+
+.page-title span { color: var(--red); }
+
+.steps li .snum { font-weight: 700; color: var(--navy); min-width: 26px; font-size: 16px; }
+
+.truth { width: auto; border-collapse: collapse; margin: 10px 0; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+
+.truth .yes { background: #eaf6ea; font-weight: 700; }
+
+.truth td.t { color: var(--green, #2e7d32); font-weight: 600; }
+
+.truth th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+
+.truth th, .truth td { border: 1px solid var(--line); padding: 6px 16px; text-align: center; }
+
+.unit-label {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 0 0 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.6rem;
+    }
+
+.wrap { flex: 1; max-width: 960px; margin: 0 auto; width: 100%; padding: 3rem 2rem 4rem; }
+
+.zonebar { display: flex; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--line); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-align: center; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; }
+
+.zonebar .accel { background: var(--gold); color: #ffffff; flex: 0 0 15%; }
+
+.zonebar .cruise { background: var(--navy); flex: 1 1 auto; }
+
+.zonebar .decel { background: var(--red); flex: 0 0 30%; }
+
+.zonebar div { padding: 14px 6px; color: #fff; }
+
+/* ---------- Print helpers (optional components) ---------- */
+
+@media print{ .zoom{display:none!important} .fig img{max-height:7cm;width:auto;margin:0 auto} }
+
+@media print{ .fieldref::after{content:""} .fld-overlay{display:none!important} }
+
+@media print{ .pl-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ul.tick input[type="checkbox"]{-webkit-appearance:none;appearance:none;border:1px solid #666;
+  border-radius:2px;width:14px;height:14px} }
+</style>
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 26px 30px;
+    border-bottom: 5px solid var(--gold);
+  }
+
+  .hero .sub {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffe9e9;
+    margin: 0;
+  }
+
+  .phase-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--navy);
+    letter-spacing: .01em;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--red);
+    background: #fbeef0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+
+  .callout .ctitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Formula block ---------- */
+  .formula {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--navy);
+    background: #f6f6f8;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 21px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--navy);
+    line-height: 1.5;
+  }
+  .formula .small {
+    display: block;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey);
+    margin-top: 6px;
+  }
+
+  /* ---------- Mechanical: video ---------- */
+  .mech-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a1a;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .mech-video iframe,
+  .mech-video video { width: 100%; height: 100%; border: 0; display: block; }
+  .mech-video video { object-fit: contain; }
+  .video-cap { font-size: 13.5px; color: var(--grey); margin: 0 0 6px; }
+
+  /* ---------- Mechanical: constraints ---------- */
+  .constraints { list-style: none; counter-reset: c; margin: 10px 0 0; padding: 0; }
+  .constraints li {
+    counter-increment: c;
+    position: relative;
+    padding: 9px 0 9px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .constraints li:last-child { border-bottom: 0; }
+  .constraints li::before {
+    content: counter(c);
+    position: absolute;
+    left: 0; top: 8px;
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* ---------- Mechanical: diagram ---------- */
+  .diagram {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .diagram figcaption { font-size: 13.5px; color: var(--grey); margin-top: 10px; }
+
+  /* ---------- Mechanical: spec check ---------- */
+  .speccheck { border: 1px solid var(--line); border-radius: 10px; padding: 6px 16px; margin: 12px 0; }
+  .speccheck .ck {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .speccheck .ck:last-child { border-bottom: 0; }
+  .speccheck input[type=checkbox] {
+    width: 19px; height: 19px; margin-top: 2px;
+    accent-color: var(--red); flex-shrink: 0;
+  }
+  .speccheck label { cursor: pointer; }
+
+  /* ---------- Bottom nav ---------- */
+  .botnav{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:20px 24px; flex-wrap:wrap;
+    margin:46px 40px 0; padding:26px 0 8px;
+    border-top:1px solid var(--line)
+  }
+  .botnav a{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; font-size:15px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:var(--navy);
+    border:1px solid var(--line); border-radius:5px;
+    padding:12px 20px; background:#fff
+  }
+  .botnav a:hover{ border-color:var(--gold); background:#FDF2F2; color:var(--red) }
+  .botnav a.next{ margin-left:auto }
+  .botnav a.gloss{
+    color:#8a6d2f;
+    border-color:rgba(192,57,43,.55);
+    background:#FDF2F2
+  }
+  .botnav a.gloss:hover{ background:rgba(192,57,43,.16) }
+
+  @media (max-width:700px){
+    .botnav{ margin-left:20px; margin-right:20px; gap:10px; padding-top:18px }
+    .botnav a{ font-size:13.5px; padding:11px 14px; flex:1 1 46%; justify-content:center }
+    .botnav a.next{ margin-left:0 }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero {
+      background: var(--red) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border-radius: 0;
+    }
+    .meta, .callout, .formula, .grid, .diagram, .speccheck, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .cmd-table th, .grid th {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input {
+      border: none !important;
+      border-bottom: 1px solid #999 !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+    .answer { min-height: auto; }
+    .mech-video { display: none; }
+    .constraints li::before {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .botnav { display: none; }
+    .print-pin { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar: PIN + submit ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+      <nav class="mainnav" aria-label="Main"><a href="../index.html">Home</a><a href="../2026-missions.html">2026 Missions</a><a href="../discovery/index.html">Discovery</a><a href="../labs/index.html">C Labs</a><a href="../Python_Labs/index.html">Python Labs</a><a href="index.html" class="here">Mechanical</a><a href="../glossary.html">Glossary</a></nav>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Mechanical Design · Challenge 9</p>
+    <h1>The Worm Gear</h1>
+    <p class="sub">Student Challenge · Drawing a Circle, Slowly</p>
+  </div>
+
+  <!-- PIN echo for printed copy -->
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Module Guiding Question</dt><dd>How do we get an enormous slowdown, and a change of direction, out of two parts?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A <span class="def-term" data-term="WORM">worm</span> advances its wheel by exactly one tooth per turn — so the tooth count is the ratio.</dd></div>
+      <div class="row"><dt>Mechanism</dt><dd>Worm and worm wheel</dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="WORM WHEEL">Worm wheel</span> · <span class="def-term" data-term="RIGHT-ANGLE DRIVE">Right-angle drive</span> · <span class="def-term" data-term="SELF-LOCKING">Self-locking</span> · <span class="def-term" data-term="GEAR REDUCTION">Gear reduction</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>Kit parts, plus rubber bands or tacky material to hold the marker</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>LEGO kit · worm gear · one motor · Wombat controller · a marker · paper · a stopwatch · rubber bands or tacky material</dd></div>
+      <div class="row"><dt>Prerequisites</dt><dd>Challenge 4 for gear ratios, Challenge 5 for torque</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>In Challenge 4 you worked hard for a 3.75:1 gear ratio. It took two gears of very different sizes, and it took up real space on your build.</p>
+    <p>A worm gear will give you 24:1 from two small parts. It will also turn the drive through a right angle, and it will hold whatever it is driving in place when the power goes off. Three useful things at once — and it gives up something significant in return.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A worm is a screw. Turn it once and it pushes the wheel along by exactly one tooth. So the number of teeth on the wheel <em>is</em> the ratio — no arithmetic required.</p>
+    </div>
+    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <ul class="obj">
+      <li>Name the two parts of a worm gear set and explain how they mesh.</li>
+      <li>Work out the ratio by counting teeth on the wheel.</li>
+      <li>Explain what <span class="def-term" data-term="SELF-LOCKING">self-locking</span> means and why it matters for a robot arm.</li>
+      <li>Build a mechanism that moves slowly and at a steady rate, and prove it with a stopwatch.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Watch the Mechanism</h2>
+    <p>Watch the video below. Do not build anything yet. Watch it at least twice.</p>
+
+    <div class="mech-video">
+      <iframe src="https://www.youtube-nocookie.com/embed/ORg4bBCemgs"
+              title="LEGO worm gear"
+              allow="accelerometer; encrypted-media; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="video-cap">Simple mechanics — LEGO worm gear.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Watch For</p>
+      <p>1. What do you notice?</p>
+      <p>2. What is happening?</p>
+      <p>3. Compare the speed of the input to the speed of the output. Which is turning faster, and by roughly how much?</p>
+    </div>
+
+    <p class="q">What do you notice? Describe what the mechanism is doing.</p>
+    <textarea class="answer" data-key="p1_notice" aria-label="What do you notice"></textarea>
+    <p class="q">Look at the two shafts. How are they pointed relative to each other? This is different from every gear pair you have built so far.</p>
+    <textarea class="answer" data-key="p1_shafts" aria-label="Shaft orientation"></textarea>
+    <p class="q">Compare this to the cam in Challenge 7 and the crank in Challenge 6. Does the output here speed up and slow down, or move at a steady rate?</p>
+    <textarea class="answer" data-key="p1_steady" aria-label="Steady rate"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: The Worm and the Wheel</h2>
+    <p>A worm gear set has two parts. The <span class="def-term" data-term="WORM">worm</span> is the screw — it looks like a threaded rod, and it is what your motor turns. The <span class="def-term" data-term="WORM WHEEL">worm wheel</span> is the toothed wheel that the screw drives.</p>
+    <p class="muted">People often call the whole set &ldquo;a worm gear,&rdquo; and sometimes call just the wheel that. When it matters, say <em>worm</em> for the screw and <em>worm wheel</em> for the wheel.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 300" role="img" aria-label="Top view of a worm gear set. A motor turns a threaded worm whose axis runs left to right. The worm meshes with the rim of a toothed wheel whose axis points straight up out of the surface. One full turn of the worm advances the wheel by exactly one tooth.">
+        <defs>
+          <marker id="axA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+          </marker>
+          <marker id="rotB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
+          </marker>
+        </defs>
+
+        <!-- worm wheel -->
+        <circle cx="400" cy="176" r="82" fill="#fff" stroke="#1C1C1C" stroke-width="7" stroke-dasharray="10.7 10.7"/>
+        <circle cx="400" cy="176" r="70" fill="#fff" stroke="#CCC" stroke-width="1.5"/>
+        <circle cx="400" cy="176" r="7" fill="#C0392B"/>
+        <text x="400" y="182" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" fill="#888">24 teeth</text>
+
+        <!-- motor -->
+        <rect x="70" y="66" width="86" height="56" rx="4" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="113" y="100" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#444">MOTOR</text>
+
+        <!-- worm -->
+        <rect x="156" y="76" width="180" height="36" rx="4" fill="#FDF2F2" stroke="#C0392B" stroke-width="2.5"/>
+        <g stroke="#C0392B" stroke-width="2">
+          <line x1="172" y1="112" x2="192" y2="76"/><line x1="196" y1="112" x2="216" y2="76"/>
+          <line x1="220" y1="112" x2="240" y2="76"/><line x1="244" y1="112" x2="264" y2="76"/>
+          <line x1="268" y1="112" x2="288" y2="76"/><line x1="292" y1="112" x2="312" y2="76"/>
+        </g>
+        <text x="246" y="62" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#C0392B">WORM &mdash; a screw</text>
+
+        <!-- worm axis -->
+        <line x1="60" y1="94" x2="352" y2="94" stroke="#888" stroke-width="1.5" stroke-dasharray="8 6" marker-end="url(#axA)"/>
+        <text x="120" y="140" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">worm axis &mdash; lies flat</text>
+
+        <!-- wheel axis: out of the page -->
+        <circle cx="400" cy="176" r="16" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="470" y="252" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">wheel axis points</text>
+        <text x="470" y="270" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">straight up out of the table</text>
+        <line x1="424" y1="192" x2="452" y2="238" stroke="#888" stroke-width="1.4"/>
+
+        <!-- rotation arrows -->
+        <path d="M370,262 A46,46 0 0 0 430,262" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rotB)"/>
+
+        <!-- the key fact -->
+        <text x="524" y="106" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1C1C1C">1 TURN</text>
+        <text x="524" y="126" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1C1C1C">= 1 TOOTH</text>
+        <text x="524" y="148" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">so 24 teeth</text>
+        <text x="524" y="164" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">means 24 : 1</text>
+      </svg>
+      <figcaption>Looking down at the table. The worm lies flat; the wheel spins about a vertical axis.</figcaption>
+    </figure>
+
+    <h3 class="sub">The Ratio Is the Tooth Count</h3>
+    <p>The worm's thread is a single continuous spiral. Each full turn of the worm slides that spiral along by one tooth of the wheel. So the wheel advances one tooth per turn, and no more.</p>
+
+    <div class="formula">
+      ratio = number of teeth on the worm wheel
+      <span class="small">a 24-tooth wheel gives 24:1 from one pair of parts</span>
+    </div>
+
+    <p>Compare that to Challenge 4, where an 8-tooth gear driving a 30-tooth gear gave you 3.75:1 and took up far more room.</p>
+
+    <h3 class="sub">The Drive Turns a Corner</h3>
+    <p>Notice the shafts in the diagram. The worm's axis and the wheel's axis are at 90&deg; to each other. That is not optional — it is how a worm gear has to be built. It is called a <span class="def-term" data-term="RIGHT-ANGLE DRIVE">right-angle drive</span>, and it is genuinely useful: a motor lying flat on a surface can turn something that spins about a vertical axis.</p>
+    <p>That property is what makes this challenge possible at all.</p>
+
+    <div class="callout">
+      <p class="ctitle">The Best Part: It Locks</p>
+      <p>Turn the worm and the wheel turns. Now try the reverse — grab the wheel and try to turn it. It will not go. The screw thread simply jams against the teeth.</p>
+      <p>This is called <span class="def-term" data-term="SELF-LOCKING">self-locking</span>, and it is why worm gears show up on robot arms everywhere.</p>
+      <p>Think back to Challenge 5. Your Big Arm needed the motor working constantly just to hold a load in the air. On a worm drive it would not — cut the power and the arm stays exactly where it is, holding its position with no motor effort at all.</p>
+    </div>
+
+    <div class="callout navy">
+      <p class="ctitle">What You Give Up</p>
+      <p>Gears are still not magic. A 24:1 ratio means the output turns 24 times slower than the input. A worm drive is also less efficient than spur gears — a good deal of the motor's effort goes into friction between the screw and the teeth rather than into useful work.</p>
+      <p>You buy torque, holding power, and a right-angle turn. You pay in speed and in wasted energy.</p>
+    </div>
+
+    <p class="q">Name one job on a robot where you would want the output to hold its position after the power is cut. Why does that matter there?</p>
+    <textarea class="answer" data-key="p2_selflock_use" aria-label="Self-locking application"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build It and Check the Claims</h2>
+    <p>Build the worm and worm wheel out of LEGO. Do not attach the arm or marker yet. Mount the worm so it meshes cleanly with the wheel and turn it by hand.</p>
+
+    <h3 class="sub">Test 1 — Count the Ratio Yourself</h3>
+    <p>Put a mark on one tooth of the worm wheel. Now turn the worm slowly, counting full turns, until the mark comes all the way back around. The number of turns should equal the number of teeth on the wheel.</p>
+
+    <h3 class="sub">Test 2 — Try to Back-Drive It</h3>
+    <p>Hold the worm loosely and try to turn the <em>wheel</em> by hand. Then try turning the worm. Note what happens in each direction.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Before You Go On</p>
+      <p>Turn the worm through five full rotations. It should feel smooth and steady with no catching. Worm gears push sideways as well as around, so if your worm is not held firmly in place it will try to walk away from the wheel and skip.</p>
+    </div>
+
+    <p class="q">How many turns of the worm did one full turn of the wheel take? How many teeth does your wheel have? Do they match?</p>
+    <textarea class="answer" data-key="p3_ratio_count" aria-label="Ratio count"></textarea>
+    <p class="q">What happened when you tried to turn the wheel by hand? Describe it.</p>
+    <textarea class="answer" data-key="p3_backdrive" aria-label="Back-drive test"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Engineering to Meet a Need</h2>
+
+    <div class="callout">
+      <p class="ctitle">The Need</p>
+      <p>Using your newly created LEGO contraption, modify and attach it in such a fashion that you can slowly rotate a marker to create a perfect circle.</p>
+    </div>
+
+    <h3 class="sub">Mental Picture</h3>
+    <p>Your contraption will act like a protractor — one fixed center, one arm of fixed length, sweeping a smooth arc all the way around.</p>
+
+    <h3 class="sub">Constraints</h3>
+    <p class="muted">Every one of these must be true for your design to count as finished.</p>
+    <ol class="constraints">
+      <li>The overall device must be stationary. Only the worm gear and arm mechanism can move.</li>
+      <li>The mechanism must draw a complete, closed circle.</li>
+      <li>The motor lies flat on the surface, and the marker draws on that same surface. Turning the drive through 90&deg; is the worm gear's job — that is what makes this possible.</li>
+      <li>The marker must move at a constant speed, and one full 360&deg; circle must take more than 60 seconds.</li>
+      <li>You may use rubber bands or tacky material to attach the marker to the arm.</li>
+    </ol>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 300" role="img" aria-label="Side view. A motor lies flat on the table driving a worm. The worm turns a wheel whose shaft points straight up. An arm on that shaft carries a marker down onto the paper, where it traces a circle.">
+        <defs>
+          <marker id="rotC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
+          </marker>
+        </defs>
+
+        <!-- table -->
+        <line x1="30" y1="248" x2="592" y2="248" stroke="#1C1C1C" stroke-width="3"/>
+        <!-- paper -->
+        <rect x="200" y="238" width="360" height="10" fill="#F8F8F8" stroke="#CCC" stroke-width="1"/>
+        <text x="70" y="268" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">table</text>
+
+        <!-- circle drawn on the paper, in perspective -->
+        <ellipse cx="356" cy="243" rx="146" ry="26" fill="none" stroke="#C0392B" stroke-width="2" stroke-dasharray="9 6"/>
+
+        <!-- motor lying flat -->
+        <rect x="86" y="200" width="94" height="46" rx="4" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="133" y="228" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#444">MOTOR</text>
+        <text x="133" y="188" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">lies flat</text>
+
+        <!-- worm -->
+        <rect x="180" y="210" width="104" height="28" rx="3" fill="#FDF2F2" stroke="#C0392B" stroke-width="2.5"/>
+        <g stroke="#C0392B" stroke-width="1.8">
+          <line x1="192" y1="238" x2="208" y2="210"/><line x1="212" y1="238" x2="228" y2="210"/>
+          <line x1="232" y1="238" x2="248" y2="210"/><line x1="252" y1="238" x2="268" y2="210"/>
+        </g>
+
+        <!-- worm wheel seen edge-on -->
+        <ellipse cx="322" cy="224" rx="42" ry="13" fill="#fff" stroke="#1C1C1C" stroke-width="3"/>
+        <text x="322" y="196" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">worm wheel</text>
+
+        <!-- vertical shaft -->
+        <line x1="322" y1="224" x2="322" y2="128" stroke="#444" stroke-width="6"/>
+        <text x="286" y="120" text-anchor="end" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">shaft points</text>
+        <text x="286" y="136" text-anchor="end" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">straight up</text>
+
+        <!-- arm -->
+        <line x1="322" y1="132" x2="500" y2="132" stroke="#888" stroke-width="8" stroke-linecap="round"/>
+        <!-- marker -->
+        <rect x="491" y="132" width="18" height="106" rx="3" fill="#C0392B" stroke="#922B21" stroke-width="2"/>
+        <text x="530" y="176" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#C0392B">MARKER</text>
+        <text x="530" y="194" font-family="'Barlow',sans-serif" font-size="12.5" fill="#C0392B">held by rubber bands</text>
+
+        <!-- rotation of arm -->
+        <path d="M356,110 A56,56 0 0 1 424,102" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rotC)"/>
+        <text x="392" y="86" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#C0392B">more than 60 seconds per turn</text>
+      </svg>
+      <figcaption>Side view. The worm gear is what lets a flat-lying motor spin something about a vertical axis.</figcaption>
+    </figure>
+
+    <h3 class="sub">Your Plan — Before You Build</h3>
+    <p class="group-label">How will you hold the marker so its tip stays pressed on the paper the whole way around, without dragging the arm off course?</p>
+    <textarea class="answer" data-key="p4_marker_plan" aria-label="Marker mounting plan"></textarea>
+
+    <p class="group-label">Break the build into manageable steps.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p4_step_1" aria-label="Build step 1" /></li>
+      <li><input type="text" data-key="p4_step_2" aria-label="Build step 2" /></li>
+      <li><input type="text" data-key="p4_step_3" aria-label="Build step 3" /></li>
+      <li><input type="text" data-key="p4_step_4" aria-label="Build step 4" /></li>
+      <li><input type="text" data-key="p4_step_5" aria-label="Build step 5" /></li>
+    </ul>
+
+    <p class="q">Predict: will your first circle take more or less than 60 seconds? Say why you think so.</p>
+    <textarea class="answer" data-key="p4_predict_time" aria-label="Time prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test &amp; Iterate</h2>
+
+    <div class="callout">
+      <p class="ctitle">Time It First</p>
+      <p>Run one full circle with a stopwatch before you change anything else. The 60-second requirement is the constraint most likely to fail on your first build, because a single worm pair may not slow things down as much as you expect.</p>
+      <p>If your circle finishes too fast, you have three ways to fix it: use a worm wheel with more teeth, add another reduction between the worm wheel and the arm, or lower the motor's power setting. The first two are mechanical solutions and will hold steady. Think about which one you would trust in a competition.</p>
+    </div>
+
+    <h3 class="sub">Your Numbers</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Teeth on your worm wheel</div></td>
+          <td><input type="text" data-key="p5_teeth" aria-label="Worm wheel teeth" /></td>
+          <td><input type="text" data-key="p5_teeth_unit" aria-label="Unit" value="teeth" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Worm turns counted for one wheel turn</div></td>
+          <td><input type="text" data-key="p5_turns" aria-label="Worm turns" /></td>
+          <td><input type="text" data-key="p5_turns_unit" aria-label="Unit" value="turns" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Extra reduction added, if any</div></td>
+          <td><input type="text" data-key="p5_extra_ratio" aria-label="Extra reduction" /></td>
+          <td><input type="text" data-key="p5_extra_ratio_unit" aria-label="Unit" value=": 1" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Length of your arm, center to marker</div></td>
+          <td><input type="text" data-key="p5_arm_length" aria-label="Arm length" /></td>
+          <td><input type="text" data-key="p5_arm_length_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Diameter of the circle you drew</div></td>
+          <td><input type="text" data-key="p5_circle_diameter" aria-label="Circle diameter" /></td>
+          <td><input type="text" data-key="p5_circle_diameter_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Time for one full circle, first attempt</div></td>
+          <td><input type="text" data-key="p5_time_first" aria-label="First time" /></td>
+          <td><input type="text" data-key="p5_time_first_unit" aria-label="Unit" value="seconds" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Time for one full circle, final build</div></td>
+          <td><input type="text" data-key="p5_time_final" aria-label="Final time" /></td>
+          <td><input type="text" data-key="p5_time_final_unit" aria-label="Unit" value="seconds" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:20%">What you changed</th>
+          <th style="width:13%">Time (s)</th>
+          <th style="width:14%">Circle closed?</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Check Against the Constraints</h3>
+    <p class="muted">Check a box only after you have actually observed it — not because you think it should be true.</p>
+    <div class="speccheck">
+      <div class="ck">
+        <input type="checkbox" id="s1" data-key="p5_check_stationary">
+        <label for="s1">The base did not shift, tip, or need a hand on it while running.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s2" data-key="p5_check_closed">
+        <label for="s2">The marker drew a complete circle that closed back on itself.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s3" data-key="p5_check_flat">
+        <label for="s3">The motor lay flat and the marker drew on that same surface.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s4" data-key="p5_check_time">
+        <label for="s4">Timed at more than 60 seconds for the full 360&deg;.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s5" data-key="p5_check_constant">
+        <label for="s5">The marker moved at a constant speed — no visible speeding up or slowing down.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s6" data-key="p5_check_marker">
+        <label for="s6">The marker stayed put in its mount for the whole circle.</label>
+      </div>
+    </div>
+
+    <p class="q">Look at the circle you drew. Is it actually round, or is it lumpy in places? If it is lumpy, what in the mechanism caused that?</p>
+    <textarea class="answer" data-key="p5_roundness" aria-label="Roundness analysis"></textarea>
+    <p class="q">Describe one specific failure. What was the symptom? What was the cause? How did you fix it?</p>
+    <textarea class="answer" data-key="p5_failure" aria-label="Failure description" style="min-height:100px"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Helps in Botball</h2>
+    <div class="callout">
+      <p class="ctitle">Transfer</p>
+      <p>An arm that stays where you put it, with the motor switched off, is worth more than an arm that is merely strong.</p>
+    </div>
+    <p>A motor holding a load against gravity draws current the whole time, heats up, and drifts. A worm drive holds it for free. That single property is why worm gears turn up on lift arms, on camera mounts, and on anything that has to stop at a position and stay there.</p>
+    <p class="q">Go back to your Big Arm from Challenge 5. If you rebuilt the shoulder joint on a worm drive, what would get better — and what would get worse?</p>
+    <textarea class="answer" data-key="p6_big_arm_rebuild" aria-label="Big Arm rebuild"></textarea>
+    <p class="q">Name a Botball task where being slow is genuinely acceptable, and one where it would cost you the match.</p>
+    <textarea class="answer" data-key="p6_slow_ok" aria-label="When slow is acceptable"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Explain why the number of teeth on a worm wheel is the same as the gear ratio. Use the idea of a screw in your answer.</p>
+    <textarea class="answer" data-key="p7_q1_ratio" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain self-locking to someone who has never heard the word, and give one reason a robot builder would want it.</p>
+    <textarea class="answer" data-key="p7_q2_selflock" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> You have now built a crank, a cam, a linkage, and a worm drive. Which one moves its output at the steadiest rate, and why does that suit this challenge?</p>
+    <textarea class="answer" data-key="p7_q3_steady" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;A worm gear buys torque, holding power, and a right-angle turn. This means that when I need those things, I should &mdash; and when I need speed instead, I should...&rdquo;</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Slowest Circle</h3>
+    <ul>
+      <li>Add reduction until a single circle takes more than 5 minutes.</li>
+      <li>What total ratio did that take? Show how you worked it out.</li>
+      <li>At what point does the mechanism become so slow that friction stalls it entirely?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — The Holding Test</h3>
+    <ul>
+      <li>Hang a weight on the end of your arm and switch the motor off. Does the arm hold?</li>
+      <li>Now rebuild the same arm driven by a spur gear pair instead, and repeat.</li>
+      <li>How much weight can each version hold with the power off? Record both numbers.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Predict the Circle</h3>
+    <ul>
+      <li>Measure your arm from the center of the shaft to the marker tip.</li>
+      <li>Predict the diameter of the circle it will draw before you run it.</li>
+      <li>Run it and measure. Was your prediction right? What is the relationship between arm length and circle diameter?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Draw Something Else</h3>
+    <ul>
+      <li>Replace the fixed arm with a linkage from Challenge 8 and let the marker ride on the coupler.</li>
+      <li>Run a full cycle and see what shape comes out.</li>
+      <li>Why is it no longer a circle? Explain in terms of what the marker is attached to.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <nav class="botnav no-print" aria-label="Page navigation">
+    <a href="mech08_four_bar.html">&larr; Challenge 8</a>
+    <a class="gloss" href="../glossary.html">Glossary</a>
+    <a class="next" href="mech10_worm_pincer.html">Challenge 10 &rarr;</a>
+  </nav>
+
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 9 — Student Sheet</p>
+</main>
+
+<script>
+  const MISSION_ID = "mech09_worm_circle";
+
+  (function buildTrials() {
+    const body = document.getElementById("trialBody");
+    for (let i = 1; i <= 10; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_time" aria-label="Trial ' + i + ' time"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_closed" aria-label="Trial ' + i + ' circle closed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
+      body.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] =
+        (el.type === "checkbox") ? (el.checked ? "yes" : "no") : el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) {
+          if (el.type === "checkbox") el.checked = (data.answers[k] === "yes");
+          else el.value = data.answers[k];
+        }
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) { /* storage full or blocked — ignore */ }
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.matches("input[type=checkbox][data-key]")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Mechanical Design · Challenge 9 — The Worm Gear",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+
+<div class="def-overlay" id="defOverlay" role="dialog" aria-modal="true" aria-labelledby="defTerm">
+  <div class="def-box">
+    <div class="def-head">
+      <span class="def-head-term" id="defTerm"></span>
+      <button class="def-close" id="defClose" aria-label="Close definition">&#10005;</button>
+    </div>
+    <div class="def-body" id="defBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEFS = {
+    'WORM': ['Worm', 'The screw half of a worm gear set. It looks like a threaded rod, and it is the part your motor turns. One full turn of the worm advances the wheel by exactly one tooth.'],
+    'WORM WHEEL': ['Worm Wheel', 'The toothed wheel driven by a worm. Its tooth count is the gear ratio of the pair \u2014 a 24-tooth wheel gives 24:1. People sometimes call the whole set a \u201cworm gear,\u201d so say worm wheel when you mean this part specifically.'],
+    'RIGHT-ANGLE DRIVE': ['Right-Angle Drive', 'A gear arrangement where the output shaft points 90\u00b0 away from the input shaft. A worm gear is always a right-angle drive, which lets a motor lying flat turn something that spins about a vertical axis.'],
+    'SELF-LOCKING': ['Self-Locking', 'A drive that works in one direction only: the input can turn the output, but the output cannot turn the input. A worm gear holds its position with the power off, because the wheel simply cannot push the screw around.'],
+    'GEAR REDUCTION': ['Gear Reduction', 'Gearing arranged so the output turns slower than the input, which multiplies torque. A 24:1 reduction means the output turns 24 times slower and can push 24 times harder \u2014 minus what friction takes.']
+  };
+  function openDef(t){
+    var e = DEFS[t]; if(!e) return;
+    document.getElementById('defTerm').textContent = e[0];
+    document.getElementById('defBody').textContent = e[1];
+    document.getElementById('defOverlay').classList.add('open');
+    document.getElementById('defClose').focus();
+    document.body.style.overflow='hidden';
+  }
+  function closeDef(){
+    document.getElementById('defOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('defClose').addEventListener('click', closeDef);
+  document.getElementById('defOverlay').addEventListener('click', function(e){ if(e.target===this) closeDef(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDef(); });
+  document.addEventListener('click', function(e){ var el=e.target.closest('.def-term'); if(el) openDef(el.dataset.term); });
+  document.addEventListener('touchend', function(e){ if(e.target.closest('.def-term')) e.preventDefault(); }, {passive:false});
+})();
+</script>
+
+</body>
+</html>

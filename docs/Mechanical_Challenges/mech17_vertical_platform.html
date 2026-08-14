@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mechanical · Challenge 17 — The Vertical Transitioning Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style id="labsheet-inline">
+/* ===== lab-sheet.css — inlined so this file previews standalone.
+   At packaging time this whole block is swapped back to
+   a stylesheet link to ../lab-sheet.css
+   Do not hand-edit rules in here; edit lab-sheet.css. ===== */
+/* KIPR Botball 2026 — Lab sheet shared styles
+ * Exact duplicates extracted from docs/labs and docs/Python_Labs.
+ * Page-specific rules and near-duplicate variants remain in each HTML style block.
+ *
+ * Near-duplicate candidates (not unified):
+ *   .calc-line input: 2×, 2×
+ *   .callout: 44×, 10×
+ *   .callout .ctitle: 44×, 10×
+ *   .hero: 44×, 10×
+ *   .hero .sub: 44×, 10×
+ *   .phase-head: 44×, 10×
+ *   @media print page sheets (contain @page): ~19 near-duplicate variants kept inline
+ */
+
+:root {
+    --red: #C0392B;
+    --red-dark: #922B21;
+    --navy: #1C1C1C;
+    --gold: #C0392B;
+    --ink: #1C1C1C;
+    --grey: #666666;
+    --line: #CCCCCC;
+    --bg: #F2F2F2;
+    --panel: #ffffff;
+    --field: #F8F8F8;
+    --field-focus: #FDF2F2;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+/* ---------- Sticky PIN / submit bar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 3px solid var(--gold);
+  }
+
+.topbar-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+.topbar .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-right: auto;
+    color: #fff;
+  }
+
+.topbar .brand span { color: var(--gold); }
+
+.pin-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+.pin-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #d7dcea;
+  }
+
+.pin-field input {
+    width: 120px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+  }
+
+.pin-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+.submit-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+
+.submit-btn:hover { background: var(--red-dark); }
+
+.submit-btn:active { transform: translateY(1px); }
+
+.status {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 2px 2px 0;
+    min-height: 0;
+    color: #d7dcea;
+  }
+
+.status.ok { color: #b9e6b0; }
+
+.status.warn { color: #ffd9a0; }
+
+.status.err { color: #ffb3b3; }
+
+/* ---------- Page shell ---------- */
+.sheet {
+    max-width: 920px;
+    margin: 22px auto 80px;
+    padding: 0 22px;
+  }
+
+.hero .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #f4d9a0;
+    margin: 0 0 4px;
+  }
+
+.hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+
+/* ---------- Meta table ---------- */
+.meta {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+.meta dl { margin: 0; }
+
+.meta .row {
+    display: grid;
+    grid-template-columns: 215px 1fr;
+  }
+
+.meta .row:nth-child(odd) { background: #eef0f5; }
+
+.meta dt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--navy);
+    padding: 9px 16px;
+  }
+
+.meta dd {
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+/* ---------- Sections ---------- */
+section { margin-top: 30px; }
+
+.phase-head .pnum {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+h3.sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 18px 0 6px;
+  }
+
+p { margin: 8px 0; }
+
+.muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+
+ul, ol { margin: 8px 0; padding-left: 24px; }
+
+li { margin: 4px 0; }
+
+.obj li { margin: 5px 0; }
+
+.callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+
+.callout.navy .ctitle { color: var(--navy); }
+
+.callout p { margin: 4px 0; }
+
+/* ---------- Command reference ---------- */
+.cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+.cmd-table th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 14px;
+  }
+
+.cmd-table td {
+    border-top: 1px solid var(--line);
+    padding: 9px 14px;
+    vertical-align: top;
+    font-size: 15.5px;
+  }
+
+.cmd-table tr:nth-child(even) td { background: #f7f8fa; }
+
+.cmd-table code {
+    font-family: 'Barlow', monospace;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14.5px;
+    white-space: nowrap;
+  }
+
+/* ---------- Code block ---------- */
+.code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+
+.code .c { color: var(--code-green); }
+
+/* ---------- Inputs ---------- */
+.answer {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 76px;
+  }
+
+.answer:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.q {
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+
+.q .n { color: var(--red); }
+
+.field-line { margin: 10px 0 4px; }
+
+/* ---------- Numbered short-answer rows ---------- */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  counter-reset: s;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+}
+.steps li::before {
+  counter-increment: s;
+  content: counter(s) ".";
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 22px;
+  font-size: 16px;
+}
+
+.answer.tall {
+  min-height: 120px;
+}
+
+.grid .seed {
+  padding: 9px 10px;
+  font-size: 15px;
+  color: var(--grey);
+}
+.grid caption {
+  caption-side: top;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 0 2px;
+  color: var(--navy);
+}
+
+/* ---------- Field sketch area ---------- */
+.sketch {
+  width: 100%;
+  height: 340px;
+  border: 2px dashed var(--navy);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    #fff;
+  position: relative;
+  margin: 12px 0;
+}
+.sketch .tag {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.sketch .startbox {
+  position: absolute;
+  bottom: 14px;
+  width: 96px;
+  height: 60px;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  background: rgba(158,27,50,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--red);
+}
+.sketch .startbox.right { right: 14px; }
+.sketch .startbox.left { left: 14px; }
+
+.steps input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.steps input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 17px;
+    margin: 14px 0 2px;
+  }
+
+/* ---------- Data tables (field orientation, trial log) ---------- */
+.grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+  }
+
+.grid th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .02em;
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+.grid td {
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+
+.grid td .label {
+    padding: 8px 10px;
+    font-size: 15px;
+    background: #eef0f5;
+    font-weight: 500;
+  }
+
+.grid input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    padding: 9px 10px;
+  }
+
+.grid input:focus {
+    outline: none;
+    background: var(--field-focus);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+
+.grid tr:nth-child(even) td:not(.has-label) { background: #fafbfc; }
+
+/* ---------- Name/date inline ---------- */
+.namebar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 8px 0 4px;
+  }
+
+.namebar .nb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+  }
+
+.namebar label {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+
+.namebar input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.namebar input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.pin-reminder {
+    background: #fff6e0;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+
+.pin-reminder strong { color: var(--navy); }
+
+/* ---------- Footer / bottom submit ---------- */
+.bottom-submit {
+    margin-top: 36px;
+    text-align: center;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+  }
+
+.bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+
+.bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+.credit {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13.5px;
+    margin: 26px 0 0;
+    letter-spacing: .02em;
+  }
+
+.print-pin { display: none; }
+
+@media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+.def-term{cursor:pointer;border-bottom:2px dotted var(--red);font-weight:700;color:inherit}
+
+.def-term:hover{color:var(--red)}
+
+.def-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;padding:1rem;
+               align-items:center;justify-content:center}
+
+.def-overlay.open{display:flex}
+
+.def-box{background:#fff;border-radius:6px;width:100%;max-width:480px;
+           box-shadow:0 12px 48px rgba(0,0,0,.4);overflow:hidden;animation:def-pop .16s ease}
+
+@keyframes def-pop{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.def-head{background:var(--red);color:#fff;display:flex;align-items:center;
+            justify-content:space-between;padding:.85rem 1rem;gap:.5rem}
+
+.def-head-term{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;
+                 letter-spacing:.1em;text-transform:uppercase;line-height:1.2}
+
+.def-close{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-size:1.4rem;
+             line-height:1;cursor:pointer;padding:0 .2rem;min-width:36px;min-height:36px;
+             display:flex;align-items:center;justify-content:center;border-radius:4px}
+
+.def-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.def-body{padding:1rem 1.1rem 1.25rem;font-size:.95rem;color:#444;line-height:1.65}
+
+.crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+          font-size:14px;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+
+.crumbs a{color:rgba(255,255,255,.72);text-decoration:none;padding:4px 2px;border-radius:3px}
+
+.crumbs a:hover{color:#fff;text-decoration:underline}
+
+.crumbs .sep{color:rgba(255,255,255,.35)}
+
+.crumbs .here{color:var(--gold);font-weight:700}
+
+.crumbs .gloss{margin-left:6px;color:var(--gold);border:1px solid rgba(192,57,43,.5);
+                 padding:4px 9px;border-radius:4px;font-weight:700}
+
+.crumbs .gloss:hover{background:rgba(192,57,43,.16);color:var(--gold);text-decoration:none}
+
+@media (max-width:600px){
+    .def-overlay{align-items:flex-end;padding:0}
+    .def-box{border-radius:12px 12px 0 0;max-width:100%}
+    .def-body{padding:1rem 1.1rem 2rem}
+  }
+
+@media (max-width:700px){ .crumbs{font-size:12.5px;gap:4px} .crumbs .gloss{padding:3px 7px} }
+
+@media print{ .crumbs,.def-overlay{display:none} .def-term{border-bottom:1px dotted #999} }
+
+/* inline trigger, used in running text and meta rows */
+.fieldref{cursor:pointer;border-bottom:2px dotted #C0392B;font-weight:700;color:#C0392B;white-space:nowrap}
+
+.fieldref:hover{color:#8f2b20;border-bottom-color:#8f2b20}
+
+.fieldref::after{content:"\00a0\25A6";font-size:.82em;opacity:.7}
+
+/* button trigger, used on the mission score cards */
+.fieldref.btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:3px;
+    background:#C0392B;color:#fff;padding:4px 10px;margin-left:8px;
+    font-family:'Barlow Condensed','Barlow Condensed',sans-serif;font-weight:800;font-size:.72rem;
+    letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;
+    box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+.fieldref.btn:hover{background:#d8483a;color:#fff}
+
+.fieldref.btn::after{content:"\25A6";font-size:.95em;opacity:.9;margin-left:1px}
+
+.fld-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;
+               padding:14px;align-items:center;justify-content:center}
+
+.fld-overlay.open{display:flex}
+
+.fld-box{background:#fff;border-radius:7px;width:100%;max-width:820px;overflow:hidden;
+           box-shadow:0 16px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:94vh}
+
+.fld-head{background:#1C1C1C;color:#fff;padding:.8rem 1rem;display:flex;align-items:center;
+            justify-content:space-between;gap:.6rem;flex-shrink:0}
+
+.fld-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.02rem;
+             letter-spacing:.05em;text-transform:uppercase;line-height:1.2}
+
+.fld-x{background:none;border:none;color:rgba(255,255,255,.75);font-size:1.35rem;cursor:pointer;
+         min-width:38px;min-height:38px;border-radius:4px;flex-shrink:0}
+
+.fld-x:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.fld-tabs{display:flex;gap:6px;padding:9px 12px;background:#F8F8F8;border-bottom:1px solid #CCCCCC;flex-shrink:0}
+
+.fld-tabs button{border:1px solid #CCCCCC;background:#fff;border-radius:4px;padding:6px 13px;cursor:pointer;
+                   font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+                   letter-spacing:.07em;text-transform:uppercase;color:#1C1C1C}
+
+.fld-tabs button.on{background:#1C1C1C;color:#fff;border-color:#1C1C1C}
+
+.fld-pic{overflow:auto;background:#F2F2F2}
+
+.fld-pic img{display:block;width:100%;height:auto}
+
+.fld-cap{padding:10px 14px;font-size:.9rem;color:#666666;background:#fff;border-top:1px solid #CCCCCC;flex-shrink:0}
+
+.fig{margin:16px 0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+
+.fig img{display:block;width:100%;height:auto;cursor:zoom-in;background:#fff}
+
+.fig figcaption{padding:9px 13px;font-size:15px;color:var(--grey);background:var(--field);
+                  border-top:1px solid var(--line)}
+
+.figrow{display:grid;gap:14px;margin:16px 0}
+
+.figrow.two{grid-template-columns:1fr 1fr}
+
+.figrow.three{grid-template-columns:repeat(3,1fr)}
+
+.figrow .fig{margin:0}
+
+@media (max-width:700px){ .figrow.two,.figrow.three{grid-template-columns:1fr} }
+
+.zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;
+        align-items:center;justify-content:center;padding:12px;cursor:zoom-out}
+
+.zoom.open{display:flex}
+
+.zoom img{max-width:100%;max-height:92vh;border-radius:4px}
+
+.zoom .zclose{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);color:#fff;
+                border:none;width:42px;height:42px;border-radius:6px;font-size:1.4rem;cursor:pointer}
+
+.zoom .zcap{position:absolute;bottom:14px;left:0;right:0;text-align:center;
+              color:rgba(255,255,255,.75);font-size:15px}
+
+.mainnav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+           font-size:14px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+
+.mainnav a{color:rgba(255,255,255,.66);text-decoration:none;padding:5px 2px;border-bottom:2px solid transparent}
+
+.mainnav a:hover{color:#fff}
+
+.mainnav a.here{color:var(--gold);border-bottom-color:var(--gold)}
+
+@media (max-width:820px){ .mainnav{font-size:12.5px;gap:3px 13px} }
+
+@media print{ .mainnav{display:none} }
+
+/* ---------- Shared components (used by some labs) ---------- */
+
+.callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+
+.callout.gold .ctitle { color: #8a6d22; }
+
+.code.small { font-size: 13.5px; }
+
+/* ---------- Concept box (new CS concepts) ---------- */
+.concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+
+.concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+.concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+
+.callout code { color: inherit; }
+
+.code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+.grid code { font-size: 14px; }
+
+code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+.code .hl { color: #f4c95d; }
+
+.safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+
+.callout.red { border-left-color: var(--red); background: #fbeef0; }
+
+.callout.red .ctitle { color: var(--red); }
+
+.filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+.widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+.sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+.warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+
+.calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+
+.calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+
+.calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
+
+.gate{border-left:5px solid #922B21;background:#fdf0ef;padding:13px 17px;margin:18px 0;border-radius:0 5px 5px 0}
+
+.gate .gt{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+            text-transform:uppercase;color:#922B21;margin:0 0 5px}
+
+.grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+
+.grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+
+.pl-body{padding:6px 16px 14px}
+
+.pl-body > p{margin:10px 0;font-size:1rem}
+
+.pl-head{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+
+.pl-head .pl-n{background:var(--gold);color:#ffffff;font-family:var(--font-display);font-weight:800;
+                 font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:3px;flex-shrink:0}
+
+.pl-head .pl-t{font-family:var(--font-display);font-weight:700;font-size:1.12rem;line-height:1.2}
+
+/* ---- prelab: checklist-first, almost nothing to grade ---- */
+.pl-sec{border:1px solid var(--line);border-radius:6px;margin:18px 0;overflow:hidden;background:#fff}
+
+.rec{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:9px 14px;align-items:center;
+       margin:12px 0;padding:12px 14px;background:#f2f4fa;border:1px solid var(--line);border-radius:5px}
+
+.rec input{padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
+             font-family:var(--font-body);font-size:1rem;width:100%}
+
+.rec input:focus{outline:none;border-color:var(--gold)}
+
+.rec label{font-family:var(--font-display);font-weight:700;font-size:.82rem;letter-spacing:.06em;
+             text-transform:uppercase;color:var(--navy)}
+
+.reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+
+.reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+
+.reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+.signoff{border:2px solid var(--gold);border-radius:6px;background:#FDF2F2;padding:14px 18px;margin:22px 0 0}
+
+.signoff .so-t{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+                 text-transform:uppercase;color:var(--navy);margin:0 0 8px}
+
+@media (max-width:700px){ .rec{grid-template-columns:1fr;gap:5px} }
+
+ul.tick{list-style:none;margin:10px 0 4px;padding:0}
+
+ul.tick input[type="checkbox"]{flex-shrink:0;width:23px;height:23px;margin-top:1px;accent-color:var(--red);cursor:pointer}
+
+ul.tick label{cursor:pointer;font-size:1.02rem;line-height:1.45}
+
+ul.tick li{display:flex;align-items:flex-start;gap:11px;padding:9px 11px;border:1px solid var(--line);
+             border-radius:5px;margin-bottom:7px;background:var(--field)}
+
+ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
+
+.calc .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+
+.calc .eq .lbl { font-size: 13px; color: var(--grey); }
+
+.calc .eq .op { font-weight: 700; color: var(--navy); font-size: 18px; }
+
+.calc .eq input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 15px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; text-align: center; }
+
+.calc .eq input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+.checklist { list-style: none; margin: 10px 0 4px; padding: 0; }
+
+.checklist input[type="checkbox"] { flex-shrink: 0; width: 23px; height: 23px; margin-top: 1px; accent-color: var(--red); cursor: pointer; }
+
+.checklist label { cursor: pointer; font-size: 1.02rem; line-height: 1.45; }
+
+.checklist li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 5px; margin-bottom: 7px; background: var(--field); }
+
+.concept .term { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 6px 0 2px; }
+
+.concept .term:first-child { margin-top: 0; }
+
+.console { background: #0c0f16; color: #c8f0c0; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.7; border: 1px solid #2b3445; }
+
+.console .pl { color: #6fa8dc; }
+
+.footer-strip {
+      background: rgba(0,0,0,0.4); text-align: center; padding: 1rem; font-size: 0.75rem;
+      color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+    }
+
+.formula { font-family: ui-monospace, Consolas, monospace; font-size: 16px; color: var(--navy); background: #eef1f7; border: 1px solid #cfdcef; border-radius: 8px; padding: 12px 14px; margin: 10px 0; text-align: center; font-weight: 600; }
+
+.grid .seedc { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; }
+
+.grid caption.a { color: var(--red); }
+
+.grid caption.b { color: var(--navy); }
+
+.grid tr.blind td { background: #fdf3f3; }
+
+.grid tr.blind td .label { background: #fdeaea; color: var(--red-dark); }
+
+.grid.tight th, .grid.tight .seed, .grid.tight .seedc { padding: 6px 10px; }
+
+.lab-arrow {
+      margin-top: auto; padding-top: 0.75rem; font-family: var(--font-display); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+    }
+
+.lab-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      padding: 1.75rem; text-decoration: none; display: flex; flex-direction: column; gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+    }
+
+.lab-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+
+.lab-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(192,57,43,0.4); transform: translateY(-3px); }
+
+.lab-card:hover::before { transform: scaleX(1); }
+
+.lab-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+.lab-num {
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+      color: var(--red); text-transform: uppercase;
+    }
+
+.lab-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--white); line-height: 1.1; }
+
+.page-eyebrow {
+      font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem;
+    }
+
+.page-title {
+      font-family: var(--font-display); font-weight: 800; font-size: clamp(2.25rem, 6vw, 3.5rem);
+      line-height: 1; color: var(--white); letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+
+.page-title span { color: var(--red); }
+
+.steps li .snum { font-weight: 700; color: var(--navy); min-width: 26px; font-size: 16px; }
+
+.truth { width: auto; border-collapse: collapse; margin: 10px 0; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+
+.truth .yes { background: #eaf6ea; font-weight: 700; }
+
+.truth td.t { color: var(--green, #2e7d32); font-weight: 600; }
+
+.truth th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+
+.truth th, .truth td { border: 1px solid var(--line); padding: 6px 16px; text-align: center; }
+
+.unit-label {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 0 0 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.6rem;
+    }
+
+.wrap { flex: 1; max-width: 960px; margin: 0 auto; width: 100%; padding: 3rem 2rem 4rem; }
+
+.zonebar { display: flex; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--line); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-align: center; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; }
+
+.zonebar .accel { background: var(--gold); color: #ffffff; flex: 0 0 15%; }
+
+.zonebar .cruise { background: var(--navy); flex: 1 1 auto; }
+
+.zonebar .decel { background: var(--red); flex: 0 0 30%; }
+
+.zonebar div { padding: 14px 6px; color: #fff; }
+
+/* ---------- Print helpers (optional components) ---------- */
+
+@media print{ .zoom{display:none!important} .fig img{max-height:7cm;width:auto;margin:0 auto} }
+
+@media print{ .fieldref::after{content:""} .fld-overlay{display:none!important} }
+
+@media print{ .pl-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ul.tick input[type="checkbox"]{-webkit-appearance:none;appearance:none;border:1px solid #666;
+  border-radius:2px;width:14px;height:14px} }
+</style>
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 26px 30px;
+    border-bottom: 5px solid var(--gold);
+  }
+
+  .hero .sub {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffe9e9;
+    margin: 0;
+  }
+
+  .phase-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--navy);
+    letter-spacing: .01em;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--red);
+    background: #fbeef0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+
+  .callout .ctitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Formula block ---------- */
+  .formula {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--navy);
+    background: #f6f6f8;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 21px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--navy);
+    line-height: 1.5;
+  }
+  .formula .small {
+    display: block;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--grey);
+    margin-top: 6px;
+  }
+
+  /* ---------- Mechanical: video ---------- */
+  .mech-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a1a;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .mech-video iframe,
+  .mech-video video { width: 100%; height: 100%; border: 0; display: block; }
+  .mech-video video { object-fit: contain; }
+  .video-cap { font-size: 13.5px; color: var(--grey); margin: 0 0 6px; }
+
+  /* ---------- Mechanical: constraints ---------- */
+  .constraints { list-style: none; counter-reset: c; margin: 10px 0 0; padding: 0; }
+  .constraints li {
+    counter-increment: c;
+    position: relative;
+    padding: 9px 0 9px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .constraints li:last-child { border-bottom: 0; }
+  .constraints li::before {
+    content: counter(c);
+    position: absolute;
+    left: 0; top: 8px;
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* ---------- Mechanical: diagram ---------- */
+  .diagram {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .diagram figcaption { font-size: 13.5px; color: var(--grey); margin-top: 10px; }
+
+  /* ---------- Mechanical: spec check ---------- */
+  .speccheck { border: 1px solid var(--line); border-radius: 10px; padding: 6px 16px; margin: 12px 0; }
+  .speccheck .ck {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .speccheck .ck:last-child { border-bottom: 0; }
+  .speccheck input[type=checkbox] {
+    width: 19px; height: 19px; margin-top: 2px;
+    accent-color: var(--red); flex-shrink: 0;
+  }
+  .speccheck label { cursor: pointer; }
+
+  /* ---------- Bottom nav ---------- */
+  .botnav{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:20px 24px; flex-wrap:wrap;
+    margin:46px 40px 0; padding:26px 0 8px;
+    border-top:1px solid var(--line)
+  }
+  .botnav a{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; font-size:15px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:var(--navy);
+    border:1px solid var(--line); border-radius:5px;
+    padding:12px 20px; background:#fff
+  }
+  .botnav a:hover{ border-color:var(--gold); background:#FDF2F2; color:var(--red) }
+  .botnav a.next{ margin-left:auto }
+  .botnav a.gloss{
+    color:#8a6d2f;
+    border-color:rgba(192,57,43,.55);
+    background:#FDF2F2
+  }
+  .botnav a.gloss:hover{ background:rgba(192,57,43,.16) }
+
+  @media (max-width:700px){
+    .botnav{ margin-left:20px; margin-right:20px; gap:10px; padding-top:18px }
+    .botnav a{ font-size:13.5px; padding:11px 14px; flex:1 1 46%; justify-content:center }
+    .botnav a.next{ margin-left:0 }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero {
+      background: var(--red) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border-radius: 0;
+    }
+    .meta, .callout, .formula, .grid, .diagram, .speccheck, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .cmd-table th, .grid th {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input {
+      border: none !important;
+      border-bottom: 1px solid #999 !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+    .answer { min-height: auto; }
+    .mech-video { display: none; }
+    .constraints li::before {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .botnav { display: none; }
+    .print-pin { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar: PIN + submit ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+      <nav class="mainnav" aria-label="Main"><a href="../index.html">Home</a><a href="../2026-missions.html">2026 Missions</a><a href="../discovery/index.html">Discovery</a><a href="../labs/index.html">C Labs</a><a href="../Python_Labs/index.html">Python Labs</a><a href="index.html" class="here">Mechanical</a><a href="../glossary.html">Glossary</a></nav>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Mechanical Design · Challenge 17</p>
+    <h1>The Vertical Transitioning Platform</h1>
+    <p class="sub">Student Challenge · Two Pounds, Five Inches, One Motor</p>
+  </div>
+
+  <!-- PIN echo for printed copy -->
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Module Guiding Question</dt><dd>How does one small motor lift something far heavier than it could ever lift directly?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd><span class="def-term" data-term="MECHANICAL ADVANTAGE">Mechanical advantage</span> trades distance for force, and the trade is exact.</dd></div>
+      <div class="row"><dt>Mechanism</dt><dd><span class="def-term" data-term="SCISSOR LIFT">Scissor lift</span></dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="WORK">Work</span> · <span class="def-term" data-term="LOAD">Load</span> · <span class="def-term" data-term="SLIDING END">Sliding end</span> · <span class="def-term" data-term="STABILITY">Stability</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>Kit parts only</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>LEGO kit · one motor or servo · Wombat controller · gears for reduction · a 2 lb weight · ruler · scale</dd></div>
+      <div class="row"><dt>Prerequisites</dt><dd>Challenge 4 for gear ratios, Challenge 5 for torque, Challenge 9 for big reductions</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Two pounds is 32 ounces. Go back to Challenge 5 for a moment: there, an 8 to 12 ounce object at the end of a 12-inch arm already put you at the 120 oz-in limit of a single motor.</p>
+    <p>Now you have to lift three times that weight, five inches straight up, with one motor. A plain arm will not do it. Nothing you have built so far will do it without help.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A motor's strength is fixed. What you can change is how far it has to turn. Make it turn much further and it can lift much more — and there is an exact exchange rate between the two.</p>
+    </div>
+    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain how a scissor lift raises a platform while keeping it level.</li>
+      <li>Define mechanical advantage and calculate what you need for a given load.</li>
+      <li>Explain why gearing down for force always costs speed, using <span class="def-term" data-term="WORK">work</span>.</li>
+      <li>Diagnose why a scissor lift struggles most at the very bottom of its travel.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Watch the Mechanism</h2>
+    <p>Watch the video below. Do not build anything yet. Watch it at least twice.</p>
+
+    <div class="mech-video">
+      <iframe src="https://www.youtube-nocookie.com/embed/cJIUVR_I7Z8"
+              title="LEGO vertical transitioning platform"
+              allow="accelerometer; encrypted-media; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="video-cap">Simple mechanics — vertical transitioning platform.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Watch For</p>
+      <p>1. What do you notice?</p>
+      <p>2. What is happening?</p>
+      <p>3. Watch the bottom ends of the links. Do both of them stay put, or does one slide?</p>
+    </div>
+
+    <p class="q">What do you notice? Describe what the mechanism is doing.</p>
+    <textarea class="answer" data-key="p1_notice" aria-label="What do you notice"></textarea>
+    <p class="q">The platform goes straight up, but nothing in the mechanism moves straight up. Where does the motion actually come from?</p>
+    <textarea class="answer" data-key="p1_source" aria-label="Source of motion"></textarea>
+    <p class="q">What LEGO pieces might take the place of each of the pieces you see?</p>
+    <textarea class="answer" data-key="p1_pieces" aria-label="LEGO substitutions"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: The Scissor Lift</h2>
+    <p>A <span class="def-term" data-term="SCISSOR LIFT">scissor lift</span> is built from pairs of links crossed in an X and pinned together at their middle. Stack several X's on top of each other and you have a lift.</p>
+    <p>At each level, one end of the pair is pinned in place and the other is a <span class="def-term" data-term="SLIDING END">sliding end</span> that can travel horizontally. Push the sliding ends inward and the X's stand up taller. Let them spread apart and the whole stack folds flat.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 320" role="img" aria-label="A scissor lift shown collapsed on the left and extended on the right. Crossed links pinned at their centres form stacked X shapes. One end of each pair is a fixed pivot and the other slides horizontally. The platform on top stays level in both positions.">
+        <defs>
+          <marker id="tkF" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M0,1 L10,1" stroke="#444" stroke-width="1.6"/>
+          </marker>
+          <marker id="slideA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#1E8449"/>
+          </marker>
+        </defs>
+
+        <!-- ===== collapsed ===== -->
+        <text x="140" y="34" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1C1C1C">COLLAPSED</text>
+        <line x1="50" y1="262" x2="240" y2="262" stroke="#1C1C1C" stroke-width="3"/>
+        <g stroke="#888" stroke-width="7" stroke-linecap="round">
+          <line x1="70" y1="262" x2="212" y2="228"/>
+          <line x1="212" y1="262" x2="70" y2="228"/>
+          <line x1="70" y1="228" x2="212" y2="196"/>
+          <line x1="212" y1="228" x2="70" y2="196"/>
+        </g>
+        <circle cx="141" cy="245" r="6" fill="#444"/>
+        <circle cx="141" cy="212" r="6" fill="#444"/>
+        <circle cx="70" cy="262" r="7" fill="#C0392B"/>
+        <circle cx="212" cy="262" r="7" fill="none" stroke="#1E8449" stroke-width="3"/>
+        <rect x="62" y="182" width="158" height="14" rx="3" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+
+        <!-- ===== extended ===== -->
+        <text x="440" y="34" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1C1C1C">EXTENDED</text>
+        <line x1="350" y1="262" x2="540" y2="262" stroke="#1C1C1C" stroke-width="3"/>
+        <g stroke="#888" stroke-width="7" stroke-linecap="round">
+          <line x1="392" y1="262" x2="490" y2="166"/>
+          <line x1="490" y1="262" x2="392" y2="166"/>
+          <line x1="392" y1="166" x2="490" y2="70"/>
+          <line x1="490" y1="166" x2="392" y2="70"/>
+        </g>
+        <circle cx="441" cy="214" r="6" fill="#444"/>
+        <circle cx="441" cy="118" r="6" fill="#444"/>
+        <circle cx="392" cy="262" r="7" fill="#C0392B"/>
+        <circle cx="490" cy="262" r="7" fill="none" stroke="#1E8449" stroke-width="3"/>
+        <rect x="382" y="56" width="118" height="14" rx="3" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+
+        <!-- sliding arrow -->
+        <line x1="516" y1="286" x2="470" y2="286" stroke="#1E8449" stroke-width="2.5" marker-end="url(#slideA)"/>
+        <text x="540" y="290" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#1E8449">slides in</text>
+
+        <!-- height dimension -->
+        <line x1="566" y1="70" x2="566" y2="262" stroke="#444" stroke-width="1.6" marker-start="url(#tkF)" marker-end="url(#tkF)"/>
+        <text x="586" y="170" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#444" transform="rotate(-90 586 170)">lift height</text>
+
+        <!-- legend -->
+        <circle cx="264" cy="120" r="7" fill="#C0392B"/>
+        <text x="280" y="125" font-family="'Barlow',sans-serif" font-size="12.5" fill="#444">fixed pivot</text>
+        <circle cx="264" cy="148" r="7" fill="none" stroke="#1E8449" stroke-width="3"/>
+        <text x="280" y="153" font-family="'Barlow',sans-serif" font-size="12.5" fill="#444">sliding end</text>
+        <text x="264" y="90" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#666">the platform stays</text>
+        <text x="264" y="106" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#666">level either way</text>
+      </svg>
+      <figcaption>Two stacked X's. Each pair you add lifts further for the same amount of sliding at the bottom.</figcaption>
+    </figure>
+
+    <h3 class="sub">Why It Stays Level</h3>
+    <p>The two links in each X are the same length and cross at their exact centers, so both sides of the platform rise by the same amount at the same time. Nothing has to be adjusted or controlled — the geometry does it.</p>
+    <p>This is the fourth way you have met of keeping something level: pivoting arms in Challenge 4, a parallelogram in Challenge 8, straight-line sliding in Challenge 11, and now symmetry.</p>
+
+    <div class="callout">
+      <p class="ctitle">The Bottom Is the Hard Part</p>
+      <p>When the scissor is nearly flat, the links are almost horizontal. Pushing them inward barely lifts anything at first — but it has to push against the entire weight of the load through a very shallow angle.</p>
+      <p>That means a scissor lift is hardest to start and easiest once it is already up. If your build lifts fine when you help it off the ground but stalls from fully collapsed, nothing is broken. That is the mechanism behaving normally, and it is what you have to design around.</p>
+    </div>
+
+    <p class="q">Predict: at what point in its travel will your lift struggle most? Say why before you build it.</p>
+    <textarea class="answer" data-key="p2_predict_struggle" aria-label="Struggle prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Concept: Mechanical Advantage, Then Build</h2>
+    <p>You have been using this idea since Challenge 4 without a name for it. Here is the name.</p>
+
+    <div class="formula">
+      mechanical advantage = force out &divide; force in
+      <span class="small">a mechanical advantage of 10 means you get ten times the push you put in</span>
+    </div>
+
+    <p>Gearing down 10:1 gives you a mechanical advantage of about 10. A lever with a long arm three times the short one gives you 3. Stack them and they multiply, exactly as gear ratios did in Challenge 5.</p>
+
+    <h3 class="sub">And Here Is What It Costs</h3>
+    <p>Nothing is free, and the reason is simple enough to write in one line. <span class="def-term" data-term="WORK">Work</span> is force multiplied by distance, and a machine cannot produce more work than you put into it.</p>
+
+    <div class="formula">
+      work = force &times; distance
+      <span class="small">whatever you gain in force, you give back in distance</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 320" role="img" aria-label="Two rectangles of equal area. The wide flat one represents a small force applied over a long distance. The narrow tall one represents a large force applied over a short distance. Because their areas are equal, they represent the same amount of work.">
+        <defs>
+          <marker id="tkG" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M1,0 L1,10" stroke="#888" stroke-width="1.6"/>
+          </marker>
+          <marker id="tkH" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M9,0 L9,10" stroke="#888" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <!-- wide flat rect -->
+        <rect x="70" y="196" width="220" height="60" fill="#dbe3f0" stroke="#1F2D5A" stroke-width="2.5"/>
+        <text x="180" y="232" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1F2D5A">AT THE MOTOR</text>
+        <line x1="70" y1="284" x2="290" y2="284" stroke="#888" stroke-width="1.6" marker-start="url(#tkG)" marker-end="url(#tkH)"/>
+        <text x="180" y="304" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#666">long distance</text>
+        <line x1="46" y1="196" x2="46" y2="256" stroke="#888" stroke-width="1.6" marker-start="url(#tkG)" marker-end="url(#tkH)"/>
+        <text x="30" y="226" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#666" transform="rotate(-90 30 226)">small force</text>
+
+        <!-- equals -->
+        <text x="330" y="228" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="34" font-weight="700" fill="#1C1C1C">=</text>
+
+        <!-- narrow tall rect -->
+        <rect x="382" y="36" width="60" height="220" fill="#f7d9d4" stroke="#C0392B" stroke-width="2.5"/>
+        <text x="412" y="152" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#C0392B" transform="rotate(-90 412 152)">AT THE PLATFORM</text>
+        <line x1="382" y1="284" x2="442" y2="284" stroke="#888" stroke-width="1.6" marker-start="url(#tkG)" marker-end="url(#tkH)"/>
+        <text x="412" y="304" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#666">short distance</text>
+        <line x1="470" y1="36" x2="470" y2="256" stroke="#888" stroke-width="1.6" marker-start="url(#tkG)" marker-end="url(#tkH)"/>
+        <text x="500" y="146" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#666" transform="rotate(-90 500 146)">large force</text>
+
+        <text x="310" y="24" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="700" fill="#1C1C1C">SAME AREA &mdash; SAME WORK</text>
+      </svg>
+      <figcaption>Force times distance is an area. Change the shape however you like; the area stays the same.</figcaption>
+    </figure>
+
+    <div class="callout navy">
+      <p class="ctitle">What This Means for Your Build</p>
+      <p>To lift 2 pounds with a motor that cannot lift 2 pounds, gear it down. Gear it down 20:1 and it can push twenty times harder — and it must turn twenty times as far to raise the platform the same 5 inches.</p>
+      <p>So your lift will be slow. That is not a fault in your design. It is the price, and it is exactly the price the equation says it should be.</p>
+    </div>
+
+    <h3 class="sub">Build the Bare Mechanism</h3>
+    <p>Build the scissor stack first, with no motor and no load. Raise and lower it by hand.</p>
+
+    <div class="callout">
+      <p class="ctitle">Before You Go On</p>
+      <p>Work it through its full range by hand five times. Check three things: the sliding ends actually slide freely, the platform stays level all the way up, and the whole stack does not rack sideways when you push on a corner.</p>
+      <p>Racking is the usual problem. A scissor built on one plane folds over sideways under load — real ones are built as two scissor stacks side by side, tied together.</p>
+    </div>
+
+    <p class="q">Does your platform stay level through the whole travel? How did you check, rather than judging by eye?</p>
+    <textarea class="answer" data-key="p3_level_check" aria-label="Level check"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Engineering to Meet a Need</h2>
+
+    <div class="callout">
+      <p class="ctitle">The Need</p>
+      <p>Using your newly created LEGO contraption, modify and attach it in such a fashion that it will lift 2 lbs a distance of 5 inches or more using only a single servo or motor.</p>
+    </div>
+
+    <h3 class="sub">Mental Picture</h3>
+    <p>Think of a scissor lift on a work site — the kind that carries two people and their tools up to a ceiling. One hydraulic cylinder pushing sideways at the bottom raises the whole platform, and the deck stays flat enough to stand on the entire way up.</p>
+
+    <h3 class="sub">Constraints</h3>
+    <p class="muted">Every one of these must be true for your design to count as finished.</p>
+    <ol class="constraints">
+      <li>The platform must have a surface area of more than 16 square inches.</li>
+      <li>The platform must be stable and very near horizontal at all times.</li>
+      <li>The lift must raise 2 lbs a distance of 5 inches or more.</li>
+      <li>Only a single servo or motor may be used.</li>
+      <li>The lift must work on more than 90% of attempts, counted over at least 10 lifts.</li>
+      <li>Kit parts only.</li>
+    </ol>
+
+    <h3 class="sub">Do the Math First</h3>
+    <p>Work out roughly what reduction you need before you build it. You will not get this exactly right, and that is fine — the point is to start close instead of guessing.</p>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Planned value</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Weight you must lift</div></td>
+          <td><input type="text" data-key="p4_weight" aria-label="Weight" /></td>
+          <td><input type="text" data-key="p4_weight_unit" aria-label="Unit" value="oz" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Most weight one motor lifted in an earlier challenge</div></td>
+          <td><input type="text" data-key="p4_prior_weight" aria-label="Prior weight" /></td>
+          <td><input type="text" data-key="p4_prior_weight_unit" aria-label="Unit" value="oz" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Mechanical advantage you will need, roughly</div></td>
+          <td><input type="text" data-key="p4_ma_needed" aria-label="Mechanical advantage needed" /></td>
+          <td><input type="text" data-key="p4_ma_needed_unit" aria-label="Unit" value="&times;" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Gear reduction you plan to use</div></td>
+          <td><input type="text" data-key="p4_reduction" aria-label="Planned reduction" /></td>
+          <td><input type="text" data-key="p4_reduction_unit" aria-label="Unit" value=": 1" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Your Plan — Before You Build</h3>
+    <p class="group-label">How will you drive the sliding ends? A rack and pinion, a lead screw, a linkage, something else?</p>
+    <textarea class="answer" data-key="p4_drive_plan" aria-label="Drive plan"></textarea>
+
+    <p class="group-label">Break the build into manageable steps.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p4_step_1" aria-label="Build step 1" /></li>
+      <li><input type="text" data-key="p4_step_2" aria-label="Build step 2" /></li>
+      <li><input type="text" data-key="p4_step_3" aria-label="Build step 3" /></li>
+      <li><input type="text" data-key="p4_step_4" aria-label="Build step 4" /></li>
+      <li><input type="text" data-key="p4_step_5" aria-label="Build step 5" /></li>
+    </ul>
+
+    <p class="q">Predict: will your lift fail by stalling, by racking sideways, or by the platform tilting?</p>
+    <textarea class="answer" data-key="p4_predict" aria-label="Prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test &amp; Iterate</h2>
+
+    <div class="callout">
+      <p class="ctitle">How to Check &ldquo;Very Near Horizontal&rdquo;</p>
+      <p>Do not judge it by eye. Measure the height of the platform at its front edge and again at its back edge, at the top of the travel. If the two numbers match, it is level. Then do it again halfway up.</p>
+      <p>Record the difference. That number is what &ldquo;very near horizontal&rdquo; actually means for your build.</p>
+    </div>
+
+    <div class="callout navy">
+      <p class="ctitle">Build Up to the Full Load</p>
+      <p>Do not start at 2 lbs. Start with nothing on the platform, then add weight in steps, recording the point where the lift slows noticeably and the point where it stops entirely.</p>
+      <p>Those two numbers tell you far more than a single pass or fail at 2 lbs would.</p>
+    </div>
+
+    <h3 class="sub">Your Numbers</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Platform dimensions</div></td>
+          <td><input type="text" data-key="p5_platform_dims" aria-label="Platform dimensions" /></td>
+          <td><input type="text" data-key="p5_platform_dims_unit" aria-label="Unit" value="in &times; in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Platform surface area</div></td>
+          <td><input type="text" data-key="p5_platform_area" aria-label="Platform area" /></td>
+          <td><input type="text" data-key="p5_platform_area_unit" aria-label="Unit" value="sq in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Scissor stages you built</div></td>
+          <td><input type="text" data-key="p5_stages" aria-label="Scissor stages" /></td>
+          <td><input type="text" data-key="p5_stages_unit" aria-label="Unit" value="X pairs" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Total gear reduction</div></td>
+          <td><input type="text" data-key="p5_reduction" aria-label="Reduction" /></td>
+          <td><input type="text" data-key="p5_reduction_unit" aria-label="Unit" value=": 1" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Height lifted with no load</div></td>
+          <td><input type="text" data-key="p5_height_empty" aria-label="Height unloaded" /></td>
+          <td><input type="text" data-key="p5_height_empty_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Height lifted with 2 lbs</div></td>
+          <td><input type="text" data-key="p5_height_loaded" aria-label="Height loaded" /></td>
+          <td><input type="text" data-key="p5_height_loaded_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Weight at which the lift first slowed noticeably</div></td>
+          <td><input type="text" data-key="p5_slow_weight" aria-label="Slowing weight" /></td>
+          <td><input type="text" data-key="p5_slow_weight_unit" aria-label="Unit" value="oz" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Weight at which it stalled completely</div></td>
+          <td><input type="text" data-key="p5_stall_weight" aria-label="Stall weight" /></td>
+          <td><input type="text" data-key="p5_stall_weight_unit" aria-label="Unit" value="oz" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Time to lift 2 lbs the full 5 inches</div></td>
+          <td><input type="text" data-key="p5_lift_time" aria-label="Lift time" /></td>
+          <td><input type="text" data-key="p5_lift_time_unit" aria-label="Unit" value="seconds" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Front-to-back height difference at full extension</div></td>
+          <td><input type="text" data-key="p5_tilt" aria-label="Tilt at top" /></td>
+          <td><input type="text" data-key="p5_tilt_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Did it start from fully collapsed, unassisted?</div></td>
+          <td><input type="text" data-key="p5_cold_start" aria-label="Cold start" /></td>
+          <td><input type="text" data-key="p5_cold_start_unit" aria-label="Unit" value="yes / no" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:20%">What you changed</th>
+          <th style="width:13%">Load (oz)</th>
+          <th style="width:14%">Height reached</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Check Against the Constraints</h3>
+    <p class="muted">Check a box only after you have actually observed it — not because you think it should be true.</p>
+    <div class="speccheck">
+      <div class="ck">
+        <input type="checkbox" id="s1" data-key="p5_check_area">
+        <label for="s1">The platform measures more than 16 square inches.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s2" data-key="p5_check_level">
+        <label for="s2">Front and back edge heights matched closely, at the top and halfway up.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s3" data-key="p5_check_lift">
+        <label for="s3">Raised 2 lbs at least 5 inches.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s4" data-key="p5_check_onemotor">
+        <label for="s4">Only one servo or motor is used anywhere in the machine.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s5" data-key="p5_check_stable">
+        <label for="s5">The lift did not rack sideways or need a hand on it under load.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s6" data-key="p5_check_rate">
+        <label for="s6">Worked on more than 90% of attempts, counted over at least 10 lifts.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s7" data-key="p5_check_materials">
+        <label for="s7">Kit parts only.</label>
+      </div>
+    </div>
+
+    <p class="q">Describe one specific failure. What was the symptom? What was the cause? How did you fix it?</p>
+    <textarea class="answer" data-key="p5_failure" aria-label="Failure description" style="min-height:100px"></textarea>
+    <p class="q">Did your lift struggle most at the bottom, as Phase 2 predicted? Describe what it did.</p>
+    <textarea class="answer" data-key="p5_bottom_check" aria-label="Bottom of travel behavior"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Helps in Botball</h2>
+    <div class="callout">
+      <p class="ctitle">Transfer</p>
+      <p>Every time you gear down for strength, you are spending time. In a timed match, that is a real cost — and sometimes the right one.</p>
+    </div>
+    <p>The question is never simply "can my robot lift this." It is "can it lift this fast enough to matter." Mechanical advantage tells you the first answer, and the work equation tells you the second one comes out of the same budget.</p>
+    <p class="q">Name a Botball task where you would gear down heavily and accept a slow mechanism. What makes the slowness acceptable there?</p>
+    <textarea class="answer" data-key="p6_slow_ok" aria-label="When slow is acceptable"></textarea>
+    <p class="q">A scissor lift folds nearly flat. Look back at the starting-size limit from Challenge 2. What does that make a scissor lift good for on a competition robot?</p>
+    <textarea class="answer" data-key="p6_folding" aria-label="Folding advantage"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Define mechanical advantage in your own words, and give the figure for your own lift.</p>
+    <textarea class="answer" data-key="p7_q1_ma" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain, using work, why a machine that lifts more must move slower. Do not use the word &ldquo;magic.&rdquo;</p>
+    <textarea class="answer" data-key="p7_q2_work" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Explain why a scissor lift keeps its platform level, and how that differs from the parallelogram in Challenge 8.</p>
+    <textarea class="answer" data-key="p7_q3_level" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;Whatever is gained in force is given back in distance. This means that when a motor is not strong enough, I should &mdash; and I should expect...&rdquo;</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Add a Stage</h3>
+    <ul>
+      <li>Add one more X pair to the stack and measure the new lift height.</li>
+      <li>Did the height go up by as much as you expected?</li>
+      <li>What happened to the weight it could lift, and to how steady it was at full extension?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Measure the Trade</h3>
+    <ul>
+      <li>Time the lift, then halve your gear reduction and time it again with a lighter load.</li>
+      <li>Record force and time for both versions.</li>
+      <li>Does the product of the two stay roughly constant? Where did the difference go?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Find the Minimum</h3>
+    <ul>
+      <li>Reduce your gearing step by step until the lift can only just raise 2 lbs.</li>
+      <li>Record that reduction — it is the least you can get away with.</li>
+      <li>Would you build a competition robot at that number, or leave margin? Defend your answer.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Beat the Bottom</h3>
+    <ul>
+      <li>Get your lift to start reliably from fully collapsed, carrying the full 2 lbs.</li>
+      <li>Try moving where the drive pushes, or starting the scissor at a slight angle rather than flat.</li>
+      <li>Which change helped most, and why does it help?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <nav class="botnav no-print" aria-label="Page navigation">
+    <a href="mech16_planar_motion.html">&larr; Challenge 16</a>
+    <a class="gloss" href="../glossary.html">Glossary</a>
+    <a class="next" href="mech18_crane.html">Challenge 18 &rarr;</a>
+  </nav>
+
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 17 — Student Sheet</p>
+</main>
+
+<script>
+  const MISSION_ID = "mech17_vertical_platform";
+
+  (function buildTrials() {
+    const body = document.getElementById("trialBody");
+    for (let i = 1; i <= 10; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_load" aria-label="Trial ' + i + ' load"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_height" aria-label="Trial ' + i + ' height reached"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
+      body.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] =
+        (el.type === "checkbox") ? (el.checked ? "yes" : "no") : el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) {
+          if (el.type === "checkbox") el.checked = (data.answers[k] === "yes");
+          else el.value = data.answers[k];
+        }
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) { /* storage full or blocked — ignore */ }
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.matches("input[type=checkbox][data-key]")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Mechanical Design · Challenge 17 — The Vertical Transitioning Platform",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+
+<div class="def-overlay" id="defOverlay" role="dialog" aria-modal="true" aria-labelledby="defTerm">
+  <div class="def-box">
+    <div class="def-head">
+      <span class="def-head-term" id="defTerm"></span>
+      <button class="def-close" id="defClose" aria-label="Close definition">&#10005;</button>
+    </div>
+    <div class="def-body" id="defBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEFS = {
+    'SCISSOR LIFT': ['Scissor Lift', 'A lift built from pairs of links crossed in an X and pinned at their centres. Pushing the bottom ends together raises the stack; letting them spread folds it flat. The platform stays level because both sides of every X are the same length.'],
+    'MECHANICAL ADVANTAGE': ['Mechanical Advantage', 'How many times more force comes out of a machine than went into it. A mechanical advantage of 10 means a 1-pound push produces a 10-pound lift \u2014 over one tenth of the distance.'],
+    'WORK': ['Work', 'Force multiplied by distance. A machine cannot give out more work than is put in, which is why every gain in force is paid for with distance and every gain in speed is paid for with force.'],
+    'LOAD': ['Load', 'The weight or force a mechanism has to move or hold. Sizing a mechanism starts with knowing the load, because everything else follows from it.'],
+    'SLIDING END': ['Sliding End', 'The end of a link that is free to travel rather than being pinned in place. A scissor lift needs one fixed end and one sliding end at each level, or it cannot change height at all.'],
+    'STABILITY': ['Stability', 'How well a machine resists tipping, flexing, or folding sideways while it works. A tall lift under load is the hardest case, because everything above the base is trying to lean.']
+  };
+  function openDef(t){
+    var e = DEFS[t]; if(!e) return;
+    document.getElementById('defTerm').textContent = e[0];
+    document.getElementById('defBody').textContent = e[1];
+    document.getElementById('defOverlay').classList.add('open');
+    document.getElementById('defClose').focus();
+    document.body.style.overflow='hidden';
+  }
+  function closeDef(){
+    document.getElementById('defOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('defClose').addEventListener('click', closeDef);
+  document.getElementById('defOverlay').addEventListener('click', function(e){ if(e.target===this) closeDef(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDef(); });
+  document.addEventListener('click', function(e){ var el=e.target.closest('.def-term'); if(el) openDef(el.dataset.term); });
+  document.addEventListener('touchend', function(e){ if(e.target.closest('.def-term')) e.preventDefault(); }, {passive:false});
+})();
+</script>
+
+</body>
+</html>

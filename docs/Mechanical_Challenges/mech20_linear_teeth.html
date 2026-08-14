@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mechanical · Challenge 20 — Using Linear Teeth to Increase Length</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style id="labsheet-inline">
+/* ===== lab-sheet.css — inlined so this file previews standalone.
+   At packaging time this whole block is swapped back to
+   a stylesheet link to ../lab-sheet.css
+   Do not hand-edit rules in here; edit lab-sheet.css. ===== */
+/* KIPR Botball 2026 — Lab sheet shared styles
+ * Exact duplicates extracted from docs/labs and docs/Python_Labs.
+ * Page-specific rules and near-duplicate variants remain in each HTML style block.
+ *
+ * Near-duplicate candidates (not unified):
+ *   .calc-line input: 2×, 2×
+ *   .callout: 44×, 10×
+ *   .callout .ctitle: 44×, 10×
+ *   .hero: 44×, 10×
+ *   .hero .sub: 44×, 10×
+ *   .phase-head: 44×, 10×
+ *   @media print page sheets (contain @page): ~19 near-duplicate variants kept inline
+ */
+
+:root {
+    --red: #C0392B;
+    --red-dark: #922B21;
+    --navy: #1C1C1C;
+    --gold: #C0392B;
+    --ink: #1C1C1C;
+    --grey: #666666;
+    --line: #CCCCCC;
+    --bg: #F2F2F2;
+    --panel: #ffffff;
+    --field: #F8F8F8;
+    --field-focus: #FDF2F2;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+/* ---------- Sticky PIN / submit bar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 3px solid var(--gold);
+  }
+
+.topbar-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+.topbar .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-right: auto;
+    color: #fff;
+  }
+
+.topbar .brand span { color: var(--gold); }
+
+.pin-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+.pin-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #d7dcea;
+  }
+
+.pin-field input {
+    width: 120px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+  }
+
+.pin-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+.submit-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+
+.submit-btn:hover { background: var(--red-dark); }
+
+.submit-btn:active { transform: translateY(1px); }
+
+.status {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 2px 2px 0;
+    min-height: 0;
+    color: #d7dcea;
+  }
+
+.status.ok { color: #b9e6b0; }
+
+.status.warn { color: #ffd9a0; }
+
+.status.err { color: #ffb3b3; }
+
+/* ---------- Page shell ---------- */
+.sheet {
+    max-width: 920px;
+    margin: 22px auto 80px;
+    padding: 0 22px;
+  }
+
+.hero .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #f4d9a0;
+    margin: 0 0 4px;
+  }
+
+.hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+
+/* ---------- Meta table ---------- */
+.meta {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+.meta dl { margin: 0; }
+
+.meta .row {
+    display: grid;
+    grid-template-columns: 215px 1fr;
+  }
+
+.meta .row:nth-child(odd) { background: #eef0f5; }
+
+.meta dt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--navy);
+    padding: 9px 16px;
+  }
+
+.meta dd {
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+/* ---------- Sections ---------- */
+section { margin-top: 30px; }
+
+.phase-head .pnum {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+h3.sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 18px 0 6px;
+  }
+
+p { margin: 8px 0; }
+
+.muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+
+ul, ol { margin: 8px 0; padding-left: 24px; }
+
+li { margin: 4px 0; }
+
+.obj li { margin: 5px 0; }
+
+.callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+
+.callout.navy .ctitle { color: var(--navy); }
+
+.callout p { margin: 4px 0; }
+
+/* ---------- Command reference ---------- */
+.cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+.cmd-table th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 14px;
+  }
+
+.cmd-table td {
+    border-top: 1px solid var(--line);
+    padding: 9px 14px;
+    vertical-align: top;
+    font-size: 15.5px;
+  }
+
+.cmd-table tr:nth-child(even) td { background: #f7f8fa; }
+
+.cmd-table code {
+    font-family: 'Barlow', monospace;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14.5px;
+    white-space: nowrap;
+  }
+
+/* ---------- Code block ---------- */
+.code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+
+.code .c { color: var(--code-green); }
+
+/* ---------- Inputs ---------- */
+.answer {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 76px;
+  }
+
+.answer:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.q {
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+
+.q .n { color: var(--red); }
+
+.field-line { margin: 10px 0 4px; }
+
+/* ---------- Numbered short-answer rows ---------- */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  counter-reset: s;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+}
+.steps li::before {
+  counter-increment: s;
+  content: counter(s) ".";
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 22px;
+  font-size: 16px;
+}
+
+.answer.tall {
+  min-height: 120px;
+}
+
+.grid .seed {
+  padding: 9px 10px;
+  font-size: 15px;
+  color: var(--grey);
+}
+.grid caption {
+  caption-side: top;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 0 2px;
+  color: var(--navy);
+}
+
+/* ---------- Field sketch area ---------- */
+.sketch {
+  width: 100%;
+  height: 340px;
+  border: 2px dashed var(--navy);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    #fff;
+  position: relative;
+  margin: 12px 0;
+}
+.sketch .tag {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.sketch .startbox {
+  position: absolute;
+  bottom: 14px;
+  width: 96px;
+  height: 60px;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  background: rgba(158,27,50,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--red);
+}
+.sketch .startbox.right { right: 14px; }
+.sketch .startbox.left { left: 14px; }
+
+.steps input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.steps input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 17px;
+    margin: 14px 0 2px;
+  }
+
+/* ---------- Data tables (field orientation, trial log) ---------- */
+.grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+  }
+
+.grid th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .02em;
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+.grid td {
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+
+.grid td .label {
+    padding: 8px 10px;
+    font-size: 15px;
+    background: #eef0f5;
+    font-weight: 500;
+  }
+
+.grid input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    padding: 9px 10px;
+  }
+
+.grid input:focus {
+    outline: none;
+    background: var(--field-focus);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+
+.grid tr:nth-child(even) td:not(.has-label) { background: #fafbfc; }
+
+/* ---------- Name/date inline ---------- */
+.namebar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 8px 0 4px;
+  }
+
+.namebar .nb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+  }
+
+.namebar label {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+
+.namebar input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.namebar input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.pin-reminder {
+    background: #fff6e0;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+
+.pin-reminder strong { color: var(--navy); }
+
+/* ---------- Footer / bottom submit ---------- */
+.bottom-submit {
+    margin-top: 36px;
+    text-align: center;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+  }
+
+.bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+
+.bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+.credit {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13.5px;
+    margin: 26px 0 0;
+    letter-spacing: .02em;
+  }
+
+.print-pin { display: none; }
+
+@media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+.def-term{cursor:pointer;border-bottom:2px dotted var(--red);font-weight:700;color:inherit}
+
+.def-term:hover{color:var(--red)}
+
+.def-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;padding:1rem;
+               align-items:center;justify-content:center}
+
+.def-overlay.open{display:flex}
+
+.def-box{background:#fff;border-radius:6px;width:100%;max-width:480px;
+           box-shadow:0 12px 48px rgba(0,0,0,.4);overflow:hidden;animation:def-pop .16s ease}
+
+@keyframes def-pop{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.def-head{background:var(--red);color:#fff;display:flex;align-items:center;
+            justify-content:space-between;padding:.85rem 1rem;gap:.5rem}
+
+.def-head-term{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;
+                 letter-spacing:.1em;text-transform:uppercase;line-height:1.2}
+
+.def-close{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-size:1.4rem;
+             line-height:1;cursor:pointer;padding:0 .2rem;min-width:36px;min-height:36px;
+             display:flex;align-items:center;justify-content:center;border-radius:4px}
+
+.def-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.def-body{padding:1rem 1.1rem 1.25rem;font-size:.95rem;color:#444;line-height:1.65}
+
+.crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+          font-size:14px;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+
+.crumbs a{color:rgba(255,255,255,.72);text-decoration:none;padding:4px 2px;border-radius:3px}
+
+.crumbs a:hover{color:#fff;text-decoration:underline}
+
+.crumbs .sep{color:rgba(255,255,255,.35)}
+
+.crumbs .here{color:var(--gold);font-weight:700}
+
+.crumbs .gloss{margin-left:6px;color:var(--gold);border:1px solid rgba(192,57,43,.5);
+                 padding:4px 9px;border-radius:4px;font-weight:700}
+
+.crumbs .gloss:hover{background:rgba(192,57,43,.16);color:var(--gold);text-decoration:none}
+
+@media (max-width:600px){
+    .def-overlay{align-items:flex-end;padding:0}
+    .def-box{border-radius:12px 12px 0 0;max-width:100%}
+    .def-body{padding:1rem 1.1rem 2rem}
+  }
+
+@media (max-width:700px){ .crumbs{font-size:12.5px;gap:4px} .crumbs .gloss{padding:3px 7px} }
+
+@media print{ .crumbs,.def-overlay{display:none} .def-term{border-bottom:1px dotted #999} }
+
+/* inline trigger, used in running text and meta rows */
+.fieldref{cursor:pointer;border-bottom:2px dotted #C0392B;font-weight:700;color:#C0392B;white-space:nowrap}
+
+.fieldref:hover{color:#8f2b20;border-bottom-color:#8f2b20}
+
+.fieldref::after{content:"\00a0\25A6";font-size:.82em;opacity:.7}
+
+/* button trigger, used on the mission score cards */
+.fieldref.btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:3px;
+    background:#C0392B;color:#fff;padding:4px 10px;margin-left:8px;
+    font-family:'Barlow Condensed','Barlow Condensed',sans-serif;font-weight:800;font-size:.72rem;
+    letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;
+    box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+.fieldref.btn:hover{background:#d8483a;color:#fff}
+
+.fieldref.btn::after{content:"\25A6";font-size:.95em;opacity:.9;margin-left:1px}
+
+.fld-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;
+               padding:14px;align-items:center;justify-content:center}
+
+.fld-overlay.open{display:flex}
+
+.fld-box{background:#fff;border-radius:7px;width:100%;max-width:820px;overflow:hidden;
+           box-shadow:0 16px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:94vh}
+
+.fld-head{background:#1C1C1C;color:#fff;padding:.8rem 1rem;display:flex;align-items:center;
+            justify-content:space-between;gap:.6rem;flex-shrink:0}
+
+.fld-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.02rem;
+             letter-spacing:.05em;text-transform:uppercase;line-height:1.2}
+
+.fld-x{background:none;border:none;color:rgba(255,255,255,.75);font-size:1.35rem;cursor:pointer;
+         min-width:38px;min-height:38px;border-radius:4px;flex-shrink:0}
+
+.fld-x:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.fld-tabs{display:flex;gap:6px;padding:9px 12px;background:#F8F8F8;border-bottom:1px solid #CCCCCC;flex-shrink:0}
+
+.fld-tabs button{border:1px solid #CCCCCC;background:#fff;border-radius:4px;padding:6px 13px;cursor:pointer;
+                   font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+                   letter-spacing:.07em;text-transform:uppercase;color:#1C1C1C}
+
+.fld-tabs button.on{background:#1C1C1C;color:#fff;border-color:#1C1C1C}
+
+.fld-pic{overflow:auto;background:#F2F2F2}
+
+.fld-pic img{display:block;width:100%;height:auto}
+
+.fld-cap{padding:10px 14px;font-size:.9rem;color:#666666;background:#fff;border-top:1px solid #CCCCCC;flex-shrink:0}
+
+.fig{margin:16px 0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+
+.fig img{display:block;width:100%;height:auto;cursor:zoom-in;background:#fff}
+
+.fig figcaption{padding:9px 13px;font-size:15px;color:var(--grey);background:var(--field);
+                  border-top:1px solid var(--line)}
+
+.figrow{display:grid;gap:14px;margin:16px 0}
+
+.figrow.two{grid-template-columns:1fr 1fr}
+
+.figrow.three{grid-template-columns:repeat(3,1fr)}
+
+.figrow .fig{margin:0}
+
+@media (max-width:700px){ .figrow.two,.figrow.three{grid-template-columns:1fr} }
+
+.zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;
+        align-items:center;justify-content:center;padding:12px;cursor:zoom-out}
+
+.zoom.open{display:flex}
+
+.zoom img{max-width:100%;max-height:92vh;border-radius:4px}
+
+.zoom .zclose{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);color:#fff;
+                border:none;width:42px;height:42px;border-radius:6px;font-size:1.4rem;cursor:pointer}
+
+.zoom .zcap{position:absolute;bottom:14px;left:0;right:0;text-align:center;
+              color:rgba(255,255,255,.75);font-size:15px}
+
+.mainnav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+           font-size:14px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+
+.mainnav a{color:rgba(255,255,255,.66);text-decoration:none;padding:5px 2px;border-bottom:2px solid transparent}
+
+.mainnav a:hover{color:#fff}
+
+.mainnav a.here{color:var(--gold);border-bottom-color:var(--gold)}
+
+@media (max-width:820px){ .mainnav{font-size:12.5px;gap:3px 13px} }
+
+@media print{ .mainnav{display:none} }
+
+/* ---------- Shared components (used by some labs) ---------- */
+
+.callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+
+.callout.gold .ctitle { color: #8a6d22; }
+
+.code.small { font-size: 13.5px; }
+
+/* ---------- Concept box (new CS concepts) ---------- */
+.concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+
+.concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+.concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+
+.callout code { color: inherit; }
+
+.code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+.grid code { font-size: 14px; }
+
+code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+.code .hl { color: #f4c95d; }
+
+.safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+
+.callout.red { border-left-color: var(--red); background: #fbeef0; }
+
+.callout.red .ctitle { color: var(--red); }
+
+.filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+.widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+.sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+.warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+
+.calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+
+.calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+
+.calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
+
+.gate{border-left:5px solid #922B21;background:#fdf0ef;padding:13px 17px;margin:18px 0;border-radius:0 5px 5px 0}
+
+.gate .gt{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+            text-transform:uppercase;color:#922B21;margin:0 0 5px}
+
+.grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+
+.grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+
+.pl-body{padding:6px 16px 14px}
+
+.pl-body > p{margin:10px 0;font-size:1rem}
+
+.pl-head{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+
+.pl-head .pl-n{background:var(--gold);color:#ffffff;font-family:var(--font-display);font-weight:800;
+                 font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:3px;flex-shrink:0}
+
+.pl-head .pl-t{font-family:var(--font-display);font-weight:700;font-size:1.12rem;line-height:1.2}
+
+/* ---- prelab: checklist-first, almost nothing to grade ---- */
+.pl-sec{border:1px solid var(--line);border-radius:6px;margin:18px 0;overflow:hidden;background:#fff}
+
+.rec{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:9px 14px;align-items:center;
+       margin:12px 0;padding:12px 14px;background:#f2f4fa;border:1px solid var(--line);border-radius:5px}
+
+.rec input{padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
+             font-family:var(--font-body);font-size:1rem;width:100%}
+
+.rec input:focus{outline:none;border-color:var(--gold)}
+
+.rec label{font-family:var(--font-display);font-weight:700;font-size:.82rem;letter-spacing:.06em;
+             text-transform:uppercase;color:var(--navy)}
+
+.reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+
+.reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+
+.reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+.signoff{border:2px solid var(--gold);border-radius:6px;background:#FDF2F2;padding:14px 18px;margin:22px 0 0}
+
+.signoff .so-t{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+                 text-transform:uppercase;color:var(--navy);margin:0 0 8px}
+
+@media (max-width:700px){ .rec{grid-template-columns:1fr;gap:5px} }
+
+ul.tick{list-style:none;margin:10px 0 4px;padding:0}
+
+ul.tick input[type="checkbox"]{flex-shrink:0;width:23px;height:23px;margin-top:1px;accent-color:var(--red);cursor:pointer}
+
+ul.tick label{cursor:pointer;font-size:1.02rem;line-height:1.45}
+
+ul.tick li{display:flex;align-items:flex-start;gap:11px;padding:9px 11px;border:1px solid var(--line);
+             border-radius:5px;margin-bottom:7px;background:var(--field)}
+
+ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
+
+.calc .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+
+.calc .eq .lbl { font-size: 13px; color: var(--grey); }
+
+.calc .eq .op { font-weight: 700; color: var(--navy); font-size: 18px; }
+
+.calc .eq input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 15px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; text-align: center; }
+
+.calc .eq input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+.checklist { list-style: none; margin: 10px 0 4px; padding: 0; }
+
+.checklist input[type="checkbox"] { flex-shrink: 0; width: 23px; height: 23px; margin-top: 1px; accent-color: var(--red); cursor: pointer; }
+
+.checklist label { cursor: pointer; font-size: 1.02rem; line-height: 1.45; }
+
+.checklist li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 5px; margin-bottom: 7px; background: var(--field); }
+
+.concept .term { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 6px 0 2px; }
+
+.concept .term:first-child { margin-top: 0; }
+
+.console { background: #0c0f16; color: #c8f0c0; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.7; border: 1px solid #2b3445; }
+
+.console .pl { color: #6fa8dc; }
+
+.footer-strip {
+      background: rgba(0,0,0,0.4); text-align: center; padding: 1rem; font-size: 0.75rem;
+      color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+    }
+
+.formula { font-family: ui-monospace, Consolas, monospace; font-size: 16px; color: var(--navy); background: #eef1f7; border: 1px solid #cfdcef; border-radius: 8px; padding: 12px 14px; margin: 10px 0; text-align: center; font-weight: 600; }
+
+.grid .seedc { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; }
+
+.grid caption.a { color: var(--red); }
+
+.grid caption.b { color: var(--navy); }
+
+.grid tr.blind td { background: #fdf3f3; }
+
+.grid tr.blind td .label { background: #fdeaea; color: var(--red-dark); }
+
+.grid.tight th, .grid.tight .seed, .grid.tight .seedc { padding: 6px 10px; }
+
+.lab-arrow {
+      margin-top: auto; padding-top: 0.75rem; font-family: var(--font-display); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+    }
+
+.lab-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      padding: 1.75rem; text-decoration: none; display: flex; flex-direction: column; gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+    }
+
+.lab-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+
+.lab-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(192,57,43,0.4); transform: translateY(-3px); }
+
+.lab-card:hover::before { transform: scaleX(1); }
+
+.lab-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+.lab-num {
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+      color: var(--red); text-transform: uppercase;
+    }
+
+.lab-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--white); line-height: 1.1; }
+
+.page-eyebrow {
+      font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem;
+    }
+
+.page-title {
+      font-family: var(--font-display); font-weight: 800; font-size: clamp(2.25rem, 6vw, 3.5rem);
+      line-height: 1; color: var(--white); letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+
+.page-title span { color: var(--red); }
+
+.steps li .snum { font-weight: 700; color: var(--navy); min-width: 26px; font-size: 16px; }
+
+.truth { width: auto; border-collapse: collapse; margin: 10px 0; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+
+.truth .yes { background: #eaf6ea; font-weight: 700; }
+
+.truth td.t { color: var(--green, #2e7d32); font-weight: 600; }
+
+.truth th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+
+.truth th, .truth td { border: 1px solid var(--line); padding: 6px 16px; text-align: center; }
+
+.unit-label {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 0 0 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.6rem;
+    }
+
+.wrap { flex: 1; max-width: 960px; margin: 0 auto; width: 100%; padding: 3rem 2rem 4rem; }
+
+.zonebar { display: flex; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--line); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-align: center; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; }
+
+.zonebar .accel { background: var(--gold); color: #ffffff; flex: 0 0 15%; }
+
+.zonebar .cruise { background: var(--navy); flex: 1 1 auto; }
+
+.zonebar .decel { background: var(--red); flex: 0 0 30%; }
+
+.zonebar div { padding: 14px 6px; color: #fff; }
+
+/* ---------- Print helpers (optional components) ---------- */
+
+@media print{ .zoom{display:none!important} .fig img{max-height:7cm;width:auto;margin:0 auto} }
+
+@media print{ .fieldref::after{content:""} .fld-overlay{display:none!important} }
+
+@media print{ .pl-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ul.tick input[type="checkbox"]{-webkit-appearance:none;appearance:none;border:1px solid #666;
+  border-radius:2px;width:14px;height:14px} }
+</style>
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 26px 30px;
+    border-bottom: 5px solid var(--gold);
+  }
+
+  .hero .sub {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffe9e9;
+    margin: 0;
+  }
+
+  .phase-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--navy);
+    letter-spacing: .01em;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--red);
+    background: #fbeef0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+
+  .callout .ctitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Mechanical: video ---------- */
+  .mech-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a1a;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .mech-video iframe,
+  .mech-video video { width: 100%; height: 100%; border: 0; display: block; }
+  .mech-video video { object-fit: contain; }
+  .video-cap { font-size: 13.5px; color: var(--grey); margin: 0 0 6px; }
+
+  /* ---------- Mechanical: constraints ---------- */
+  .constraints { list-style: none; counter-reset: c; margin: 10px 0 0; padding: 0; }
+  .constraints li {
+    counter-increment: c;
+    position: relative;
+    padding: 9px 0 9px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .constraints li:last-child { border-bottom: 0; }
+  .constraints li::before {
+    content: counter(c);
+    position: absolute;
+    left: 0; top: 8px;
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* ---------- Mechanical: diagram ---------- */
+  .diagram {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .diagram figcaption { font-size: 13.5px; color: var(--grey); margin-top: 10px; }
+
+  /* ---------- Mechanical: spec check ---------- */
+  .speccheck { border: 1px solid var(--line); border-radius: 10px; padding: 6px 16px; margin: 12px 0; }
+  .speccheck .ck {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .speccheck .ck:last-child { border-bottom: 0; }
+  .speccheck input[type=checkbox] {
+    width: 19px; height: 19px; margin-top: 2px;
+    accent-color: var(--red); flex-shrink: 0;
+  }
+  .speccheck label { cursor: pointer; }
+
+  /* ---------- Bottom nav ---------- */
+  .botnav{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:20px 24px; flex-wrap:wrap;
+    margin:46px 40px 0; padding:26px 0 8px;
+    border-top:1px solid var(--line)
+  }
+  .botnav a{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; font-size:15px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:var(--navy);
+    border:1px solid var(--line); border-radius:5px;
+    padding:12px 20px; background:#fff
+  }
+  .botnav a:hover{ border-color:var(--gold); background:#FDF2F2; color:var(--red) }
+  .botnav a.next{ margin-left:auto }
+  .botnav a.gloss{
+    color:#8a6d2f;
+    border-color:rgba(192,57,43,.55);
+    background:#FDF2F2
+  }
+  .botnav a.gloss:hover{ background:rgba(192,57,43,.16) }
+
+  @media (max-width:700px){
+    .botnav{ margin-left:20px; margin-right:20px; gap:10px; padding-top:18px }
+    .botnav a{ font-size:13.5px; padding:11px 14px; flex:1 1 46%; justify-content:center }
+    .botnav a.next{ margin-left:0 }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero {
+      background: var(--red) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border-radius: 0;
+    }
+    .meta, .callout, .grid, .diagram, .speccheck, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .cmd-table th, .grid th {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input {
+      border: none !important;
+      border-bottom: 1px solid #999 !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+    .answer { min-height: auto; }
+    .mech-video { display: none; }
+    .constraints li::before {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .botnav { display: none; }
+    .print-pin { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar: PIN + submit ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+      <nav class="mainnav" aria-label="Main"><a href="../index.html">Home</a><a href="../2026-missions.html">2026 Missions</a><a href="../discovery/index.html">Discovery</a><a href="../labs/index.html">C Labs</a><a href="../Python_Labs/index.html">Python Labs</a><a href="index.html" class="here">Mechanical</a><a href="../glossary.html">Glossary</a></nav>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Mechanical Design · Challenge 20</p>
+    <h1>Using Linear Teeth to Increase Length</h1>
+    <p class="sub">Student Challenge · Reaching Past Your Own Edges</p>
+  </div>
+
+  <!-- PIN echo for printed copy -->
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Module Guiding Question</dt><dd>How does a machine work on something that is not underneath it?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A sliding <span class="def-term" data-term="STAGE">stage</span> carried on another sliding stage adds its travel to the first, so reach can exceed the size of the machine.</dd></div>
+      <div class="row"><dt>Mechanism</dt><dd><span class="def-term" data-term="LINEAR TEETH">Linear teeth</span> driving an extending grabber</dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="EXTENSION">Extension</span> · <span class="def-term" data-term="OVERHANG">Overhang</span> · <span class="def-term" data-term="FOOTPRINT">Footprint</span> · <span class="def-term" data-term="CENTER OF GRAVITY">Center of gravity</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>Kit parts only</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>LEGO kit · rack pieces · one motor · Wombat controller · a 4&Prime; foam cube · ruler</dd></div>
+      <div class="row"><dt>Prerequisites</dt><dd>Challenge 11 for rack and pinion, Challenge 2 for the tipping rule</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>This will look familiar. A central gear, racks on either side, two arms closing on a 4-inch cube — that is the grabber you built in Challenge 11.</p>
+    <p>The difference is in the title. Challenge 11 was about keeping the jaws parallel. This one is about <em>length</em>: getting the arms out past the edge of the machine, so the object does not have to be sitting inside the base to be grabbed.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>Racks do not only move things. A rack that slides out of its housing makes the machine longer than it was — and if that housing is itself sliding, the two add up.</p>
+    </div>
+    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain how sliding stages add their travel together.</li>
+      <li>Measure the reach of a mechanism past its own <span class="def-term" data-term="FOOTPRINT">footprint</span>.</li>
+      <li>Predict when an extending machine will tip, using center of gravity.</li>
+      <li>Design a base that stays put while the arms are fully out and loaded.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Watch the Mechanism</h2>
+    <p>Watch the video below. Do not build anything yet. Watch it at least twice.</p>
+
+    <div class="mech-video">
+      <iframe src="https://www.youtube-nocookie.com/embed/QHr38WRYuyg"
+              title="LEGO linear teeth to increase length"
+              allow="accelerometer; encrypted-media; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="video-cap">Simple mechanics — using linear teeth to increase length.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Watch For</p>
+      <p>1. What do you notice?</p>
+      <p>2. What is happening?</p>
+      <p>3. Compare the size of the mechanism when it is closed up to how far it reaches when it is fully out.</p>
+    </div>
+
+    <p class="q">What do you notice? Describe what the mechanism is doing.</p>
+    <textarea class="answer" data-key="p1_notice" aria-label="What do you notice"></textarea>
+    <p class="q">Does the mechanism end up longer than it started? Where did the extra length come from — nothing grew, so what happened?</p>
+    <textarea class="answer" data-key="p1_extra_length" aria-label="Source of extra length"></textarea>
+    <p class="q">What LEGO pieces might take the place of each of the pieces you see?</p>
+    <textarea class="answer" data-key="p1_pieces" aria-label="LEGO substitutions"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Stages Add Up</h2>
+    <p>A rack sliding out of a housing has a limit: it can only travel as far as its own length before it falls out. One rack, one <span class="def-term" data-term="STAGE">stage</span>, one amount of reach.</p>
+    <p>Now put a second rack on the first, sliding along it. When both are extended, the second one starts from wherever the first one ended — so the two travels add together.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 300" role="img" aria-label="Two extension systems compared. A single stage slides one bar out of a base and reaches a certain distance. Two stages, one carried on the other, reach twice as far from a base of the same size.">
+        <defs>
+          <marker id="tkK" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M1,0 L1,10" stroke="#444" stroke-width="1.6"/>
+          </marker>
+          <marker id="tkL" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M9,0 L9,10" stroke="#444" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <!-- Panel A: one stage -->
+        <rect x="8" y="8" width="296" height="284" rx="8" fill="#fff" stroke="#CCC"/>
+        <text x="24" y="34" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#1C1C1C">ONE STAGE</text>
+
+        <rect x="34" y="118" width="96" height="66" rx="3" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="82" y="158" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="14" font-weight="700" fill="#444">BASE</text>
+
+        <rect x="40" y="132" width="130" height="38" rx="2" fill="none" stroke="#BBB" stroke-width="2" stroke-dasharray="8 6"/>
+        <rect x="120" y="132" width="130" height="38" rx="2" fill="#dbe3f0" stroke="#1F2D5A" stroke-width="2.5"/>
+        <line x1="126" y1="151" x2="244" y2="151" stroke="#1F2D5A" stroke-width="9" stroke-dasharray="8 10"/>
+
+        <line x1="130" y1="214" x2="250" y2="214" stroke="#444" stroke-width="1.6" marker-start="url(#tkK)" marker-end="url(#tkL)"/>
+        <text x="190" y="234" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#444">reach</text>
+        <text x="24" y="266" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">grey dashed shows it retracted</text>
+
+        <!-- Panel B: two stages -->
+        <rect x="316" y="8" width="296" height="284" rx="8" fill="#fff" stroke="#CCC"/>
+        <text x="332" y="34" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#1C1C1C">TWO STAGES</text>
+
+        <rect x="336" y="118" width="86" height="66" rx="3" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="379" y="158" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="14" font-weight="700" fill="#444">BASE</text>
+
+        <rect x="412" y="128" width="112" height="46" rx="2" fill="#dbe3f0" stroke="#1F2D5A" stroke-width="2.5"/>
+        <text x="468" y="120" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="11.5" font-weight="600" fill="#1F2D5A">stage 1</text>
+
+        <rect x="500" y="138" width="104" height="28" rx="2" fill="#f7d9d4" stroke="#C0392B" stroke-width="2.5"/>
+        <text x="552" y="188" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="11.5" font-weight="600" fill="#C0392B">stage 2</text>
+
+        <line x1="422" y1="214" x2="604" y2="214" stroke="#444" stroke-width="1.6" marker-start="url(#tkK)" marker-end="url(#tkL)"/>
+        <text x="513" y="234" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#444">reach</text>
+        <text x="332" y="266" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#C0392B">Same base. Twice the reach.</text>
+      </svg>
+      <figcaption>Each stage starts where the one before it finished, so their travels add.</figcaption>
+    </figure>
+
+    <h3 class="sub">The Cost of Reaching Out</h3>
+    <p>The moment your arms cross the edge of the base, the machine has an <span class="def-term" data-term="OVERHANG">overhang</span> — weight hanging out past the footprint, with nothing under it.</p>
+    <p>You met this rule in Challenge 2. If the <span class="def-term" data-term="CENTER OF GRAVITY">center of gravity</span> stays over the base, the machine stands. Push it past the edge and the machine tips. Extending arms move weight outward, and adding an object at the far end moves it further still.</p>
+
+    <div class="callout">
+      <p class="ctitle">The Failure You Should Expect</p>
+      <p>Your mechanism will probably work perfectly on the bench and then tip forward the first time you extend it fully with the cube in the jaws.</p>
+      <p>You have three tools for this, all from earlier challenges: widen the base, keep the heavy parts back over the base, or counterweight the far side. Challenge 5 was where you first used the third one.</p>
+    </div>
+
+    <p class="q">Predict how far you will be able to reach before your machine tips. What will you do about it?</p>
+    <textarea class="answer" data-key="p2_tip_predict" aria-label="Tipping prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build the Bare Mechanism</h2>
+    <p>Build the central gear and the racks first, with no arms attached. Get everything sliding cleanly before you add anything to it.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Before You Go On</p>
+      <p>Run the mechanism through its full travel by hand five times. Both racks should move by the same amount and neither should skip a tooth at the end of its travel.</p>
+      <p>The specific problem with extending mechanisms is that a rack hanging far out of its housing is only supported at one end. It sags, lifts off the gear, and skips. If yours does that, it needs support further along, not more force.</p>
+    </div>
+
+    <p class="q">Measure the footprint of your base, and the furthest the arms reach when fully extended. Record both.</p>
+    <textarea class="answer" data-key="p3_footprint_reach" aria-label="Footprint and reach"></textarea>
+    <p class="q">Did anything sag or skip at full extension? What did you add to fix it?</p>
+    <textarea class="answer" data-key="p3_sag" aria-label="Sag and skipping"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Engineering to Meet a Need</h2>
+
+    <div class="callout">
+      <p class="ctitle">The Need</p>
+      <p>Using your newly created LEGO contraption, modify it so that there is a motor attached to the central sprocket. Each lengthening piece should have an arm at 90&deg; that would allow it to get wider or narrower to precisely grab a 4&Prime; &times; 4&Prime; &times; 4&Prime; foam object.</p>
+    </div>
+
+    <h3 class="sub">Mental Picture</h3>
+    <p>Think of a telescoping ladder. Folded up it fits in the back of a van; extended it reaches the roof. Nothing about it grew — the sections simply slid out of each other, and each one started where the last one ended.</p>
+
+    <h3 class="sub">Constraints</h3>
+    <p class="muted">Every one of these must be true for your design to count as finished.</p>
+    <ol class="constraints">
+      <li>The base structure of the device must be stationary.</li>
+      <li>The arms must be no less than 1&frac12;&Prime; in height and 4&Prime; in length.</li>
+      <li>The arms must start in a position more narrow than the object to be grabbed.</li>
+      <li>The foam cube must sit entirely outside the base's footprint. The arms have to reach past the edge of the machine to get to it.</li>
+      <li>The base must not tip, slide, or lift while the arms are fully extended and holding the cube.</li>
+      <li>The device must grab the cube on more than 90% of attempts, counted over at least 10 tries.</li>
+      <li>Kit parts only.</li>
+    </ol>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 340" role="img" aria-label="Top view. A stationary base at the left carries a central gear with a rack on each side. Two arms extend to the right, past the edge of the base, and close on a four inch cube that sits entirely outside the base footprint.">
+        <defs>
+          <marker id="udC" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="9" markerHeight="9" orient="auto">
+            <path d="M0,9 L5,0 L10,9 z" fill="#1C1C1C"/>
+          </marker>
+          <marker id="tkM" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M1,0 L1,10" stroke="#1E8449" stroke-width="1.6"/>
+          </marker>
+          <marker id="tkN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M9,0 L9,10" stroke="#1E8449" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <!-- base -->
+        <rect x="34" y="122" width="150" height="140" rx="3" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="109" y="184" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#444">STATIONARY</text>
+        <text x="109" y="204" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#444">BASE</text>
+
+        <!-- edge of base -->
+        <line x1="184" y1="84" x2="184" y2="300" stroke="#1E8449" stroke-width="2" stroke-dasharray="9 6"/>
+        <text x="184" y="76" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#1E8449">edge of the base</text>
+
+        <!-- central gear -->
+        <circle cx="246" cy="192" r="32" fill="#fff" stroke="#1C1C1C" stroke-width="6" stroke-dasharray="11 11"/>
+        <circle cx="246" cy="192" r="5" fill="#444"/>
+
+        <!-- racks (vertical) -->
+        <rect x="196" y="112" width="16" height="160" rx="2" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <line x1="217" y1="118" x2="217" y2="266" stroke="#444" stroke-width="10" stroke-dasharray="9 11"/>
+        <rect x="280" y="112" width="16" height="160" rx="2" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <line x1="275" y1="118" x2="275" y2="266" stroke="#444" stroke-width="10" stroke-dasharray="9 11"/>
+
+        <!-- arms open (solid) -->
+        <rect x="196" y="96" width="290" height="16" rx="2" fill="#888" stroke="#666" stroke-width="1.5"/>
+        <rect x="280" y="272" width="206" height="16" rx="2" fill="#888" stroke="#666" stroke-width="1.5"/>
+
+        <!-- arms closed (dashed) -->
+        <rect x="196" y="134" width="290" height="16" rx="2" fill="none" stroke="#C0392B" stroke-width="2.5" stroke-dasharray="10 7"/>
+        <rect x="280" y="234" width="206" height="16" rx="2" fill="none" stroke="#C0392B" stroke-width="2.5" stroke-dasharray="10 7"/>
+
+        <!-- cube -->
+        <rect x="374" y="150" width="100" height="100" fill="#F8F8F8" stroke="#444" stroke-width="2"/>
+        <text x="424" y="206" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#444">4&Prime; &times; 4&Prime;</text>
+
+        <!-- open/close arrow -->
+        <line x1="516" y1="104" x2="516" y2="280" stroke="#1C1C1C" stroke-width="2.5" marker-start="url(#udC)" marker-end="url(#udC)"/>
+
+        <!-- reach dimension -->
+        <line x1="184" y1="318" x2="486" y2="318" stroke="#1E8449" stroke-width="1.8" marker-start="url(#tkM)" marker-end="url(#tkN)"/>
+        <text x="335" y="336" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1E8449">reach beyond the base</text>
+
+        <text x="560" y="192" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1C1C1C" transform="rotate(-90 560 192)">TOP VIEW</text>
+      </svg>
+      <figcaption>Top view. The cube sits entirely past the green line — outside the base — so the arms have to travel to reach it.</figcaption>
+    </figure>
+
+    <h3 class="sub">Your Plan — Before You Build</h3>
+    <p class="group-label">How many extending stages will you use, and how much reach does each one give you?</p>
+    <textarea class="answer" data-key="p4_stages_plan" aria-label="Stage plan"></textarea>
+
+    <p class="group-label">How will you stop the machine tipping forward when the arms are fully out with the cube?</p>
+    <textarea class="answer" data-key="p4_tip_plan" aria-label="Anti-tip plan"></textarea>
+
+    <p class="group-label">Break the build into manageable steps.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p4_step_1" aria-label="Build step 1" /></li>
+      <li><input type="text" data-key="p4_step_2" aria-label="Build step 2" /></li>
+      <li><input type="text" data-key="p4_step_3" aria-label="Build step 3" /></li>
+      <li><input type="text" data-key="p4_step_4" aria-label="Build step 4" /></li>
+      <li><input type="text" data-key="p4_step_5" aria-label="Build step 5" /></li>
+    </ul>
+
+    <p class="q">Predict: will your machine fail by tipping, by the racks sagging, or by not reaching far enough?</p>
+    <textarea class="answer" data-key="p4_predict" aria-label="Prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test &amp; Iterate</h2>
+
+    <div class="callout">
+      <p class="ctitle">Find the Tipping Point on Purpose</p>
+      <p>Do not wait for it to happen by accident. Extend the arms a little at a time with the cube held, and note the reach at which the base first starts to lift at the back.</p>
+      <p>That number is the real limit of your machine. Everything you do to fix it should be measured against moving that number further out.</p>
+    </div>
+
+    <h3 class="sub">Your Numbers</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Depth of your base, front to back</div></td>
+          <td><input type="text" data-key="p5_base_depth" aria-label="Base depth" /></td>
+          <td><input type="text" data-key="p5_base_depth_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Extending stages you built</div></td>
+          <td><input type="text" data-key="p5_stages" aria-label="Stage count" /></td>
+          <td><input type="text" data-key="p5_stages_unit" aria-label="Unit" value="stages" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Reach beyond the edge of the base, fully extended</div></td>
+          <td><input type="text" data-key="p5_reach" aria-label="Reach beyond base" /></td>
+          <td><input type="text" data-key="p5_reach_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Arm height</div></td>
+          <td><input type="text" data-key="p5_arm_height" aria-label="Arm height" /></td>
+          <td><input type="text" data-key="p5_arm_height_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Arm length</div></td>
+          <td><input type="text" data-key="p5_arm_length" aria-label="Arm length" /></td>
+          <td><input type="text" data-key="p5_arm_length_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Gap between arms at rest</div></td>
+          <td><input type="text" data-key="p5_gap_rest" aria-label="Gap at rest" /></td>
+          <td><input type="text" data-key="p5_gap_rest_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Reach at which the base first lifted at the back</div></td>
+          <td><input type="text" data-key="p5_tip_reach" aria-label="Tipping reach" /></td>
+          <td><input type="text" data-key="p5_tip_reach_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Same, after you fixed the tipping</div></td>
+          <td><input type="text" data-key="p5_tip_reach_after" aria-label="Tipping reach after fix" /></td>
+          <td><input type="text" data-key="p5_tip_reach_after_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Runs attempted</div></td>
+          <td><input type="text" data-key="p5_runs" aria-label="Runs attempted" /></td>
+          <td><input type="text" data-key="p5_runs_unit" aria-label="Unit" value="runs" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Runs that fully worked</div></td>
+          <td><input type="text" data-key="p5_successes" aria-label="Successes" /></td>
+          <td><input type="text" data-key="p5_successes_unit" aria-label="Unit" value="runs" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:20%">What you changed</th>
+          <th style="width:13%">Reach (in)</th>
+          <th style="width:14%">Base stayed down?</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Check Against the Constraints</h3>
+    <p class="muted">Check a box only after you have actually observed it — not because you think it should be true.</p>
+    <div class="speccheck">
+      <div class="ck">
+        <input type="checkbox" id="s1" data-key="p5_check_stationary">
+        <label for="s1">The base structure stayed stationary throughout.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s2" data-key="p5_check_armsize">
+        <label for="s2">The arms measure at least 1&frac12;&Prime; tall and 4&Prime; long.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s3" data-key="p5_check_narrow">
+        <label for="s3">At rest, the arms are narrower than the cube.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s4" data-key="p5_check_outside">
+        <label for="s4">The cube sat entirely outside the base's footprint.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s5" data-key="p5_check_notip">
+        <label for="s5">The base did not tip, slide, or lift with the arms fully out and loaded.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s6" data-key="p5_check_rate">
+        <label for="s6">Grabbed the cube on more than 90% of attempts, over at least 10 tries.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s7" data-key="p5_check_materials">
+        <label for="s7">Kit parts only.</label>
+      </div>
+    </div>
+
+    <p class="q">What did you change to stop the tipping, and how much further out could you reach afterwards?</p>
+    <textarea class="answer" data-key="p5_tip_fix" aria-label="Tipping fix"></textarea>
+    <p class="q">Describe one specific failure. What was the symptom? What was the cause? How did you fix it?</p>
+    <textarea class="answer" data-key="p5_failure" aria-label="Failure description" style="min-height:100px"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Helps in Botball</h2>
+    <div class="callout">
+      <p class="ctitle">Transfer</p>
+      <p>A robot that has to drive to everything spends the match driving. A robot that can reach does not have to move as often.</p>
+    </div>
+    <p>Reaching also gets you to places a robot cannot go. If a scoring zone is behind a barrier or in a spot too tight to drive into, an arm that extends is the only way in.</p>
+    <p class="q">Name a Botball task where reaching would beat driving over. What does staying put save you?</p>
+    <textarea class="answer" data-key="p6_reach_vs_drive" aria-label="Reach versus drive"></textarea>
+    <p class="q">A robot that reaches out far will want to tip. On a robot that also drives, what makes that harder than it was on your stationary base?</p>
+    <textarea class="answer" data-key="p6_mobile_tipping" aria-label="Tipping on a mobile robot"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Explain how a mechanism can end up longer than any of its parts.</p>
+    <textarea class="answer" data-key="p7_q1_longer" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> You built a very similar grabber in Challenge 11. What was that one really about, and what is this one really about?</p>
+    <textarea class="answer" data-key="p7_q2_vs_c11" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Explain, using center of gravity, why reaching further out makes a machine want to tip.</p>
+    <textarea class="answer" data-key="p7_q3_tipping" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;Reach is bought with stability. This means that when I design something that extends, I should...&rdquo;</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Add a Stage</h3>
+    <ul>
+      <li>Add another extending stage and measure the new reach.</li>
+      <li>Did the reach go up by the full amount you expected, or less? Where did the difference go?</li>
+      <li>What happened to how steady the arms are at full extension?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Push the Tipping Point</h3>
+    <ul>
+      <li>Record the reach at which your machine tips. Then try each fix in turn: widen the base, move heavy parts back, add a counterweight.</li>
+      <li>Measure the new tipping reach after each change, one at a time.</li>
+      <li>Which single change bought you the most, and was it the one you expected?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Heavier at Arm's Length</h3>
+    <ul>
+      <li>Replace the foam cube with something noticeably heavier of the same size.</li>
+      <li>Does your machine still hold it at full extension?</li>
+      <li>Calculate the torque at the base pivot as you did in Challenge 18. Does the number explain what happened?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Retract Under Load</h3>
+    <ul>
+      <li>Grab the cube at full extension and then pull the whole thing back in, still holding it.</li>
+      <li>Is retracting harder or easier than extending? Why?</li>
+      <li>Time both directions over five cycles and compare.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <nav class="botnav no-print" aria-label="Page navigation">
+    <a href="mech19_gear_45.html">&larr; Challenge 19</a>
+    <a class="gloss" href="../glossary.html">Glossary</a>
+    <a class="next" href="mech21_parallelogram.html">Challenge 21 &rarr;</a>
+  </nav>
+
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 20 — Student Sheet</p>
+</main>
+
+<script>
+  const MISSION_ID = "mech20_linear_teeth";
+
+  (function buildTrials() {
+    const body = document.getElementById("trialBody");
+    for (let i = 1; i <= 10; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_reach" aria-label="Trial ' + i + ' reach"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_stable" aria-label="Trial ' + i + ' base stayed down"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
+      body.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] =
+        (el.type === "checkbox") ? (el.checked ? "yes" : "no") : el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) {
+          if (el.type === "checkbox") el.checked = (data.answers[k] === "yes");
+          else el.value = data.answers[k];
+        }
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) { /* storage full or blocked — ignore */ }
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.matches("input[type=checkbox][data-key]")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Mechanical Design · Challenge 20 — Using Linear Teeth to Increase Length",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+
+<div class="def-overlay" id="defOverlay" role="dialog" aria-modal="true" aria-labelledby="defTerm">
+  <div class="def-box">
+    <div class="def-head">
+      <span class="def-head-term" id="defTerm"></span>
+      <button class="def-close" id="defClose" aria-label="Close definition">&#10005;</button>
+    </div>
+    <div class="def-body" id="defBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEFS = {
+    'LINEAR TEETH': ['Linear Teeth', 'Gear teeth arranged in a straight line along a bar rather than around a wheel \u2014 a rack. Driven by a gear, a rack can travel out of its housing and make the whole mechanism longer than it started.'],
+    'EXTENSION': ['Extension', 'How far a mechanism grows beyond its retracted size. It is measured from where the machine ends when folded to where it ends when fully out.'],
+    'STAGE': ['Stage', 'One sliding section of an extending mechanism. Each stage is carried by the one before it, so a stage starts its own travel from wherever the previous one finished \u2014 which is why their reaches add together.'],
+    'OVERHANG': ['Overhang', 'The part of a machine that sticks out past its base with nothing underneath it. The further the overhang, the harder the base has to work to stay down.'],
+    'FOOTPRINT': ['Footprint', 'The area a machine actually stands on \u2014 the outline of its base seen from above. Anything reaching outside the footprint is overhang.'],
+    'CENTER OF GRAVITY': ['Center of Gravity', 'The single point where all of an object\u2019s weight can be treated as acting. While it stays above the footprint the machine stands; once it passes beyond the edge, the machine tips.']
+  };
+  function openDef(t){
+    var e = DEFS[t]; if(!e) return;
+    document.getElementById('defTerm').textContent = e[0];
+    document.getElementById('defBody').textContent = e[1];
+    document.getElementById('defOverlay').classList.add('open');
+    document.getElementById('defClose').focus();
+    document.body.style.overflow='hidden';
+  }
+  function closeDef(){
+    document.getElementById('defOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('defClose').addEventListener('click', closeDef);
+  document.getElementById('defOverlay').addEventListener('click', function(e){ if(e.target===this) closeDef(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDef(); });
+  document.addEventListener('click', function(e){ var el=e.target.closest('.def-term'); if(el) openDef(el.dataset.term); });
+  document.addEventListener('touchend', function(e){ if(e.target.closest('.def-term')) e.preventDefault(); }, {passive:false});
+})();
+</script>
+
+</body>
+</html>

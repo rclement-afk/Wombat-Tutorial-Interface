@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mechanical · Challenge 24 — One Motor, Two Speeds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style id="labsheet-inline">
+/* ===== lab-sheet.css — inlined so this file previews standalone.
+   At packaging time this whole block is swapped back to
+   a stylesheet link to ../lab-sheet.css
+   Do not hand-edit rules in here; edit lab-sheet.css. ===== */
+/* KIPR Botball 2026 — Lab sheet shared styles
+ * Exact duplicates extracted from docs/labs and docs/Python_Labs.
+ * Page-specific rules and near-duplicate variants remain in each HTML style block.
+ *
+ * Near-duplicate candidates (not unified):
+ *   .calc-line input: 2×, 2×
+ *   .callout: 44×, 10×
+ *   .callout .ctitle: 44×, 10×
+ *   .hero: 44×, 10×
+ *   .hero .sub: 44×, 10×
+ *   .phase-head: 44×, 10×
+ *   @media print page sheets (contain @page): ~19 near-duplicate variants kept inline
+ */
+
+:root {
+    --red: #C0392B;
+    --red-dark: #922B21;
+    --navy: #1C1C1C;
+    --gold: #C0392B;
+    --ink: #1C1C1C;
+    --grey: #666666;
+    --line: #CCCCCC;
+    --bg: #F2F2F2;
+    --panel: #ffffff;
+    --field: #F8F8F8;
+    --field-focus: #FDF2F2;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+/* ---------- Sticky PIN / submit bar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 3px solid var(--gold);
+  }
+
+.topbar-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+.topbar .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-right: auto;
+    color: #fff;
+  }
+
+.topbar .brand span { color: var(--gold); }
+
+.pin-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+.pin-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #d7dcea;
+  }
+
+.pin-field input {
+    width: 120px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+  }
+
+.pin-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+.submit-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+
+.submit-btn:hover { background: var(--red-dark); }
+
+.submit-btn:active { transform: translateY(1px); }
+
+.status {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 2px 2px 0;
+    min-height: 0;
+    color: #d7dcea;
+  }
+
+.status.ok { color: #b9e6b0; }
+
+.status.warn { color: #ffd9a0; }
+
+.status.err { color: #ffb3b3; }
+
+/* ---------- Page shell ---------- */
+.sheet {
+    max-width: 920px;
+    margin: 22px auto 80px;
+    padding: 0 22px;
+  }
+
+.hero .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #f4d9a0;
+    margin: 0 0 4px;
+  }
+
+.hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+
+/* ---------- Meta table ---------- */
+.meta {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+.meta dl { margin: 0; }
+
+.meta .row {
+    display: grid;
+    grid-template-columns: 215px 1fr;
+  }
+
+.meta .row:nth-child(odd) { background: #eef0f5; }
+
+.meta dt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--navy);
+    padding: 9px 16px;
+  }
+
+.meta dd {
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+/* ---------- Sections ---------- */
+section { margin-top: 30px; }
+
+.phase-head .pnum {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+h3.sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 18px 0 6px;
+  }
+
+p { margin: 8px 0; }
+
+.muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+
+ul, ol { margin: 8px 0; padding-left: 24px; }
+
+li { margin: 4px 0; }
+
+.obj li { margin: 5px 0; }
+
+.callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+
+.callout.navy .ctitle { color: var(--navy); }
+
+.callout p { margin: 4px 0; }
+
+/* ---------- Command reference ---------- */
+.cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+.cmd-table th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 14px;
+  }
+
+.cmd-table td {
+    border-top: 1px solid var(--line);
+    padding: 9px 14px;
+    vertical-align: top;
+    font-size: 15.5px;
+  }
+
+.cmd-table tr:nth-child(even) td { background: #f7f8fa; }
+
+.cmd-table code {
+    font-family: 'Barlow', monospace;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14.5px;
+    white-space: nowrap;
+  }
+
+/* ---------- Code block ---------- */
+.code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+
+.code .c { color: var(--code-green); }
+
+/* ---------- Inputs ---------- */
+.answer {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 76px;
+  }
+
+.answer:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.q {
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+
+.q .n { color: var(--red); }
+
+.field-line { margin: 10px 0 4px; }
+
+/* ---------- Numbered short-answer rows ---------- */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  counter-reset: s;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+}
+.steps li::before {
+  counter-increment: s;
+  content: counter(s) ".";
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 22px;
+  font-size: 16px;
+}
+
+.answer.tall {
+  min-height: 120px;
+}
+
+.grid .seed {
+  padding: 9px 10px;
+  font-size: 15px;
+  color: var(--grey);
+}
+.grid caption {
+  caption-side: top;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 0 2px;
+  color: var(--navy);
+}
+
+/* ---------- Field sketch area ---------- */
+.sketch {
+  width: 100%;
+  height: 340px;
+  border: 2px dashed var(--navy);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    #fff;
+  position: relative;
+  margin: 12px 0;
+}
+.sketch .tag {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.sketch .startbox {
+  position: absolute;
+  bottom: 14px;
+  width: 96px;
+  height: 60px;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  background: rgba(158,27,50,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--red);
+}
+.sketch .startbox.right { right: 14px; }
+.sketch .startbox.left { left: 14px; }
+
+.steps input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.steps input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 17px;
+    margin: 14px 0 2px;
+  }
+
+/* ---------- Data tables (field orientation, trial log) ---------- */
+.grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+  }
+
+.grid th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .02em;
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+.grid td {
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+
+.grid td .label {
+    padding: 8px 10px;
+    font-size: 15px;
+    background: #eef0f5;
+    font-weight: 500;
+  }
+
+.grid input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    padding: 9px 10px;
+  }
+
+.grid input:focus {
+    outline: none;
+    background: var(--field-focus);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+
+.grid tr:nth-child(even) td:not(.has-label) { background: #fafbfc; }
+
+/* ---------- Name/date inline ---------- */
+.namebar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 8px 0 4px;
+  }
+
+.namebar .nb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+  }
+
+.namebar label {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+
+.namebar input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.namebar input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.pin-reminder {
+    background: #fff6e0;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+
+.pin-reminder strong { color: var(--navy); }
+
+/* ---------- Footer / bottom submit ---------- */
+.bottom-submit {
+    margin-top: 36px;
+    text-align: center;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+  }
+
+.bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+
+.bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+.credit {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13.5px;
+    margin: 26px 0 0;
+    letter-spacing: .02em;
+  }
+
+.print-pin { display: none; }
+
+@media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+.def-term{cursor:pointer;border-bottom:2px dotted var(--red);font-weight:700;color:inherit}
+
+.def-term:hover{color:var(--red)}
+
+.def-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;padding:1rem;
+               align-items:center;justify-content:center}
+
+.def-overlay.open{display:flex}
+
+.def-box{background:#fff;border-radius:6px;width:100%;max-width:480px;
+           box-shadow:0 12px 48px rgba(0,0,0,.4);overflow:hidden;animation:def-pop .16s ease}
+
+@keyframes def-pop{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.def-head{background:var(--red);color:#fff;display:flex;align-items:center;
+            justify-content:space-between;padding:.85rem 1rem;gap:.5rem}
+
+.def-head-term{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;
+                 letter-spacing:.1em;text-transform:uppercase;line-height:1.2}
+
+.def-close{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-size:1.4rem;
+             line-height:1;cursor:pointer;padding:0 .2rem;min-width:36px;min-height:36px;
+             display:flex;align-items:center;justify-content:center;border-radius:4px}
+
+.def-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.def-body{padding:1rem 1.1rem 1.25rem;font-size:.95rem;color:#444;line-height:1.65}
+
+.crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+          font-size:14px;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+
+.crumbs a{color:rgba(255,255,255,.72);text-decoration:none;padding:4px 2px;border-radius:3px}
+
+.crumbs a:hover{color:#fff;text-decoration:underline}
+
+.crumbs .sep{color:rgba(255,255,255,.35)}
+
+.crumbs .here{color:var(--gold);font-weight:700}
+
+.crumbs .gloss{margin-left:6px;color:var(--gold);border:1px solid rgba(192,57,43,.5);
+                 padding:4px 9px;border-radius:4px;font-weight:700}
+
+.crumbs .gloss:hover{background:rgba(192,57,43,.16);color:var(--gold);text-decoration:none}
+
+@media (max-width:600px){
+    .def-overlay{align-items:flex-end;padding:0}
+    .def-box{border-radius:12px 12px 0 0;max-width:100%}
+    .def-body{padding:1rem 1.1rem 2rem}
+  }
+
+@media (max-width:700px){ .crumbs{font-size:12.5px;gap:4px} .crumbs .gloss{padding:3px 7px} }
+
+@media print{ .crumbs,.def-overlay{display:none} .def-term{border-bottom:1px dotted #999} }
+
+/* inline trigger, used in running text and meta rows */
+.fieldref{cursor:pointer;border-bottom:2px dotted #C0392B;font-weight:700;color:#C0392B;white-space:nowrap}
+
+.fieldref:hover{color:#8f2b20;border-bottom-color:#8f2b20}
+
+.fieldref::after{content:"\00a0\25A6";font-size:.82em;opacity:.7}
+
+/* button trigger, used on the mission score cards */
+.fieldref.btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:3px;
+    background:#C0392B;color:#fff;padding:4px 10px;margin-left:8px;
+    font-family:'Barlow Condensed','Barlow Condensed',sans-serif;font-weight:800;font-size:.72rem;
+    letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;
+    box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+.fieldref.btn:hover{background:#d8483a;color:#fff}
+
+.fieldref.btn::after{content:"\25A6";font-size:.95em;opacity:.9;margin-left:1px}
+
+.fld-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;
+               padding:14px;align-items:center;justify-content:center}
+
+.fld-overlay.open{display:flex}
+
+.fld-box{background:#fff;border-radius:7px;width:100%;max-width:820px;overflow:hidden;
+           box-shadow:0 16px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:94vh}
+
+.fld-head{background:#1C1C1C;color:#fff;padding:.8rem 1rem;display:flex;align-items:center;
+            justify-content:space-between;gap:.6rem;flex-shrink:0}
+
+.fld-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.02rem;
+             letter-spacing:.05em;text-transform:uppercase;line-height:1.2}
+
+.fld-x{background:none;border:none;color:rgba(255,255,255,.75);font-size:1.35rem;cursor:pointer;
+         min-width:38px;min-height:38px;border-radius:4px;flex-shrink:0}
+
+.fld-x:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.fld-tabs{display:flex;gap:6px;padding:9px 12px;background:#F8F8F8;border-bottom:1px solid #CCCCCC;flex-shrink:0}
+
+.fld-tabs button{border:1px solid #CCCCCC;background:#fff;border-radius:4px;padding:6px 13px;cursor:pointer;
+                   font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+                   letter-spacing:.07em;text-transform:uppercase;color:#1C1C1C}
+
+.fld-tabs button.on{background:#1C1C1C;color:#fff;border-color:#1C1C1C}
+
+.fld-pic{overflow:auto;background:#F2F2F2}
+
+.fld-pic img{display:block;width:100%;height:auto}
+
+.fld-cap{padding:10px 14px;font-size:.9rem;color:#666666;background:#fff;border-top:1px solid #CCCCCC;flex-shrink:0}
+
+.fig{margin:16px 0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+
+.fig img{display:block;width:100%;height:auto;cursor:zoom-in;background:#fff}
+
+.fig figcaption{padding:9px 13px;font-size:15px;color:var(--grey);background:var(--field);
+                  border-top:1px solid var(--line)}
+
+.figrow{display:grid;gap:14px;margin:16px 0}
+
+.figrow.two{grid-template-columns:1fr 1fr}
+
+.figrow.three{grid-template-columns:repeat(3,1fr)}
+
+.figrow .fig{margin:0}
+
+@media (max-width:700px){ .figrow.two,.figrow.three{grid-template-columns:1fr} }
+
+.zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;
+        align-items:center;justify-content:center;padding:12px;cursor:zoom-out}
+
+.zoom.open{display:flex}
+
+.zoom img{max-width:100%;max-height:92vh;border-radius:4px}
+
+.zoom .zclose{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);color:#fff;
+                border:none;width:42px;height:42px;border-radius:6px;font-size:1.4rem;cursor:pointer}
+
+.zoom .zcap{position:absolute;bottom:14px;left:0;right:0;text-align:center;
+              color:rgba(255,255,255,.75);font-size:15px}
+
+.mainnav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+           font-size:14px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+
+.mainnav a{color:rgba(255,255,255,.66);text-decoration:none;padding:5px 2px;border-bottom:2px solid transparent}
+
+.mainnav a:hover{color:#fff}
+
+.mainnav a.here{color:var(--gold);border-bottom-color:var(--gold)}
+
+@media (max-width:820px){ .mainnav{font-size:12.5px;gap:3px 13px} }
+
+@media print{ .mainnav{display:none} }
+
+/* ---------- Shared components (used by some labs) ---------- */
+
+.callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+
+.callout.gold .ctitle { color: #8a6d22; }
+
+.code.small { font-size: 13.5px; }
+
+/* ---------- Concept box (new CS concepts) ---------- */
+.concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+
+.concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+.concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+
+.callout code { color: inherit; }
+
+.code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+.grid code { font-size: 14px; }
+
+code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+.code .hl { color: #f4c95d; }
+
+.safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+
+.callout.red { border-left-color: var(--red); background: #fbeef0; }
+
+.callout.red .ctitle { color: var(--red); }
+
+.filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+.widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+.sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+.warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+
+.calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+
+.calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+
+.calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
+
+.gate{border-left:5px solid #922B21;background:#fdf0ef;padding:13px 17px;margin:18px 0;border-radius:0 5px 5px 0}
+
+.gate .gt{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+            text-transform:uppercase;color:#922B21;margin:0 0 5px}
+
+.grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+
+.grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+
+.pl-body{padding:6px 16px 14px}
+
+.pl-body > p{margin:10px 0;font-size:1rem}
+
+.pl-head{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+
+.pl-head .pl-n{background:var(--gold);color:#ffffff;font-family:var(--font-display);font-weight:800;
+                 font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:3px;flex-shrink:0}
+
+.pl-head .pl-t{font-family:var(--font-display);font-weight:700;font-size:1.12rem;line-height:1.2}
+
+/* ---- prelab: checklist-first, almost nothing to grade ---- */
+.pl-sec{border:1px solid var(--line);border-radius:6px;margin:18px 0;overflow:hidden;background:#fff}
+
+.rec{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:9px 14px;align-items:center;
+       margin:12px 0;padding:12px 14px;background:#f2f4fa;border:1px solid var(--line);border-radius:5px}
+
+.rec input{padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
+             font-family:var(--font-body);font-size:1rem;width:100%}
+
+.rec input:focus{outline:none;border-color:var(--gold)}
+
+.rec label{font-family:var(--font-display);font-weight:700;font-size:.82rem;letter-spacing:.06em;
+             text-transform:uppercase;color:var(--navy)}
+
+.reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+
+.reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+
+.reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+.signoff{border:2px solid var(--gold);border-radius:6px;background:#FDF2F2;padding:14px 18px;margin:22px 0 0}
+
+.signoff .so-t{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+                 text-transform:uppercase;color:var(--navy);margin:0 0 8px}
+
+@media (max-width:700px){ .rec{grid-template-columns:1fr;gap:5px} }
+
+ul.tick{list-style:none;margin:10px 0 4px;padding:0}
+
+ul.tick input[type="checkbox"]{flex-shrink:0;width:23px;height:23px;margin-top:1px;accent-color:var(--red);cursor:pointer}
+
+ul.tick label{cursor:pointer;font-size:1.02rem;line-height:1.45}
+
+ul.tick li{display:flex;align-items:flex-start;gap:11px;padding:9px 11px;border:1px solid var(--line);
+             border-radius:5px;margin-bottom:7px;background:var(--field)}
+
+ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
+
+.calc .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+
+.calc .eq .lbl { font-size: 13px; color: var(--grey); }
+
+.calc .eq .op { font-weight: 700; color: var(--navy); font-size: 18px; }
+
+.calc .eq input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 15px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; text-align: center; }
+
+.calc .eq input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+.checklist { list-style: none; margin: 10px 0 4px; padding: 0; }
+
+.checklist input[type="checkbox"] { flex-shrink: 0; width: 23px; height: 23px; margin-top: 1px; accent-color: var(--red); cursor: pointer; }
+
+.checklist label { cursor: pointer; font-size: 1.02rem; line-height: 1.45; }
+
+.checklist li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 5px; margin-bottom: 7px; background: var(--field); }
+
+.concept .term { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 6px 0 2px; }
+
+.concept .term:first-child { margin-top: 0; }
+
+.console { background: #0c0f16; color: #c8f0c0; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.7; border: 1px solid #2b3445; }
+
+.console .pl { color: #6fa8dc; }
+
+.footer-strip {
+      background: rgba(0,0,0,0.4); text-align: center; padding: 1rem; font-size: 0.75rem;
+      color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+    }
+
+.formula { font-family: ui-monospace, Consolas, monospace; font-size: 16px; color: var(--navy); background: #eef1f7; border: 1px solid #cfdcef; border-radius: 8px; padding: 12px 14px; margin: 10px 0; text-align: center; font-weight: 600; }
+
+.grid .seedc { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; }
+
+.grid caption.a { color: var(--red); }
+
+.grid caption.b { color: var(--navy); }
+
+.grid tr.blind td { background: #fdf3f3; }
+
+.grid tr.blind td .label { background: #fdeaea; color: var(--red-dark); }
+
+.grid.tight th, .grid.tight .seed, .grid.tight .seedc { padding: 6px 10px; }
+
+.lab-arrow {
+      margin-top: auto; padding-top: 0.75rem; font-family: var(--font-display); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+    }
+
+.lab-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      padding: 1.75rem; text-decoration: none; display: flex; flex-direction: column; gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+    }
+
+.lab-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+
+.lab-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(192,57,43,0.4); transform: translateY(-3px); }
+
+.lab-card:hover::before { transform: scaleX(1); }
+
+.lab-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+.lab-num {
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+      color: var(--red); text-transform: uppercase;
+    }
+
+.lab-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--white); line-height: 1.1; }
+
+.page-eyebrow {
+      font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem;
+    }
+
+.page-title {
+      font-family: var(--font-display); font-weight: 800; font-size: clamp(2.25rem, 6vw, 3.5rem);
+      line-height: 1; color: var(--white); letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+
+.page-title span { color: var(--red); }
+
+.steps li .snum { font-weight: 700; color: var(--navy); min-width: 26px; font-size: 16px; }
+
+.truth { width: auto; border-collapse: collapse; margin: 10px 0; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+
+.truth .yes { background: #eaf6ea; font-weight: 700; }
+
+.truth td.t { color: var(--green, #2e7d32); font-weight: 600; }
+
+.truth th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+
+.truth th, .truth td { border: 1px solid var(--line); padding: 6px 16px; text-align: center; }
+
+.unit-label {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 0 0 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.6rem;
+    }
+
+.wrap { flex: 1; max-width: 960px; margin: 0 auto; width: 100%; padding: 3rem 2rem 4rem; }
+
+.zonebar { display: flex; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--line); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-align: center; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; }
+
+.zonebar .accel { background: var(--gold); color: #ffffff; flex: 0 0 15%; }
+
+.zonebar .cruise { background: var(--navy); flex: 1 1 auto; }
+
+.zonebar .decel { background: var(--red); flex: 0 0 30%; }
+
+.zonebar div { padding: 14px 6px; color: #fff; }
+
+/* ---------- Print helpers (optional components) ---------- */
+
+@media print{ .zoom{display:none!important} .fig img{max-height:7cm;width:auto;margin:0 auto} }
+
+@media print{ .fieldref::after{content:""} .fld-overlay{display:none!important} }
+
+@media print{ .pl-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ul.tick input[type="checkbox"]{-webkit-appearance:none;appearance:none;border:1px solid #666;
+  border-radius:2px;width:14px;height:14px} }
+</style>
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 26px 30px;
+    border-bottom: 5px solid var(--gold);
+  }
+
+  .hero .sub {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffe9e9;
+    margin: 0;
+  }
+
+  .phase-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--navy);
+    letter-spacing: .01em;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--red);
+    background: #fbeef0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+
+  .callout .ctitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Mechanical: video ---------- */
+  .mech-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a1a;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .mech-video iframe,
+  .mech-video video { width: 100%; height: 100%; border: 0; display: block; }
+  .mech-video video { object-fit: contain; }
+  .video-cap { font-size: 13.5px; color: var(--grey); margin: 0 0 6px; }
+
+  /* ---------- Mechanical: constraints ---------- */
+  .constraints { list-style: none; counter-reset: c; margin: 10px 0 0; padding: 0; }
+  .constraints li {
+    counter-increment: c;
+    position: relative;
+    padding: 9px 0 9px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .constraints li:last-child { border-bottom: 0; }
+  .constraints li::before {
+    content: counter(c);
+    position: absolute;
+    left: 0; top: 8px;
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* ---------- Mechanical: diagram ---------- */
+  .diagram {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .diagram figcaption { font-size: 13.5px; color: var(--grey); margin-top: 10px; }
+
+  /* ---------- Mechanical: spec check ---------- */
+  .speccheck { border: 1px solid var(--line); border-radius: 10px; padding: 6px 16px; margin: 12px 0; }
+  .speccheck .ck {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .speccheck .ck:last-child { border-bottom: 0; }
+  .speccheck input[type=checkbox] {
+    width: 19px; height: 19px; margin-top: 2px;
+    accent-color: var(--red); flex-shrink: 0;
+  }
+  .speccheck label { cursor: pointer; }
+
+  /* ---------- Bottom nav ---------- */
+  .botnav{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:20px 24px; flex-wrap:wrap;
+    margin:46px 40px 0; padding:26px 0 8px;
+    border-top:1px solid var(--line)
+  }
+  .botnav a{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; font-size:15px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:var(--navy);
+    border:1px solid var(--line); border-radius:5px;
+    padding:12px 20px; background:#fff
+  }
+  .botnav a:hover{ border-color:var(--gold); background:#FDF2F2; color:var(--red) }
+  .botnav a.next{ margin-left:auto }
+  .botnav a.gloss{
+    color:#8a6d2f;
+    border-color:rgba(192,57,43,.55);
+    background:#FDF2F2
+  }
+  .botnav a.gloss:hover{ background:rgba(192,57,43,.16) }
+
+  @media (max-width:700px){
+    .botnav{ margin-left:20px; margin-right:20px; gap:10px; padding-top:18px }
+    .botnav a{ font-size:13.5px; padding:11px 14px; flex:1 1 46%; justify-content:center }
+    .botnav a.next{ margin-left:0 }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero {
+      background: var(--red) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border-radius: 0;
+    }
+    .meta, .callout, .grid, .diagram, .speccheck, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .cmd-table th, .grid th {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input {
+      border: none !important;
+      border-bottom: 1px solid #999 !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+    .answer { min-height: auto; }
+    .mech-video { display: none; }
+    .constraints li::before {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .botnav { display: none; }
+    .print-pin { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar: PIN + submit ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+      <nav class="mainnav" aria-label="Main"><a href="../index.html">Home</a><a href="../2026-missions.html">2026 Missions</a><a href="../discovery/index.html">Discovery</a><a href="../labs/index.html">C Labs</a><a href="../Python_Labs/index.html">Python Labs</a><a href="index.html" class="here">Mechanical</a><a href="../glossary.html">Glossary</a></nav>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Mechanical Design · Challenge 24</p>
+    <h1>One Motor, Two Speeds</h1>
+    <p class="sub">Student Challenge · Splitting a Drive Train</p>
+  </div>
+
+  <!-- PIN echo for printed copy -->
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Module Guiding Question</dt><dd>Can one motor run two things at once, at completely different speeds?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A <span class="def-term" data-term="DRIVE TRAIN">drive train</span> can split. Each <span class="def-term" data-term="BRANCHED DRIVE">branch</span> gets its own gearing, so one input can produce as many different speeds as you have branches.</dd></div>
+      <div class="row"><dt>Mechanism</dt><dd>Branched drive train with a worm gear on one side</dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="TIP SPEED">Tip speed</span> · <span class="def-term" data-term="GEAR REDUCTION">Gear reduction</span> · <span class="def-term" data-term="EFFECTOR">Effector</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>Kit parts only</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>LEGO kit · one motor · Wombat controller · worm gear · wheels · a chassis · at least 3 poms · ruler · stopwatch</dd></div>
+      <div class="row"><dt>Prerequisites</dt><dd>Challenge 9 for the worm gear, Challenge 13 for building a vehicle</dd></div>
+      <div class="row"><dt>Source Title</dt><dd>This challenge appears in the original deck as &ldquo;Fundamentals of a Worm Gear.&rdquo;</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Every mechanism you have built so far had one motor doing one job, or several motors each doing their own. This one has a single motor doing two jobs at the same time — and the two jobs need wildly different speeds.</p>
+    <p>The striker on the front has to spin fast enough to knock a pom clear. The wheels have to creep forward slowly enough that the striker gets a chance to do it. Same motor, same instant, roughly twenty times the difference.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>A drive train does not have to be a single line from motor to output. Split it, and each branch can have completely different gearing. One motor, as many speeds as you need.</p>
+    </div>
+    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <ul class="obj">
+      <li>Split a drive train into two branches from a single motor.</li>
+      <li>Give each branch its own gear ratio and predict the resulting speeds.</li>
+      <li>Explain why the tip of a spinning arm moves far faster than the shaft it is on.</li>
+      <li>Build a moving vehicle whose effector works while it drives.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Watch the Mechanism</h2>
+    <p>Watch the video below. Do not build anything yet. Watch it at least twice.</p>
+
+    <div class="mech-video">
+      <iframe src="https://www.youtube-nocookie.com/embed/zqYFVNY1CYA"
+              title="LEGO worm gear fundamentals"
+              allow="accelerometer; encrypted-media; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="video-cap">Simple mechanics — fundamentals of a worm gear.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Watch For</p>
+      <p>1. What do you notice?</p>
+      <p>2. What is happening?</p>
+      <p>3. Follow the power from the motor. Where does it split, and what does each path drive?</p>
+    </div>
+
+    <p class="q">What do you notice? Describe what the mechanism is doing.</p>
+    <textarea class="answer" data-key="p1_notice" aria-label="What do you notice"></textarea>
+    <p class="q">Trace the path from the motor to each output. Where exactly does the power divide?</p>
+    <textarea class="answer" data-key="p1_split" aria-label="Where the power splits"></textarea>
+    <p class="q">What LEGO pieces might take the place of each of the pieces you see?</p>
+    <textarea class="answer" data-key="p1_pieces" aria-label="LEGO substitutions"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Splitting the Drive</h2>
+    <p>A <span class="def-term" data-term="DRIVE TRAIN">drive train</span> is everything between the motor and the thing being driven. Up to now yours have been a single chain: motor, gears, output.</p>
+    <p>They do not have to be. Take power off the motor shaft at two points and you have two <span class="def-term" data-term="BRANCHED DRIVE">branches</span>, and each branch can be geared however you like.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 300" role="img" aria-label="A drive train splitting into two branches from one motor. The upper branch runs straight to a spinning striker and turns at full motor speed. The lower branch passes through a worm gear before reaching the wheels, so they turn far more slowly.">
+        <defs>
+          <marker id="flowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+          </marker>
+        </defs>
+
+        <!-- motor -->
+        <rect x="34" y="122" width="112" height="64" rx="4" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="90" y="160" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#444">MOTOR</text>
+
+        <!-- main shaft to junction -->
+        <rect x="146" y="147" width="84" height="14" rx="2" fill="#888" stroke="#666" stroke-width="1.5"/>
+        <circle cx="236" cy="154" r="9" fill="#C0392B"/>
+        <text x="236" y="188" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#C0392B">the split</text>
+
+        <!-- upper branch -->
+        <line x1="242" y1="146" x2="242" y2="72" stroke="#888" stroke-width="10" stroke-linecap="round"/>
+        <line x1="242" y1="72" x2="356" y2="72" stroke="#888" stroke-width="10" stroke-linecap="round"/>
+        <line x1="360" y1="72" x2="404" y2="72" stroke="#444" stroke-width="2" marker-end="url(#flowB)"/>
+        <line x1="428" y1="34" x2="428" y2="110" stroke="#1F2D5A" stroke-width="9" stroke-linecap="round"/>
+        <rect x="414" y="98" width="28" height="24" rx="2" fill="#1F2D5A"/>
+        <text x="466" y="60" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#1F2D5A">STRIKER</text>
+        <text x="466" y="80" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#1F2D5A">1 : 1 &mdash; full motor speed</text>
+
+        <!-- lower branch -->
+        <line x1="242" y1="162" x2="242" y2="232" stroke="#888" stroke-width="10" stroke-linecap="round"/>
+        <rect x="248" y="216" width="96" height="32" rx="3" fill="#FDF2F2" stroke="#C0392B" stroke-width="2.5"/>
+        <g stroke="#C0392B" stroke-width="1.8">
+          <line x1="258" y1="248" x2="274" y2="216"/><line x1="282" y1="248" x2="298" y2="216"/>
+          <line x1="306" y1="248" x2="322" y2="216"/>
+        </g>
+        <text x="296" y="208" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="700" fill="#C0392B">WORM</text>
+        <line x1="350" y1="232" x2="394" y2="232" stroke="#444" stroke-width="2" marker-end="url(#flowB)"/>
+        <circle cx="432" cy="232" r="30" fill="#1C1C1C"/>
+        <circle cx="432" cy="232" r="10" fill="#888"/>
+        <text x="480" y="222" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#C0392B">WHEELS</text>
+        <text x="480" y="242" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#C0392B">24 : 1 &mdash; a slow crawl</text>
+
+        <text x="310" y="290" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1C1C1C">One motor. Two branches. Two speeds, at the same moment.</text>
+      </svg>
+      <figcaption>The branch point is where the design decision lives. Everything after it is just gearing.</figcaption>
+    </figure>
+
+    <div class="callout navy">
+      <p class="ctitle">Why the Worm Belongs on the Slow Branch</p>
+      <p>You need an enormous slowdown on the wheels and none at all on the striker. A worm gear gives you roughly a 24:1 reduction from a single pair of parts — which is exactly why it goes on that branch and nowhere near the other one.</p>
+      <p>Building the same reduction from spur gears would take three or four pairs and a great deal more space.</p>
+    </div>
+
+    <h3 class="sub">The Striker Moves Faster Than Its Shaft</h3>
+    <p>A shaft turning at, say, two turns per second does not sound fast. But the face of a striker mounted three inches out from that shaft travels the whole way around a circle nearly nineteen inches long, twice every second.</p>
+    <p>That is <span class="def-term" data-term="TIP SPEED">tip speed</span>, and it is why a modest motor can knock a pom clear across a table. Move the face further out and it goes faster still, for free.</p>
+
+    <p class="q">Your striker has to hit hard and your wheels have to crawl. Which branch needs the worm, and what would happen if you put it on the other one?</p>
+    <textarea class="answer" data-key="p2_which_branch" aria-label="Which branch gets the worm"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build the Bare Mechanism</h2>
+    <p>Build the split first: motor, branch point, and both branches turning — with no striker face and no chassis. Confirm that both outputs turn from the one motor before you build anything onto them.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Before You Go On</p>
+      <p>Turn the motor shaft by hand. Both branches should move together, at obviously different speeds. If only one turns, the split is not actually splitting.</p>
+      <p>Watch the worm branch especially. Under load it will try to push itself out of mesh, and if it does, the wheels stop while the striker keeps spinning — which looks like a wiring fault and is not one.</p>
+    </div>
+
+    <h3 class="sub">Measure Both Speeds</h3>
+    <p>Count how many times the striker shaft turns while the wheel axle turns once. That number is the difference between your two branches.</p>
+
+    <p class="q">How many striker turns per single wheel-axle turn? Does it match what the gearing predicted?</p>
+    <textarea class="answer" data-key="p3_ratio_measured" aria-label="Measured ratio"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Engineering to Meet a Need</h2>
+
+    <div class="callout">
+      <p class="ctitle">The Need</p>
+      <p>Using your newly created LEGO contraption, create an effector that spins at the speed of the motor in front and rotates an effector that can knock off the top pom of a stack of poms. The worm gear will turn a drive axle at the slower speed.</p>
+    </div>
+
+    <h3 class="sub">Mental Picture</h3>
+    <p>Think of a propeller plane taxiing. The propeller is a blur while the plane rolls forward at walking pace — one engine, two completely different speeds, at the same time.</p>
+
+    <h3 class="sub">Constraints</h3>
+    <p class="muted">Every one of these must be true for your design to count as finished.</p>
+    <ol class="constraints">
+      <li>Only one motor can be used.</li>
+      <li>The &ldquo;golf club&rdquo; must have a face approximately 1&Prime; tall and 2&Prime; wide. At the bottom of its arc, the bottom of the face should sit approximately 1&frac14;&Prime; off the surface.</li>
+      <li>The motor must drive a straight axle as well as the propeller on the front of the car.</li>
+    </ol>
+
+    <div class="callout">
+      <p class="ctitle">That 1&frac14;&Prime; Is Not Arbitrary</p>
+      <p>You met this in Challenge 12. The height sets a window: low enough for the face to catch the pom on top of the stack, high enough to sweep over the poms holding it up.</p>
+      <p>The difference this time is that the whole machine is moving while it happens. The face passes through that window once per revolution, and the car is somewhere slightly different each time.</p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 310" role="img" aria-label="Side view of the car. The striker arm rotates on the front, its face sweeping down to about one and a quarter inches above the surface, where it strikes the top pom of a three pom stack while the car creeps forward.">
+        <defs>
+          <marker id="rotN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#1F2D5A"/>
+          </marker>
+          <marker id="travC" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#1E8449"/>
+          </marker>
+          <marker id="tkQ" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M0,1 L10,1" stroke="#444" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <!-- ground -->
+        <line x1="30" y1="250" x2="592" y2="250" stroke="#1C1C1C" stroke-width="3"/>
+
+        <!-- car body -->
+        <rect x="70" y="152" width="220" height="66" rx="4" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
+        <text x="180" y="192" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#444">MOTOR &amp; CHASSIS</text>
+        <circle cx="122" cy="228" r="22" fill="#1C1C1C"/>
+        <circle cx="122" cy="228" r="7" fill="#888"/>
+        <circle cx="242" cy="228" r="22" fill="#1C1C1C"/>
+        <circle cx="242" cy="228" r="7" fill="#888"/>
+
+        <!-- striker arc -->
+        <circle cx="340" cy="120" r="100" fill="none" stroke="#BBB" stroke-width="1.6" stroke-dasharray="8 6"/>
+        <circle cx="340" cy="120" r="6" fill="#444"/>
+        <line x1="290" y1="152" x2="340" y2="120" stroke="#888" stroke-width="5"/>
+
+        <!-- striker arm, down position -->
+        <line x1="340" y1="120" x2="340" y2="196" stroke="#1F2D5A" stroke-width="9" stroke-linecap="round"/>
+        <rect x="316" y="196" width="48" height="24" rx="2" fill="#1F2D5A"/>
+        <text x="256" y="106" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#1F2D5A">STRIKER</text>
+        <text x="256" y="124" font-family="'Barlow',sans-serif" font-size="12" fill="#1F2D5A">face 1&Prime; tall, 2&Prime; wide</text>
+        <path d="M418,76 A104,104 0 0 1 434,140" fill="none" stroke="#1F2D5A" stroke-width="2.5" marker-end="url(#rotN)"/>
+
+        <!-- height dimension -->
+        <line x1="392" y1="220" x2="392" y2="250" stroke="#444" stroke-width="1.6" marker-start="url(#tkQ)" marker-end="url(#tkQ)"/>
+        <text x="404" y="242" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#444">1&frac14;&Prime;</text>
+
+        <!-- pom stack -->
+        <circle cx="470" cy="235" r="15" fill="#fff" stroke="#888" stroke-width="2"/>
+        <circle cx="502" cy="235" r="15" fill="#fff" stroke="#888" stroke-width="2"/>
+        <circle cx="486" cy="209" r="15" fill="#FADBD8" stroke="#C0392B" stroke-width="2.5"/>
+        <text x="486" y="184" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" font-weight="600" fill="#C0392B">top pom only</text>
+        <text x="486" y="280" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12" fill="#888">these stay put</text>
+
+        <!-- travel arrow -->
+        <line x1="120" y1="292" x2="256" y2="292" stroke="#1E8449" stroke-width="2.5" marker-end="url(#travC)"/>
+        <text x="188" y="284" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#1E8449">car creeps forward</text>
+      </svg>
+      <figcaption>The face sweeps through the gap between the top pom and the two beneath it, once every revolution.</figcaption>
+    </figure>
+
+    <h3 class="sub">Do the Math First</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Planned value</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Gearing on the striker branch</div></td>
+          <td><input type="text" data-key="p4_striker_ratio" aria-label="Striker ratio" /></td>
+          <td><input type="text" data-key="p4_striker_ratio_unit" aria-label="Unit" value=": 1" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Gearing on the wheel branch</div></td>
+          <td><input type="text" data-key="p4_wheel_ratio" aria-label="Wheel ratio" /></td>
+          <td><input type="text" data-key="p4_wheel_ratio_unit" aria-label="Unit" value=": 1" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Distance from the striker shaft to the bottom of the face</div></td>
+          <td><input type="text" data-key="p4_arm_radius" aria-label="Arm radius" /></td>
+          <td><input type="text" data-key="p4_arm_radius_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Your Plan — Before You Build</h3>
+    <p class="group-label">Break the build into manageable steps.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p4_step_1" aria-label="Build step 1" /></li>
+      <li><input type="text" data-key="p4_step_2" aria-label="Build step 2" /></li>
+      <li><input type="text" data-key="p4_step_3" aria-label="Build step 3" /></li>
+      <li><input type="text" data-key="p4_step_4" aria-label="Build step 4" /></li>
+      <li><input type="text" data-key="p4_step_5" aria-label="Build step 5" /></li>
+    </ul>
+
+    <p class="q">Predict: will your car fail by driving too fast to hit anything, by the striker missing the window, or by knocking the whole stack over?</p>
+    <textarea class="answer" data-key="p4_predict" aria-label="Prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test &amp; Iterate</h2>
+
+    <div class="callout">
+      <p class="ctitle">Set the Stack Up the Same Way Every Time</p>
+      <p>Mark the spot, use the same poms, and start the car from the same line. The car is moving while it strikes, so where it starts decides where the face lands.</p>
+      <p>If the result changes run to run and you have not changed anything, check your setup before you change the machine.</p>
+    </div>
+
+    <h3 class="sub">Your Numbers</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Striker revolutions in 10 seconds</div></td>
+          <td><input type="text" data-key="p5_striker_revs" aria-label="Striker revolutions" /></td>
+          <td><input type="text" data-key="p5_striker_revs_unit" aria-label="Unit" value="turns" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Wheel-axle revolutions in the same 10 seconds</div></td>
+          <td><input type="text" data-key="p5_wheel_revs" aria-label="Wheel revolutions" /></td>
+          <td><input type="text" data-key="p5_wheel_revs_unit" aria-label="Unit" value="turns" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Ratio between the two branches</div></td>
+          <td><input type="text" data-key="p5_branch_ratio" aria-label="Branch ratio" /></td>
+          <td><input type="text" data-key="p5_branch_ratio_unit" aria-label="Unit" value=": 1" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Distance the car travelled in 10 seconds</div></td>
+          <td><input type="text" data-key="p5_distance" aria-label="Distance travelled" /></td>
+          <td><input type="text" data-key="p5_distance_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Height of the bottom of the face at the bottom of its arc</div></td>
+          <td><input type="text" data-key="p5_face_height" aria-label="Face height" /></td>
+          <td><input type="text" data-key="p5_face_height_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Face dimensions</div></td>
+          <td><input type="text" data-key="p5_face_size" aria-label="Face dimensions" /></td>
+          <td><input type="text" data-key="p5_face_size_unit" aria-label="Unit" value="in &times; in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">How far the struck pom travelled</div></td>
+          <td><input type="text" data-key="p5_pom_distance" aria-label="Pom distance" /></td>
+          <td><input type="text" data-key="p5_pom_distance_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Runs where the bottom poms stayed put</div></td>
+          <td><input type="text" data-key="p5_clean_runs" aria-label="Clean runs" /></td>
+          <td><input type="text" data-key="p5_clean_runs_unit" aria-label="Unit" value="of 10" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:20%">What you changed</th>
+          <th style="width:13%">Top pom off?</th>
+          <th style="width:16%">Bottom poms in place?</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Check Against the Constraints</h3>
+    <p class="muted">Check a box only after you have actually observed it — not because you think it should be true.</p>
+    <div class="speccheck">
+      <div class="ck">
+        <input type="checkbox" id="s1" data-key="p5_check_onemotor">
+        <label for="s1">Only one motor is used anywhere in the machine.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s2" data-key="p5_check_face">
+        <label for="s2">The face measures about 1&Prime; tall and 2&Prime; wide.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s3" data-key="p5_check_height">
+        <label for="s3">At the bottom of its arc, the bottom of the face sits about 1&frac14;&Prime; off the surface.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s4" data-key="p5_check_both">
+        <label for="s4">The motor drives both the straight axle and the propeller on the front.</label>
+      </div>
+    </div>
+
+    <p class="q">Compare your two branch speeds. Was the difference as large as your gearing predicted? If not, where did it go?</p>
+    <textarea class="answer" data-key="p5_speed_compare" aria-label="Speed comparison"></textarea>
+    <p class="q">Describe one specific failure. What was the symptom? What was the cause? How did you fix it?</p>
+    <textarea class="answer" data-key="p5_failure" aria-label="Failure description" style="min-height:100px"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Helps in Botball</h2>
+    <div class="callout">
+      <p class="ctitle">Transfer</p>
+      <p>Motors are the thing you run out of first. A drive train that splits turns one motor into two, at whatever speeds you need.</p>
+    </div>
+    <p>The cost is that the two branches can never be controlled separately. Start one and you start both; stop one and you stop both. That is a real limitation, and it is the price of the motor you saved.</p>
+    <p class="q">Name a Botball job where two mechanisms could share a motor because they always run together. Name one where they could not.</p>
+    <textarea class="answer" data-key="p6_sharing" aria-label="Sharing a motor"></textarea>
+    <p class="q">Your striker knocked the pom without the robot having to stop and aim. What does that buy you in a timed match?</p>
+    <textarea class="answer" data-key="p6_no_stopping" aria-label="Working while moving"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Explain how one motor can drive two things at different speeds at the same time.</p>
+    <textarea class="answer" data-key="p7_q1_split" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Why did the worm gear belong on the wheel branch rather than the striker branch?</p>
+    <textarea class="answer" data-key="p7_q2_worm_placement" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Explain tip speed, and say how you would make your striker hit harder without changing any gearing.</p>
+    <textarea class="answer" data-key="p7_q3_tip_speed" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;A drive train can split, but the branches can never be controlled separately. This means that before I share a motor, I should...&rdquo;</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Change One Branch Only</h3>
+    <ul>
+      <li>Add reduction to the wheel branch so the car creeps at half the speed.</li>
+      <li>Measure the striker speed before and after.</li>
+      <li>Did the striker change at all? What does that tell you about how branches relate to each other?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Longer Arm, Faster Face</h3>
+    <ul>
+      <li>Move the striker face further out from its shaft, keeping the 1&frac14;&Prime; height by raising the shaft.</li>
+      <li>Measure how far the pom travels before and after.</li>
+      <li>The shaft speed never changed. Explain why the pom went further.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Against the Coulisse</h3>
+    <ul>
+      <li>Set up your Challenge 12 mechanism, which knocked the top pom off a stationary stack.</li>
+      <li>Run both on identical stacks, 10 attempts each, and count clean removals.</li>
+      <li>Which is more reliable? Which would you rather have on a robot, and why is that a different question?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Swap the Branches</h3>
+    <ul>
+      <li>Put the worm on the striker branch and drive the wheels directly.</li>
+      <li>Run it and describe what happens.</li>
+      <li>Why is this arrangement useless for the task, and can you think of a task it would suit?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <nav class="botnav no-print" aria-label="Page navigation">
+    <a href="mech23_gear_linkage.html">&larr; Challenge 23</a>
+    <a class="gloss" href="../glossary.html">Glossary</a>
+    <a class="next" href="mech25_parallelogram_mech.html">Challenge 25 &rarr;</a>
+  </nav>
+
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 24 — Student Sheet</p>
+</main>
+
+<script>
+  const MISSION_ID = "mech24_worm_fundamentals";
+
+  (function buildTrials() {
+    const body = document.getElementById("trialBody");
+    for (let i = 1; i <= 10; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_topoff" aria-label="Trial ' + i + ' top pom off"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_bottomok" aria-label="Trial ' + i + ' bottom poms in place"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
+      body.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] =
+        (el.type === "checkbox") ? (el.checked ? "yes" : "no") : el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) {
+          if (el.type === "checkbox") el.checked = (data.answers[k] === "yes");
+          else el.value = data.answers[k];
+        }
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) { /* storage full or blocked — ignore */ }
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.matches("input[type=checkbox][data-key]")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Mechanical Design · Challenge 24 — One Motor, Two Speeds",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+
+<div class="def-overlay" id="defOverlay" role="dialog" aria-modal="true" aria-labelledby="defTerm">
+  <div class="def-box">
+    <div class="def-head">
+      <span class="def-head-term" id="defTerm"></span>
+      <button class="def-close" id="defClose" aria-label="Close definition">&#10005;</button>
+    </div>
+    <div class="def-body" id="defBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEFS = {
+    'DRIVE TRAIN': ['Drive Train', 'Everything between the motor and the thing being driven \u2014 shafts, gears, chains, and couplings. It does not have to be a single line from one to the other.'],
+    'BRANCHED DRIVE': ['Branched Drive', 'A drive train that splits, so one motor powers two or more outputs. Each branch can have its own gearing and therefore its own speed \u2014 but they all start and stop together, because they share the motor.'],
+    'TIP SPEED': ['Tip Speed', 'How fast the far end of a rotating arm is actually travelling. The shaft may turn slowly, but a point further out covers a much bigger circle in the same time, so it moves much faster.'],
+    'GEAR REDUCTION': ['Gear Reduction', 'Gearing arranged so the output turns slower than the input, which multiplies torque. A worm gear gives a very large reduction from a single pair of parts.'],
+    'EFFECTOR': ['Effector', 'The part of a machine that actually does the job \u2014 here, the striker face that contacts the pom. Everything else exists to put the effector where it needs to be, moving how it needs to move.']
+  };
+  function openDef(t){
+    var e = DEFS[t]; if(!e) return;
+    document.getElementById('defTerm').textContent = e[0];
+    document.getElementById('defBody').textContent = e[1];
+    document.getElementById('defOverlay').classList.add('open');
+    document.getElementById('defClose').focus();
+    document.body.style.overflow='hidden';
+  }
+  function closeDef(){
+    document.getElementById('defOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('defClose').addEventListener('click', closeDef);
+  document.getElementById('defOverlay').addEventListener('click', function(e){ if(e.target===this) closeDef(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDef(); });
+  document.addEventListener('click', function(e){ var el=e.target.closest('.def-term'); if(el) openDef(el.dataset.term); });
+  document.addEventListener('touchend', function(e){ if(e.target.closest('.def-term')) e.preventDefault(); }, {passive:false});
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mechanical · Challenge 21 — The Parallelogram Elevator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style id="labsheet-inline">
+/* ===== lab-sheet.css — inlined so this file previews standalone.
+   At packaging time this whole block is swapped back to
+   a stylesheet link to ../lab-sheet.css
+   Do not hand-edit rules in here; edit lab-sheet.css. ===== */
+/* KIPR Botball 2026 — Lab sheet shared styles
+ * Exact duplicates extracted from docs/labs and docs/Python_Labs.
+ * Page-specific rules and near-duplicate variants remain in each HTML style block.
+ *
+ * Near-duplicate candidates (not unified):
+ *   .calc-line input: 2×, 2×
+ *   .callout: 44×, 10×
+ *   .callout .ctitle: 44×, 10×
+ *   .hero: 44×, 10×
+ *   .hero .sub: 44×, 10×
+ *   .phase-head: 44×, 10×
+ *   @media print page sheets (contain @page): ~19 near-duplicate variants kept inline
+ */
+
+:root {
+    --red: #C0392B;
+    --red-dark: #922B21;
+    --navy: #1C1C1C;
+    --gold: #C0392B;
+    --ink: #1C1C1C;
+    --grey: #666666;
+    --line: #CCCCCC;
+    --bg: #F2F2F2;
+    --panel: #ffffff;
+    --field: #F8F8F8;
+    --field-focus: #FDF2F2;
+    --code-bg: #1f2330;
+    --code-ink: #e7e3d8;
+    --code-green: #8fbf7f;
+  }
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+/* ---------- Sticky PIN / submit bar ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--navy);
+    color: #fff;
+    border-bottom: 3px solid var(--gold);
+  }
+
+.topbar-inner {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+.topbar .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-right: auto;
+    color: #fff;
+  }
+
+.topbar .brand span { color: var(--gold); }
+
+.pin-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+.pin-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #d7dcea;
+  }
+
+.pin-field input {
+    width: 120px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-align: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fff;
+    color: var(--navy);
+    font-family: 'Barlow', sans-serif;
+  }
+
+.pin-field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+.submit-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--red);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background .15s ease, transform .05s ease;
+  }
+
+.submit-btn:hover { background: var(--red-dark); }
+
+.submit-btn:active { transform: translateY(1px); }
+
+.status {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 2px 2px 0;
+    min-height: 0;
+    color: #d7dcea;
+  }
+
+.status.ok { color: #b9e6b0; }
+
+.status.warn { color: #ffd9a0; }
+
+.status.err { color: #ffb3b3; }
+
+/* ---------- Page shell ---------- */
+.sheet {
+    max-width: 920px;
+    margin: 22px auto 80px;
+    padding: 0 22px;
+  }
+
+.hero .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: #f4d9a0;
+    margin: 0 0 4px;
+  }
+
+.hero h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.04;
+    margin: 0 0 6px;
+    letter-spacing: .01em;
+  }
+
+/* ---------- Meta table ---------- */
+.meta {
+    margin-top: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+.meta dl { margin: 0; }
+
+.meta .row {
+    display: grid;
+    grid-template-columns: 215px 1fr;
+  }
+
+.meta .row:nth-child(odd) { background: #eef0f5; }
+
+.meta dt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--navy);
+    padding: 9px 16px;
+  }
+
+.meta dd {
+    margin: 0;
+    padding: 9px 16px;
+    font-size: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+/* ---------- Sections ---------- */
+section { margin-top: 30px; }
+
+.phase-head .pnum {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+h3.sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 18px 0 6px;
+  }
+
+p { margin: 8px 0; }
+
+.muted { color: var(--grey); font-style: italic; font-size: 15.5px; }
+
+ul, ol { margin: 8px 0; padding-left: 24px; }
+
+li { margin: 4px 0; }
+
+.obj li { margin: 5px 0; }
+
+.callout.navy { border-left-color: var(--navy); background: #eef1f7; }
+
+.callout.navy .ctitle { color: var(--navy); }
+
+.callout p { margin: 4px 0; }
+
+/* ---------- Command reference ---------- */
+.cmd-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+.cmd-table th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    font-size: 15px;
+    text-align: left;
+    padding: 8px 14px;
+  }
+
+.cmd-table td {
+    border-top: 1px solid var(--line);
+    padding: 9px 14px;
+    vertical-align: top;
+    font-size: 15.5px;
+  }
+
+.cmd-table tr:nth-child(even) td { background: #f7f8fa; }
+
+.cmd-table code {
+    font-family: 'Barlow', monospace;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    color: var(--red);
+    font-weight: 600;
+    font-size: 14.5px;
+    white-space: nowrap;
+  }
+
+/* ---------- Code block ---------- */
+.code {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+  }
+
+.code .c { color: var(--code-green); }
+
+/* ---------- Inputs ---------- */
+.answer {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--field);
+    border: 1.5px solid var(--line);
+    border-radius: 9px;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 76px;
+  }
+
+.answer:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.q {
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+
+.q .n { color: var(--red); }
+
+.field-line { margin: 10px 0 4px; }
+
+/* ---------- Numbered short-answer rows ---------- */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  counter-reset: s;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+}
+.steps li::before {
+  counter-increment: s;
+  content: counter(s) ".";
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 22px;
+  font-size: 16px;
+}
+
+.answer.tall {
+  min-height: 120px;
+}
+
+.grid .seed {
+  padding: 9px 10px;
+  font-size: 15px;
+  color: var(--grey);
+}
+.grid caption {
+  caption-side: top;
+  text-align: left;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 4px 0 2px;
+  color: var(--navy);
+}
+
+/* ---------- Field sketch area ---------- */
+.sketch {
+  width: 100%;
+  height: 340px;
+  border: 2px dashed var(--navy);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    repeating-linear-gradient(90deg, transparent, transparent 29px, #e6e8ef 29px, #e6e8ef 30px),
+    #fff;
+  position: relative;
+  margin: 12px 0;
+}
+.sketch .tag {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.sketch .startbox {
+  position: absolute;
+  bottom: 14px;
+  width: 96px;
+  height: 60px;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  background: rgba(158,27,50,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--red);
+}
+.sketch .startbox.right { right: 14px; }
+.sketch .startbox.left { left: 14px; }
+
+.steps input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.steps input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 17px;
+    margin: 14px 0 2px;
+  }
+
+/* ---------- Data tables (field orientation, trial log) ---------- */
+.grid {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    border: 1px solid var(--line);
+  }
+
+.grid th {
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .02em;
+    padding: 8px 8px;
+    text-align: left;
+    vertical-align: bottom;
+  }
+
+.grid td {
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+
+.grid td .label {
+    padding: 8px 10px;
+    font-size: 15px;
+    background: #eef0f5;
+    font-weight: 500;
+  }
+
+.grid input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15.5px;
+    padding: 9px 10px;
+  }
+
+.grid input:focus {
+    outline: none;
+    background: var(--field-focus);
+    box-shadow: inset 0 0 0 2px var(--gold);
+  }
+
+.grid tr:nth-child(even) td:not(.has-label) { background: #fafbfc; }
+
+/* ---------- Name/date inline ---------- */
+.namebar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin: 8px 0 4px;
+  }
+
+.namebar .nb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 220px;
+  }
+
+.namebar label {
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+
+.namebar input {
+    flex: 1;
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 8px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: var(--field);
+  }
+
+.namebar input:focus {
+    outline: none; border-color: var(--gold);
+    background: var(--field-focus);
+    box-shadow: 0 0 0 3px rgba(192,57,43,.18);
+  }
+
+.pin-reminder {
+    background: #fff6e0;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 6px;
+    font-size: 15.5px;
+  }
+
+.pin-reminder strong { color: var(--navy); }
+
+/* ---------- Footer / bottom submit ---------- */
+.bottom-submit {
+    margin-top: 36px;
+    text-align: center;
+    padding: 24px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+    border-radius: 12px;
+  }
+
+.bottom-submit p { margin: 0 0 14px; color: var(--grey); font-size: 15.5px; }
+
+.bottom-submit .submit-btn { font-size: 19px; padding: 13px 30px; }
+
+.credit {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13.5px;
+    margin: 26px 0 0;
+    letter-spacing: .02em;
+  }
+
+.print-pin { display: none; }
+
+@media (max-width: 600px) {
+    .meta .row { grid-template-columns: 1fr; }
+    .meta dd { border-left: none; border-top: 1px solid var(--line); }
+    .hero h1 { font-size: 30px; }
+    .topbar .brand { width: 100%; margin-bottom: 4px; }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+.def-term{cursor:pointer;border-bottom:2px dotted var(--red);font-weight:700;color:inherit}
+
+.def-term:hover{color:var(--red)}
+
+.def-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;padding:1rem;
+               align-items:center;justify-content:center}
+
+.def-overlay.open{display:flex}
+
+.def-box{background:#fff;border-radius:6px;width:100%;max-width:480px;
+           box-shadow:0 12px 48px rgba(0,0,0,.4);overflow:hidden;animation:def-pop .16s ease}
+
+@keyframes def-pop{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.def-head{background:var(--red);color:#fff;display:flex;align-items:center;
+            justify-content:space-between;padding:.85rem 1rem;gap:.5rem}
+
+.def-head-term{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;
+                 letter-spacing:.1em;text-transform:uppercase;line-height:1.2}
+
+.def-close{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-size:1.4rem;
+             line-height:1;cursor:pointer;padding:0 .2rem;min-width:36px;min-height:36px;
+             display:flex;align-items:center;justify-content:center;border-radius:4px}
+
+.def-close:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.def-body{padding:1rem 1.1rem 1.25rem;font-size:.95rem;color:#444;line-height:1.65}
+
+.crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+          font-size:14px;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+
+.crumbs a{color:rgba(255,255,255,.72);text-decoration:none;padding:4px 2px;border-radius:3px}
+
+.crumbs a:hover{color:#fff;text-decoration:underline}
+
+.crumbs .sep{color:rgba(255,255,255,.35)}
+
+.crumbs .here{color:var(--gold);font-weight:700}
+
+.crumbs .gloss{margin-left:6px;color:var(--gold);border:1px solid rgba(192,57,43,.5);
+                 padding:4px 9px;border-radius:4px;font-weight:700}
+
+.crumbs .gloss:hover{background:rgba(192,57,43,.16);color:var(--gold);text-decoration:none}
+
+@media (max-width:600px){
+    .def-overlay{align-items:flex-end;padding:0}
+    .def-box{border-radius:12px 12px 0 0;max-width:100%}
+    .def-body{padding:1rem 1.1rem 2rem}
+  }
+
+@media (max-width:700px){ .crumbs{font-size:12.5px;gap:4px} .crumbs .gloss{padding:3px 7px} }
+
+@media print{ .crumbs,.def-overlay{display:none} .def-term{border-bottom:1px dotted #999} }
+
+/* inline trigger, used in running text and meta rows */
+.fieldref{cursor:pointer;border-bottom:2px dotted #C0392B;font-weight:700;color:#C0392B;white-space:nowrap}
+
+.fieldref:hover{color:#8f2b20;border-bottom-color:#8f2b20}
+
+.fieldref::after{content:"\00a0\25A6";font-size:.82em;opacity:.7}
+
+/* button trigger, used on the mission score cards */
+.fieldref.btn{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:3px;
+    background:#C0392B;color:#fff;padding:4px 10px;margin-left:8px;
+    font-family:'Barlow Condensed','Barlow Condensed',sans-serif;font-weight:800;font-size:.72rem;
+    letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;vertical-align:middle;
+    box-shadow:0 1px 0 rgba(0,0,0,.25)}
+
+.fieldref.btn:hover{background:#d8483a;color:#fff}
+
+.fieldref.btn::after{content:"\25A6";font-size:.95em;opacity:.9;margin-left:1px}
+
+.fld-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:10000;
+               padding:14px;align-items:center;justify-content:center}
+
+.fld-overlay.open{display:flex}
+
+.fld-box{background:#fff;border-radius:7px;width:100%;max-width:820px;overflow:hidden;
+           box-shadow:0 16px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:94vh}
+
+.fld-head{background:#1C1C1C;color:#fff;padding:.8rem 1rem;display:flex;align-items:center;
+            justify-content:space-between;gap:.6rem;flex-shrink:0}
+
+.fld-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.02rem;
+             letter-spacing:.05em;text-transform:uppercase;line-height:1.2}
+
+.fld-x{background:none;border:none;color:rgba(255,255,255,.75);font-size:1.35rem;cursor:pointer;
+         min-width:38px;min-height:38px;border-radius:4px;flex-shrink:0}
+
+.fld-x:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.fld-tabs{display:flex;gap:6px;padding:9px 12px;background:#F8F8F8;border-bottom:1px solid #CCCCCC;flex-shrink:0}
+
+.fld-tabs button{border:1px solid #CCCCCC;background:#fff;border-radius:4px;padding:6px 13px;cursor:pointer;
+                   font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;
+                   letter-spacing:.07em;text-transform:uppercase;color:#1C1C1C}
+
+.fld-tabs button.on{background:#1C1C1C;color:#fff;border-color:#1C1C1C}
+
+.fld-pic{overflow:auto;background:#F2F2F2}
+
+.fld-pic img{display:block;width:100%;height:auto}
+
+.fld-cap{padding:10px 14px;font-size:.9rem;color:#666666;background:#fff;border-top:1px solid #CCCCCC;flex-shrink:0}
+
+.fig{margin:16px 0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+
+.fig img{display:block;width:100%;height:auto;cursor:zoom-in;background:#fff}
+
+.fig figcaption{padding:9px 13px;font-size:15px;color:var(--grey);background:var(--field);
+                  border-top:1px solid var(--line)}
+
+.figrow{display:grid;gap:14px;margin:16px 0}
+
+.figrow.two{grid-template-columns:1fr 1fr}
+
+.figrow.three{grid-template-columns:repeat(3,1fr)}
+
+.figrow .fig{margin:0}
+
+@media (max-width:700px){ .figrow.two,.figrow.three{grid-template-columns:1fr} }
+
+.zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9998;
+        align-items:center;justify-content:center;padding:12px;cursor:zoom-out}
+
+.zoom.open{display:flex}
+
+.zoom img{max-width:100%;max-height:92vh;border-radius:4px}
+
+.zoom .zclose{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.15);color:#fff;
+                border:none;width:42px;height:42px;border-radius:6px;font-size:1.4rem;cursor:pointer}
+
+.zoom .zcap{position:absolute;bottom:14px;left:0;right:0;text-align:center;
+              color:rgba(255,255,255,.75);font-size:15px}
+
+.mainnav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:'Barlow Condensed',sans-serif;
+           font-size:14px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+
+.mainnav a{color:rgba(255,255,255,.66);text-decoration:none;padding:5px 2px;border-bottom:2px solid transparent}
+
+.mainnav a:hover{color:#fff}
+
+.mainnav a.here{color:var(--gold);border-bottom-color:var(--gold)}
+
+@media (max-width:820px){ .mainnav{font-size:12.5px;gap:3px 13px} }
+
+@media print{ .mainnav{display:none} }
+
+/* ---------- Shared components (used by some labs) ---------- */
+
+.callout.gold { border-left-color: var(--gold); background: #fff6e0; }
+
+.callout.gold .ctitle { color: #8a6d22; }
+
+.code.small { font-size: 13.5px; }
+
+/* ---------- Concept box (new CS concepts) ---------- */
+.concept { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin: 14px 0; }
+
+.concept .cbody { padding: 14px 18px; background: var(--panel); }
+
+.concept .chead { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: .03em; padding: 10px 18px; }
+
+.callout code { color: inherit; }
+
+.code code { color: inherit; font-weight: inherit; font-size: inherit; }
+
+.grid code { font-size: 14px; }
+
+code { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; color: var(--red); font-weight: 600; font-size: .92em; }
+
+.code .hl { color: #f4c95d; }
+
+.safety { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.safety .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.grid .num { text-align: center; font-weight: 600; color: var(--navy); width: 42px; }
+
+.callout.red { border-left-color: var(--red); background: #fbeef0; }
+
+.callout.red .ctitle { color: var(--red); }
+
+.filetab { display: inline-block; background: #2b3040; color: #f4c95d; font-family: ui-monospace, Consolas, monospace; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 8px 8px 0 0; margin-bottom: -10px; margin-left: 4px; border: 1px solid #3a4055; }
+
+.widget-step { background: #eef4ff; border: 1px solid #bcd0f0; border-left: 6px solid var(--navy); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.widget-step .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--navy); margin: 0 0 4px; }
+
+.sketch-note { font-size: 14px; color: var(--grey); font-style: italic; margin-top: 0; }
+
+.warn { background: #fdeaea; border: 1px solid var(--red); border-left: 6px solid var(--red); border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.warn .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 0 0 4px; }
+
+.calc { background: #eef4ff; border: 1px solid #bcd0f0; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 17px; color: var(--navy); margin: 0 0 8px; }
+
+.calc .formula { font-family: ui-monospace, Consolas, monospace; font-size: 15px; color: var(--navy); background: #fff; border: 1px solid #cfdcef; border-radius: 8px; padding: 10px 12px; margin: 6px 0; text-align: center; }
+
+.calc-box { background: #f4fbf4; border: 1px solid #b7dcb7; border-left: 6px solid #3c7a3c; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+.calc-box .ctitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: #2f6b2f; margin: 0 0 4px; }
+
+.calc-line { font-family: ui-monospace, Consolas, monospace; font-size: 16px; margin: 10px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.calc-line input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(192,57,43,.18); }
+
+.gate{border-left:5px solid #922B21;background:#fdf0ef;padding:13px 17px;margin:18px 0;border-radius:0 5px 5px 0}
+
+.gate .gt{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+            text-transform:uppercase;color:#922B21;margin:0 0 5px}
+
+.grid .rst { text-align: center; color: #8a6d22; font-weight: 700; }
+
+.grid .seedmono { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+
+.pl-body{padding:6px 16px 14px}
+
+.pl-body > p{margin:10px 0;font-size:1rem}
+
+.pl-head{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:12px}
+
+.pl-head .pl-n{background:var(--gold);color:#ffffff;font-family:var(--font-display);font-weight:800;
+                 font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:3px;flex-shrink:0}
+
+.pl-head .pl-t{font-family:var(--font-display);font-weight:700;font-size:1.12rem;line-height:1.2}
+
+/* ---- prelab: checklist-first, almost nothing to grade ---- */
+.pl-sec{border:1px solid var(--line);border-radius:6px;margin:18px 0;overflow:hidden;background:#fff}
+
+.rec{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:9px 14px;align-items:center;
+       margin:12px 0;padding:12px 14px;background:#f2f4fa;border:1px solid var(--line);border-radius:5px}
+
+.rec input{padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
+             font-family:var(--font-body);font-size:1rem;width:100%}
+
+.rec input:focus{outline:none;border-color:var(--gold)}
+
+.rec label{font-family:var(--font-display);font-weight:700;font-size:.82rem;letter-spacing:.06em;
+             text-transform:uppercase;color:var(--navy)}
+
+.reset-box { border: 2px solid var(--gold); background: #fffaf0; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+
+.reset-box .rtitle { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: #8a6d22; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+
+.reset-box .rtitle::before { content: "↺"; font-size: 20px; }
+
+.signoff{border:2px solid var(--gold);border-radius:6px;background:#FDF2F2;padding:14px 18px;margin:22px 0 0}
+
+.signoff .so-t{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.07em;
+                 text-transform:uppercase;color:var(--navy);margin:0 0 8px}
+
+@media (max-width:700px){ .rec{grid-template-columns:1fr;gap:5px} }
+
+ul.tick{list-style:none;margin:10px 0 4px;padding:0}
+
+ul.tick input[type="checkbox"]{flex-shrink:0;width:23px;height:23px;margin-top:1px;accent-color:var(--red);cursor:pointer}
+
+ul.tick label{cursor:pointer;font-size:1.02rem;line-height:1.45}
+
+ul.tick li{display:flex;align-items:flex-start;gap:11px;padding:9px 11px;border:1px solid var(--line);
+             border-radius:5px;margin-bottom:7px;background:var(--field)}
+
+ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
+
+.calc .eq { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+
+.calc .eq .lbl { font-size: 13px; color: var(--grey); }
+
+.calc .eq .op { font-weight: 700; color: var(--navy); font-size: 18px; }
+
+.calc .eq input { width: 110px; font-family: ui-monospace, Consolas, monospace; font-size: 15px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; text-align: center; }
+
+.calc .eq input:focus { outline: none; border-color: var(--gold); background: var(--field-focus); }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+
+.checklist { list-style: none; margin: 10px 0 4px; padding: 0; }
+
+.checklist input[type="checkbox"] { flex-shrink: 0; width: 23px; height: 23px; margin-top: 1px; accent-color: var(--red); cursor: pointer; }
+
+.checklist label { cursor: pointer; font-size: 1.02rem; line-height: 1.45; }
+
+.checklist li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 5px; margin-bottom: 7px; background: var(--field); }
+
+.concept .term { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--red); margin: 6px 0 2px; }
+
+.concept .term:first-child { margin-top: 0; }
+
+.console { background: #0c0f16; color: #c8f0c0; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; line-height: 1.7; border: 1px solid #2b3445; }
+
+.console .pl { color: #6fa8dc; }
+
+.footer-strip {
+      background: rgba(0,0,0,0.4); text-align: center; padding: 1rem; font-size: 0.75rem;
+      color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+    }
+
+.formula { font-family: ui-monospace, Consolas, monospace; font-size: 16px; color: var(--navy); background: #eef1f7; border: 1px solid #cfdcef; border-radius: 8px; padding: 12px 14px; margin: 10px 0; text-align: center; font-weight: 600; }
+
+.grid .seedc { padding: 9px 10px; font-size: 14px; color: var(--navy); font-family: ui-monospace, Consolas, monospace; }
+
+.grid caption.a { color: var(--red); }
+
+.grid caption.b { color: var(--navy); }
+
+.grid tr.blind td { background: #fdf3f3; }
+
+.grid tr.blind td .label { background: #fdeaea; color: var(--red-dark); }
+
+.grid.tight th, .grid.tight .seed, .grid.tight .seedc { padding: 6px 10px; }
+
+.lab-arrow {
+      margin-top: auto; padding-top: 0.75rem; font-family: var(--font-display); font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red);
+    }
+
+.lab-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      padding: 1.75rem; text-decoration: none; display: flex; flex-direction: column; gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s; position: relative; overflow: hidden;
+    }
+
+.lab-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--red);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+
+.lab-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(192,57,43,0.4); transform: translateY(-3px); }
+
+.lab-card:hover::before { transform: scaleX(1); }
+
+.lab-desc { font-size: 0.85rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+.lab-num {
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em;
+      color: var(--red); text-transform: uppercase;
+    }
+
+.lab-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--white); line-height: 1.1; }
+
+.page-eyebrow {
+      font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); margin-bottom: 0.75rem;
+    }
+
+.page-title {
+      font-family: var(--font-display); font-weight: 800; font-size: clamp(2.25rem, 6vw, 3.5rem);
+      line-height: 1; color: var(--white); letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+
+.page-title span { color: var(--red); }
+
+.steps li .snum { font-weight: 700; color: var(--navy); min-width: 26px; font-size: 16px; }
+
+.truth { width: auto; border-collapse: collapse; margin: 10px 0; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+
+.truth .yes { background: #eaf6ea; font-weight: 700; }
+
+.truth td.t { color: var(--green, #2e7d32); font-weight: 600; }
+
+.truth th { background: var(--navy); color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+
+.truth th, .truth td { border: 1px solid var(--line); padding: 6px 16px; text-align: center; }
+
+.unit-label {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: rgba(255,255,255,0.45); margin: 0 0 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.6rem;
+    }
+
+.wrap { flex: 1; max-width: 960px; margin: 0 auto; width: 100%; padding: 3rem 2rem 4rem; }
+
+.zonebar { display: flex; border-radius: 10px; overflow: hidden; margin: 12px 0; border: 1px solid var(--line); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-align: center; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; }
+
+.zonebar .accel { background: var(--gold); color: #ffffff; flex: 0 0 15%; }
+
+.zonebar .cruise { background: var(--navy); flex: 1 1 auto; }
+
+.zonebar .decel { background: var(--red); flex: 0 0 30%; }
+
+.zonebar div { padding: 14px 6px; color: #fff; }
+
+/* ---------- Print helpers (optional components) ---------- */
+
+@media print{ .zoom{display:none!important} .fig img{max-height:7cm;width:auto;margin:0 auto} }
+
+@media print{ .fieldref::after{content:""} .fld-overlay{display:none!important} }
+
+@media print{ .pl-head{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  ul.tick input[type="checkbox"]{-webkit-appearance:none;appearance:none;border:1px solid #666;
+  border-radius:2px;width:14px;height:14px} }
+</style>
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 26px 30px;
+    border-bottom: 5px solid var(--gold);
+  }
+
+  .hero .sub {
+    font-size: 18px;
+    font-style: italic;
+    color: #ffe9e9;
+    margin: 0;
+  }
+
+  .phase-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 25px;
+    color: var(--navy);
+    letter-spacing: .01em;
+    padding-bottom: 6px;
+    border-bottom: 2.5px solid var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Callout ---------- */
+  .callout {
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--red);
+    background: #fbeef0;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+
+  .callout .ctitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: var(--red);
+    margin: 0 0 4px;
+  }
+
+  /* ---------- Mechanical: video ---------- */
+  .mech-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a1a;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .mech-video iframe,
+  .mech-video video { width: 100%; height: 100%; border: 0; display: block; }
+  .mech-video video { object-fit: contain; }
+  .video-cap { font-size: 13.5px; color: var(--grey); margin: 0 0 6px; }
+
+  /* ---------- Mechanical: constraints ---------- */
+  .constraints { list-style: none; counter-reset: c; margin: 10px 0 0; padding: 0; }
+  .constraints li {
+    counter-increment: c;
+    position: relative;
+    padding: 9px 0 9px 40px;
+    border-bottom: 1px solid var(--line);
+  }
+  .constraints li:last-child { border-bottom: 0; }
+  .constraints li::before {
+    content: counter(c);
+    position: absolute;
+    left: 0; top: 8px;
+    width: 26px; height: 26px;
+    background: var(--navy);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  /* ---------- Mechanical: diagram ---------- */
+  .diagram {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .diagram svg { max-width: 100%; height: auto; }
+  .diagram figcaption { font-size: 13.5px; color: var(--grey); margin-top: 10px; }
+
+  /* ---------- Mechanical: spec check ---------- */
+  .speccheck { border: 1px solid var(--line); border-radius: 10px; padding: 6px 16px; margin: 12px 0; }
+  .speccheck .ck {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .speccheck .ck:last-child { border-bottom: 0; }
+  .speccheck input[type=checkbox] {
+    width: 19px; height: 19px; margin-top: 2px;
+    accent-color: var(--red); flex-shrink: 0;
+  }
+  .speccheck label { cursor: pointer; }
+
+  /* ---------- Bottom nav ---------- */
+  .botnav{
+    display:flex; align-items:center; justify-content:flex-start;
+    gap:20px 24px; flex-wrap:wrap;
+    margin:46px 40px 0; padding:26px 0 8px;
+    border-top:1px solid var(--line)
+  }
+  .botnav a{
+    display:inline-flex; align-items:center; gap:8px;
+    text-decoration:none;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700; font-size:15px;
+    letter-spacing:.06em; text-transform:uppercase;
+    color:var(--navy);
+    border:1px solid var(--line); border-radius:5px;
+    padding:12px 20px; background:#fff
+  }
+  .botnav a:hover{ border-color:var(--gold); background:#FDF2F2; color:var(--red) }
+  .botnav a.next{ margin-left:auto }
+  .botnav a.gloss{
+    color:#8a6d2f;
+    border-color:rgba(192,57,43,.55);
+    background:#FDF2F2
+  }
+  .botnav a.gloss:hover{ background:rgba(192,57,43,.16) }
+
+  @media (max-width:700px){
+    .botnav{ margin-left:20px; margin-right:20px; gap:10px; padding-top:18px }
+    .botnav a{ font-size:13.5px; padding:11px 14px; flex:1 1 46%; justify-content:center }
+    .botnav a.next{ margin-left:0 }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; font-size: 12px; }
+    .topbar { position: static; border: none; }
+    .no-print { display: none !important; }
+    .sheet { margin: 0; max-width: none; padding: 0; }
+    .hero {
+      background: var(--red) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      border-radius: 0;
+    }
+    .meta, .callout, .grid, .diagram, .speccheck, .bottom-submit { break-inside: avoid; }
+    section { break-inside: avoid-page; }
+    .cmd-table th, .grid th {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .answer, .steps input, .grid input, .namebar input, .pin-field input {
+      border: none !important;
+      border-bottom: 1px solid #999 !important;
+      border-radius: 0 !important;
+      background: #fff !important;
+      box-shadow: none !important;
+      color: #000 !important;
+    }
+    .answer { min-height: auto; }
+    .mech-video { display: none; }
+    .constraints li::before {
+      background: var(--navy) !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .botnav { display: none; }
+    .print-pin { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky top bar: PIN + submit ===== -->
+<div class="topbar no-print">
+  <div class="topbar-inner">
+    <div class="brand">KIPR · Botball <span>Explorer</span></div>
+      <nav class="mainnav" aria-label="Main"><a href="../index.html">Home</a><a href="../2026-missions.html">2026 Missions</a><a href="../discovery/index.html">Discovery</a><a href="../labs/index.html">C Labs</a><a href="../Python_Labs/index.html">Python Labs</a><a href="index.html" class="here">Mechanical</a><a href="../glossary.html">Glossary</a></nav>
+    <div class="pin-field">
+      <label for="pin">Your PIN</label>
+      <input id="pin" type="text" inputmode="numeric" autocomplete="off"
+             maxlength="8" placeholder="••••" aria-label="Your student PIN" />
+    </div>
+    <button class="submit-btn" id="submitTop">Submit &amp; Download</button>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<main class="sheet">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <p class="eyebrow">Mechanical Design · Challenge 21</p>
+    <h1>The Parallelogram Elevator</h1>
+    <p class="sub">Student Challenge · Up and Down from a Motor That Only Goes One Way</p>
+  </div>
+
+  <!-- PIN echo for printed copy -->
+  <p class="print-pin"><strong>Student PIN:</strong> <span id="pinEcho"></span></p>
+
+  <!-- ===== Meta ===== -->
+  <div class="meta">
+    <dl>
+      <div class="row"><dt>Module Guiding Question</dt><dd>How does a machine reverse direction when its motor never does?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A <span class="def-term" data-term="UNIDIRECTIONAL DRIVE">one-way drive</span> can produce two-way motion, and the shape of the linkage decides what path that motion takes.</dd></div>
+      <div class="row"><dt>Mechanism</dt><dd>Four-bar elevator</dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="RECIPROCATION">Reciprocation</span> · <span class="def-term" data-term="COUPLER CURVE">Coupler curve</span> · <span class="def-term" data-term="PARALLELOGRAM LINKAGE">Parallelogram linkage</span> · <span class="def-term" data-term="STRAIGHT-LINE LINKAGE">Straight-line linkage</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>Kit parts only</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>LEGO kit · one motor · Wombat controller · a 4 oz weight · ruler · marker and paper</dd></div>
+      <div class="row"><dt>Prerequisites</dt><dd>Challenge 6 for the crank, Challenge 8 for four-bar linkages, Challenge 17 for lifting</dd></div>
+    </dl>
+  </div>
+
+  <div class="pin-reminder no-print">
+    <strong>Before you start:</strong> type your PIN in the box at the top of the page. Your teacher gave you this number. When you finish, press <strong>Submit &amp; Download</strong> to turn in your work and save a copy.
+  </div>
+
+  <!-- ===== Overview ===== -->
+  <section>
+    <h2 class="phase-head">Overview</h2>
+    <p>Your scissor lift in Challenge 17 went up when the motor ran forward and came down when it ran backward. That is the obvious way to build a lift, and this challenge forbids it.</p>
+    <p>Here the motor turns one way and never stops or reverses — and the platform still has to rise and fall. That single constraint changes the whole problem.</p>
+    <div class="callout">
+      <p class="ctitle">Core Insight</p>
+      <p>You already solved this in Challenge 6. A crank turns endless rotation into back-and-forth motion, without the motor ever changing direction. An elevator is the same trick pointed upward.</p>
+    </div>
+    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <ul class="obj">
+      <li>Explain how a one-way motor produces two-way motion.</li>
+      <li>Describe what a <span class="def-term" data-term="COUPLER CURVE">coupler curve</span> is and trace one.</li>
+      <li>Explain the difference between a parallelogram linkage and a <span class="def-term" data-term="STRAIGHT-LINE LINKAGE">straight-line linkage</span>.</li>
+      <li>Choose between a level platform and a straight path, and defend the choice.</li>
+    </ul>
+  </section>
+
+  <!-- ===== Phase 1 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Watch the Mechanism</h2>
+    <p>Watch the video below. Do not build anything yet. Watch it at least twice.</p>
+
+    <div class="mech-video">
+      <iframe src="https://www.youtube-nocookie.com/embed/mP6WFS0_1jM"
+              title="LEGO parallelogram concepts"
+              allow="accelerometer; encrypted-media; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="video-cap">Simple mechanics — application of parallelogram concepts.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Watch For</p>
+      <p>1. What do you notice?</p>
+      <p>2. What is happening?</p>
+      <p>3. Pick one point on the moving platform and follow only that point through a whole cycle. What shape does it trace?</p>
+    </div>
+
+    <p class="q">What do you notice? Describe what the mechanism is doing.</p>
+    <textarea class="answer" data-key="p1_notice" aria-label="What do you notice"></textarea>
+    <p class="q">Does the platform stay level as it moves, or does it tilt? Does it travel straight up, or does it swing sideways as well?</p>
+    <textarea class="answer" data-key="p1_path" aria-label="Path and tilt"></textarea>
+    <p class="q">What LEGO pieces might take the place of each of the pieces you see?</p>
+    <textarea class="answer" data-key="p1_pieces" aria-label="LEGO substitutions"></textarea>
+  </section>
+
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: One Way Round, Two Ways Up</h2>
+    <p>A motor that only spins one direction seems like a poor way to build something that has to go up and then down again. It is not. It is how almost every engine-driven machine in the world works.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 320" role="img" aria-label="A wheel turning in one direction only, with a pin near its rim connected by a rod to a platform above. As the pin goes round, the platform rises and falls, even though the wheel never reverses.">
+        <defs>
+          <marker id="rotK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
+          </marker>
+          <marker id="udD" viewBox="0 0 10 10" refX="5" refY="1" markerWidth="9" markerHeight="9" orient="auto">
+            <path d="M0,9 L5,0 L10,9 z" fill="#1E8449"/>
+          </marker>
+        </defs>
+
+        <!-- wheel -->
+        <circle cx="180" cy="212" r="58" fill="#F8F8F8" stroke="#888" stroke-width="2.5"/>
+        <circle cx="180" cy="212" r="6" fill="#444"/>
+        <path d="M112,246 A76,76 0 0 1 104,192" fill="none" stroke="#C0392B" stroke-width="3" marker-end="url(#rotK)"/>
+        <text x="64" y="288" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#C0392B">ONE DIRECTION</text>
+        <text x="64" y="306" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#C0392B">ONLY</text>
+
+        <!-- pin high and rod -->
+        <circle cx="180" cy="154" r="9" fill="#C0392B"/>
+        <line x1="180" y1="154" x2="180" y2="96" stroke="#888" stroke-width="7" stroke-linecap="round"/>
+        <rect x="112" y="76" width="176" height="18" rx="3" fill="#dbe3f0" stroke="#1F2D5A" stroke-width="2.5"/>
+
+        <!-- pin low and rod, dashed -->
+        <circle cx="180" cy="270" r="9" fill="none" stroke="#BBB" stroke-width="3"/>
+        <line x1="180" y1="270" x2="180" y2="212" stroke="#BBB" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 6"/>
+        <rect x="112" y="192" width="176" height="18" rx="3" fill="none" stroke="#BBB" stroke-width="2.5" stroke-dasharray="9 6"/>
+
+        <!-- lift dimension -->
+        <line x1="330" y1="200" x2="330" y2="88" stroke="#1E8449" stroke-width="3" marker-start="url(#udD)" marker-end="url(#udD)"/>
+        <text x="352" y="148" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1E8449">UP AND DOWN</text>
+        <text x="352" y="170" font-family="'Barlow',sans-serif" font-size="13" fill="#666">the platform reverses</text>
+        <text x="352" y="188" font-family="'Barlow',sans-serif" font-size="13" fill="#666">even though the wheel never does</text>
+
+        <text x="352" y="240" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1C1C1C">Lift = twice the pin offset</text>
+        <text x="352" y="258" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">the same rule as the crank in Challenge 6</text>
+      </svg>
+      <figcaption>The wheel does the same thing forever. The platform gets its two directions from where the pin happens to be.</figcaption>
+    </figure>
+
+    <div class="callout navy">
+      <p class="ctitle">Compare to Challenge 17</p>
+      <p>Your scissor lift needed the motor to run forward, stop, and run backward. That means someone or something has to decide when to reverse — a program, a switch, or a limit.</p>
+      <p>This elevator needs none of that. Turn it on and it cycles by itself, forever, with no decisions made anywhere. Fewer decisions means fewer things that can go wrong.</p>
+    </div>
+
+    <p class="q">Name one advantage of a lift that reverses on command, and one advantage of a lift that simply cycles. When would you want each?</p>
+    <textarea class="answer" data-key="p2_compare_c17" aria-label="Comparison to Challenge 17"></textarea>
+  </section>
+
+  <!-- ===== Phase 3 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Concept: The Shape of the Path, Then Build</h2>
+    <p>Back in Challenge 8 you may have taped a marker to the middle link of a four-bar and let it draw. The shape it drew has a name: the <span class="def-term" data-term="COUPLER CURVE">coupler curve</span> — the path traced by a point on the coupler as the mechanism runs.</p>
+    <p>That curve is not usually a circle, and it is not usually a straight line. And here is the useful part: <em>you can change its shape by changing the link lengths</em>.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 620 320" role="img" aria-label="Two four-bar linkages compared. In a parallelogram, where both moving links are equal, the platform stays level but swings through an arc. With unequal links, a point on the coupler traces a path that is very nearly a straight vertical line, but the platform tilts as it moves.">
+        <!-- Panel A: parallelogram -->
+        <rect x="8" y="8" width="296" height="304" rx="8" fill="#fff" stroke="#CCC"/>
+        <text x="24" y="34" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#1C1C1C">PARALLELOGRAM</text>
+        <text x="24" y="52" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">both moving links equal</text>
+
+        <line x1="60" y1="264" x2="220" y2="264" stroke="#1C1C1C" stroke-width="2.5"/>
+        <line x1="80" y1="264" x2="80" y2="152" stroke="#888" stroke-width="8" stroke-linecap="round"/>
+        <line x1="200" y1="264" x2="200" y2="152" stroke="#888" stroke-width="8" stroke-linecap="round"/>
+        <rect x="70" y="140" width="140" height="14" rx="3" fill="#dbe3f0" stroke="#1F2D5A" stroke-width="2.5"/>
+        <circle cx="80" cy="264" r="7" fill="#fff" stroke="#1C1C1C" stroke-width="3"/>
+        <circle cx="200" cy="264" r="7" fill="#fff" stroke="#1C1C1C" stroke-width="3"/>
+        <circle cx="140" cy="147" r="6" fill="#C0392B"/>
+
+        <path d="M72,166 A122,122 0 0 1 208,166" fill="none" stroke="#C0392B" stroke-width="2.5" stroke-dasharray="7 5"/>
+        <text x="140" y="196" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#C0392B">the point swings on an arc</text>
+
+        <text x="24" y="290" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#1E8449">Stays level.</text>
+        <text x="24" y="306" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#C0392B">Drifts sideways as it rises.</text>
+
+        <!-- Panel B: unequal -->
+        <rect x="316" y="8" width="296" height="304" rx="8" fill="#fff" stroke="#CCC"/>
+        <text x="332" y="34" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#1C1C1C">UNEQUAL LINKS</text>
+        <text x="332" y="52" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">deliberately different lengths</text>
+
+        <line x1="368" y1="264" x2="528" y2="264" stroke="#1C1C1C" stroke-width="2.5"/>
+        <line x1="388" y1="264" x2="376" y2="166" stroke="#888" stroke-width="8" stroke-linecap="round"/>
+        <line x1="508" y1="264" x2="522" y2="140" stroke="#888" stroke-width="8" stroke-linecap="round"/>
+        <line x1="376" y1="166" x2="522" y2="140" stroke="#1F2D5A" stroke-width="9" stroke-linecap="round"/>
+        <circle cx="388" cy="264" r="7" fill="#fff" stroke="#1C1C1C" stroke-width="3"/>
+        <circle cx="508" cy="264" r="7" fill="#fff" stroke="#1C1C1C" stroke-width="3"/>
+        <circle cx="449" cy="153" r="6" fill="#C0392B"/>
+
+        <path d="M445,96 Q459,154 445,212" fill="none" stroke="#C0392B" stroke-width="2.5" stroke-dasharray="7 5"/>
+        <text x="500" y="196" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#C0392B">very nearly straight</text>
+
+        <text x="332" y="290" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#1E8449">Travels almost straight up.</text>
+        <text x="332" y="306" font-family="'Barlow',sans-serif" font-size="12.5" font-weight="600" fill="#C0392B">The platform tilts.</text>
+      </svg>
+      <figcaption>Both are four-bar linkages. The only difference is the link lengths — and the paths come out completely different.</figcaption>
+    </figure>
+
+    <div class="callout">
+      <p class="ctitle">You Cannot Have Both, Easily</p>
+      <p>A parallelogram keeps the platform level, because both moving links stay parallel to each other. But the platform swings on an arc, so it drifts sideways as it rises.</p>
+      <p>Unequal links can make a point travel almost perfectly straight up — mechanisms like this are called <span class="def-term" data-term="STRAIGHT-LINE LINKAGE">straight-line linkages</span>, and engineers used them long before straight rails were easy to make. The cost is that the coupler rotates, so the platform tilts.</p>
+      <p>Which one you want depends on your cargo. Decide before you build, and be ready to say why.</p>
+    </div>
+
+    <h3 class="sub">Build the Bare Mechanism</h3>
+    <p>Build the linkage first, without the motor. Move it through its full travel by hand.</p>
+
+    <div class="callout navy">
+      <p class="ctitle">Before You Go On</p>
+      <p>Run the linkage through five complete cycles by hand. It must be able to go all the way round without jamming — check the link lengths against the test from Challenge 8 if it locks up.</p>
+      <p>This matters more here than usual. Your motor never reverses, so if the mechanism reaches a position it cannot get past, the motor will simply push against it until something breaks.</p>
+    </div>
+
+    <p class="q">Which version did you build, and why that one?</p>
+    <textarea class="answer" data-key="p3_which_version" aria-label="Version chosen"></textarea>
+  </section>
+
+  <!-- ===== Phase 4 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Engineering to Meet a Need</h2>
+
+    <div class="callout">
+      <p class="ctitle">The Need</p>
+      <p>Using your newly created LEGO contraption, create an elevator. You may want to modify it so that the moveable parallelogram is a different quadrilateral, or align the sprockets so that the movement is in a more vertical direction.</p>
+    </div>
+
+    <h3 class="sub">Mental Picture</h3>
+    <p>Think of the pedals on a bicycle. Your foot goes up and then down, over and over — but the crank only ever turns one way, and the rider never has to think about reversing anything.</p>
+
+    <h3 class="sub">Constraints</h3>
+    <p class="muted">Every one of these must be true for your design to count as finished.</p>
+    <ol class="constraints">
+      <li>The elevator must have a total lift of 3&Prime; or more.</li>
+      <li>The rise and fall must be run by a motor in a constant spin orientation. The motor may not turn clockwise <em>and</em> counterclockwise.</li>
+      <li>The surface of the elevator must be at least 9 square inches — a 3&Prime; &times; 3&Prime; platform, or anything larger.</li>
+      <li>The platform must carry a 4 oz load through the whole cycle without dropping it.</li>
+      <li>The elevator must complete 10 full up-and-down cycles without fault.</li>
+      <li>Kit parts only.</li>
+    </ol>
+
+    <div class="callout navy">
+      <p class="ctitle">Constraint 2 Is the Whole Challenge</p>
+      <p>It is easy to read past. It says your motor runs and keeps running — one direction, no stopping, no reversing — and the platform still has to come back down on its own.</p>
+      <p>If you find yourself planning to switch the motor direction at the top, you have not met the constraint. The mechanism has to do it.</p>
+    </div>
+
+    <h3 class="sub">Your Design Decision</h3>
+    <p class="group-label">Level platform on an arc, or straighter path with some tilt? Write your choice and what your cargo needs.</p>
+    <textarea class="answer" data-key="p4_decision" aria-label="Design decision"></textarea>
+
+    <h3 class="sub">Do the Math First</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Planned value</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Lift you need</div></td>
+          <td><input type="text" data-key="p4_lift_needed" aria-label="Lift needed" /></td>
+          <td><input type="text" data-key="p4_lift_needed_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Pin offset that would give you that lift</div></td>
+          <td><input type="text" data-key="p4_offset" aria-label="Pin offset" /></td>
+          <td><input type="text" data-key="p4_offset_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Platform dimensions you will build</div></td>
+          <td><input type="text" data-key="p4_platform" aria-label="Platform dimensions" /></td>
+          <td><input type="text" data-key="p4_platform_unit" aria-label="Unit" value="in &times; in" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Your Plan — Before You Build</h3>
+    <p class="group-label">Break the build into manageable steps.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p4_step_1" aria-label="Build step 1" /></li>
+      <li><input type="text" data-key="p4_step_2" aria-label="Build step 2" /></li>
+      <li><input type="text" data-key="p4_step_3" aria-label="Build step 3" /></li>
+      <li><input type="text" data-key="p4_step_4" aria-label="Build step 4" /></li>
+      <li><input type="text" data-key="p4_step_5" aria-label="Build step 5" /></li>
+    </ul>
+
+    <p class="q">Predict: will your elevator lose its load by tilting, by drifting sideways, or by jerking at the top and bottom?</p>
+    <textarea class="answer" data-key="p4_predict" aria-label="Prediction"></textarea>
+  </section>
+
+  <!-- ===== Phase 5 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test &amp; Iterate</h2>
+
+    <div class="callout">
+      <p class="ctitle">Measure the Path, Not Just the Height</p>
+      <p>Stand a ruler upright beside the platform at the bottom of its travel and mark where the platform's edge sits. Run it to the top and mark again.</p>
+      <p>The vertical difference is your lift. The <em>horizontal</em> difference is the drift, and that is what tells you how vertical your path really is.</p>
+      <p>Then measure the tilt: platform height at its front edge and at its back edge, at the top of the travel.</p>
+    </div>
+
+    <h3 class="sub">Your Numbers</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Total lift, bottom to top</div></td>
+          <td><input type="text" data-key="p5_lift" aria-label="Total lift" /></td>
+          <td><input type="text" data-key="p5_lift_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Sideways drift between bottom and top</div></td>
+          <td><input type="text" data-key="p5_drift" aria-label="Sideways drift" /></td>
+          <td><input type="text" data-key="p5_drift_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Platform dimensions</div></td>
+          <td><input type="text" data-key="p5_platform" aria-label="Platform dimensions" /></td>
+          <td><input type="text" data-key="p5_platform_unit" aria-label="Unit" value="in &times; in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Platform surface area</div></td>
+          <td><input type="text" data-key="p5_area" aria-label="Platform area" /></td>
+          <td><input type="text" data-key="p5_area_unit" aria-label="Unit" value="sq in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Front-to-back height difference at the top</div></td>
+          <td><input type="text" data-key="p5_tilt" aria-label="Tilt at top" /></td>
+          <td><input type="text" data-key="p5_tilt_unit" aria-label="Unit" value="in" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Time for one complete up-and-down cycle</div></td>
+          <td><input type="text" data-key="p5_cycle_time" aria-label="Cycle time" /></td>
+          <td><input type="text" data-key="p5_cycle_time_unit" aria-label="Unit" value="seconds" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Cycles completed carrying the load</div></td>
+          <td><input type="text" data-key="p5_cycles" aria-label="Cycles" /></td>
+          <td><input type="text" data-key="p5_cycles_unit" aria-label="Unit" value="cycles" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Times the motor had to reverse</div></td>
+          <td><input type="text" data-key="p5_reversals" aria-label="Motor reversals" /></td>
+          <td><input type="text" data-key="p5_reversals_unit" aria-label="Unit" value="should be 0" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:20%">What you changed</th>
+          <th style="width:13%">Lift (in)</th>
+          <th style="width:14%">Kept the load?</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
+
+    <h3 class="sub">Check Against the Constraints</h3>
+    <p class="muted">Check a box only after you have actually observed it — not because you think it should be true.</p>
+    <div class="speccheck">
+      <div class="ck">
+        <input type="checkbox" id="s1" data-key="p5_check_lift">
+        <label for="s1">Total lift measured at 3&Prime; or more.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s2" data-key="p5_check_oneway">
+        <label for="s2">The motor ran in one direction only, and never reversed.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s3" data-key="p5_check_area">
+        <label for="s3">The platform measures at least 9 square inches.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s4" data-key="p5_check_load">
+        <label for="s4">Carried a 4 oz load through the whole cycle without dropping it.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s5" data-key="p5_check_cycles">
+        <label for="s5">Completed 10 full up-and-down cycles without fault.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s6" data-key="p5_check_materials">
+        <label for="s6">Kit parts only.</label>
+      </div>
+    </div>
+
+    <p class="q">How much did the platform drift sideways, and did that cause any trouble for the load?</p>
+    <textarea class="answer" data-key="p5_drift_effect" aria-label="Drift effect"></textarea>
+    <p class="q">Describe one specific failure. What was the symptom? What was the cause? How did you fix it?</p>
+    <textarea class="answer" data-key="p5_failure" aria-label="Failure description" style="min-height:100px"></textarea>
+  </section>
+
+  <!-- ===== Phase 6 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Helps in Botball</h2>
+    <div class="callout">
+      <p class="ctitle">Transfer</p>
+      <p>Every decision a robot has to make during a match is a chance for it to make the wrong one. Mechanisms that need no decisions are the most reliable things on a robot.</p>
+    </div>
+    <p>A lift that reverses needs to know when it has reached the top. That means a sensor, or a timer, or a limit switch — and all three can fail. A lift that just cycles needs none of them. Switch it on and it works.</p>
+    <p class="q">Name a Botball task where a mechanism that cycles endlessly would beat one you have to command. What does it save you?</p>
+    <textarea class="answer" data-key="p6_cycling" aria-label="Cycling application"></textarea>
+    <p class="q">Now name a task where cycling would be exactly wrong, and you would need the lift to stop where you told it.</p>
+    <textarea class="answer" data-key="p6_when_not" aria-label="When cycling fails"></textarea>
+  </section>
+
+  <!-- ===== Phase 7 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <p class="muted">Complete this section on your own.</p>
+    <div class="namebar">
+      <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
+      <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
+    </div>
+    <p class="q"><span class="n">1.</span> Explain how a motor that never reverses can drive something that goes up and then down.</p>
+    <textarea class="answer" data-key="p7_q1_oneway" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> What is a coupler curve? Describe the one your own mechanism traced.</p>
+    <textarea class="answer" data-key="p7_q2_coupler_curve" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> A parallelogram stays level but swings. Unequal links go straighter but tilt. Which did you choose, and would you choose the same again?</p>
+    <textarea class="answer" data-key="p7_q3_tradeoff" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;Link lengths decide the shape of the path. This means that when a mechanism moves along the wrong path, I should...&rdquo;</p>
+    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+  </section>
+
+  <!-- ===== Extensions ===== -->
+  <section>
+    <h2 class="phase-head">Extension Challenges</h2>
+    <p class="muted">Finished early? Try one or more of these.</p>
+
+    <h3 class="sub">Extension A — Build the Other One</h3>
+    <ul>
+      <li>If you built the parallelogram, build the unequal-link version. If you built unequal links, build the parallelogram.</li>
+      <li>Measure lift, sideways drift, and tilt for both.</li>
+      <li>Put all six numbers side by side. Which version would you take to a competition, and for what cargo?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
+
+    <h3 class="sub">Extension B — Draw the Curve</h3>
+    <ul>
+      <li>Tape a marker to the platform and let it draw on paper taped upright beside the mechanism.</li>
+      <li>Run one full cycle and look at the shape.</li>
+      <li>Move the marker to a different point on the coupler and run it again. How much did the curve change?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
+
+    <h3 class="sub">Extension C — Raise the Lift</h3>
+    <ul>
+      <li>Get 5 inches of lift instead of 3, still with a one-way motor.</li>
+      <li>What did you have to lengthen, and what happened to the sideways drift?</li>
+      <li>Did the mechanism still clear its whole cycle without jamming?</li>
+    </ul>
+    <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
+
+    <h3 class="sub">Extension D — Carry Something That Spills</h3>
+    <ul>
+      <li>Replace the weight with a shallow cup holding a few poms, or something else that will fall out if the platform tips.</li>
+      <li>Run 10 cycles and count how many poms are left.</li>
+      <li>Does this change which version you would choose? Explain.</li>
+    </ul>
+    <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
+  </section>
+
+  <!-- ===== Bottom submit ===== -->
+  <div class="bottom-submit no-print">
+    <p>When you are finished, press the button to turn in your work and save a copy.</p>
+    <button class="submit-btn" id="submitBottom">Submit &amp; Download</button>
+    <div class="status" id="statusBottom" role="status" aria-live="polite" style="color:var(--grey);margin-top:10px"></div>
+  </div>
+
+  <nav class="botnav no-print" aria-label="Page navigation">
+    <a href="mech20_linear_teeth.html">&larr; Challenge 20</a>
+    <a class="gloss" href="../glossary.html">Glossary</a>
+    <a class="next" href="mech22_rack_slide.html">Challenge 22 &rarr;</a>
+  </nav>
+
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 21 — Student Sheet</p>
+</main>
+
+<script>
+  const MISSION_ID = "mech21_parallelogram";
+
+  (function buildTrials() {
+    const body = document.getElementById("trialBody");
+    for (let i = 1; i <= 10; i++) {
+      const tr = document.createElement("tr");
+      tr.innerHTML =
+        '<td style="text-align:center;font-weight:600">' + i + '</td>' +
+        '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_lift" aria-label="Trial ' + i + ' lift"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_load" aria-label="Trial ' + i + ' kept the load"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
+      body.appendChild(tr);
+    }
+  })();
+
+  const $ = (s) => document.querySelector(s);
+  const pinInput = $("#pin");
+  const statusEl = $("#status");
+  const statusBottom = $("#statusBottom");
+
+  const SAVE_KEY = "kipr_" + MISSION_ID + "_draft";
+  function collectAnswers() {
+    const answers = {};
+    document.querySelectorAll("[data-key]").forEach((el) => {
+      answers[el.getAttribute("data-key")] =
+        (el.type === "checkbox") ? (el.checked ? "yes" : "no") : el.value;
+    });
+    return answers;
+  }
+  function restoreDraft() {
+    let raw = null;
+    try { raw = window.localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+    if (!raw) return;
+    let data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.pin) pinInput.value = data.pin;
+    if (data.answers) {
+      document.querySelectorAll("[data-key]").forEach((el) => {
+        const k = el.getAttribute("data-key");
+        if (k in data.answers) {
+          if (el.type === "checkbox") el.checked = (data.answers[k] === "yes");
+          else el.value = data.answers[k];
+        }
+      });
+    }
+  }
+  function saveDraft() {
+    try {
+      window.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        pin: pinInput.value.trim(),
+        answers: collectAnswers()
+      }));
+    } catch (e) { /* storage full or blocked — ignore */ }
+  }
+  restoreDraft();
+  document.addEventListener("input", function (e) {
+    if (e.target.matches("[data-key], #pin")) saveDraft();
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.matches("input[type=checkbox][data-key]")) saveDraft();
+  });
+
+  function setStatus(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = "status" + (kind ? " " + kind : "");
+    statusBottom.textContent = msg;
+  }
+
+  function buildPayload() {
+    return {
+      mission: MISSION_ID,
+      missionTitle: "Mechanical Design · Challenge 21 — The Parallelogram Elevator",
+      pin: pinInput.value.trim(),
+      submittedAt: new Date().toISOString(),
+      answers: collectAnswers()
+    };
+  }
+
+  function downloadJSON(payload) {
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = MISSION_ID + "_pin" + (payload.pin || "none") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  let submitting = false;
+  async function handleSubmit() {
+    if (submitting) return;
+    const pin = pinInput.value.trim();
+    if (!pin) {
+      setStatus("Enter your PIN at the top before you submit.", "warn");
+      pinInput.focus();
+      return;
+    }
+    submitting = true;
+    setStatus("Turning in your work…");
+    const payload = buildPayload();
+
+    downloadJSON(payload);
+    document.getElementById("pinEcho").textContent = pin;
+    setStatus("Saved your results file to Downloads. Opening the print dialog so you can save your PDF…", "ok");
+
+    setTimeout(() => { window.print(); submitting = false; }, 600);
+  }
+
+  $("#submitTop").addEventListener("click", handleSubmit);
+  $("#submitBottom").addEventListener("click", handleSubmit);
+</script>
+
+<div class="def-overlay" id="defOverlay" role="dialog" aria-modal="true" aria-labelledby="defTerm">
+  <div class="def-box">
+    <div class="def-head">
+      <span class="def-head-term" id="defTerm"></span>
+      <button class="def-close" id="defClose" aria-label="Close definition">&#10005;</button>
+    </div>
+    <div class="def-body" id="defBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var DEFS = {
+    'UNIDIRECTIONAL DRIVE': ['Unidirectional Drive', 'A drive whose motor turns one way and never reverses. The mechanism, not the motor, is what makes the output change direction \u2014 which means nothing has to decide when to reverse.'],
+    'RECIPROCATION': ['Reciprocation', 'Back-and-forth motion between two limits. A crank turns continuous rotation into reciprocation, which is how a one-way motor drives something that has to go up and then down.'],
+    'COUPLER CURVE': ['Coupler Curve', 'The path traced by a point on the coupler of a linkage as the mechanism runs. It is usually neither a circle nor a straight line, and changing the link lengths changes its shape.'],
+    'PARALLELOGRAM LINKAGE': ['Parallelogram Linkage', 'A four-bar where the two moving links are equal in length and stay parallel. The platform it carries stays level throughout, but travels on an arc, so it drifts sideways as it rises.'],
+    'STRAIGHT-LINE LINKAGE': ['Straight-Line Linkage', 'A four-bar with deliberately unequal links, arranged so that a chosen point on the coupler travels along a path that is very nearly a straight line. The cost is that the coupler rotates as it goes, so anything mounted on it tilts.']
+  };
+  function openDef(t){
+    var e = DEFS[t]; if(!e) return;
+    document.getElementById('defTerm').textContent = e[0];
+    document.getElementById('defBody').textContent = e[1];
+    document.getElementById('defOverlay').classList.add('open');
+    document.getElementById('defClose').focus();
+    document.body.style.overflow='hidden';
+  }
+  function closeDef(){
+    document.getElementById('defOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('defClose').addEventListener('click', closeDef);
+  document.getElementById('defOverlay').addEventListener('click', function(e){ if(e.target===this) closeDef(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDef(); });
+  document.addEventListener('click', function(e){ var el=e.target.closest('.def-term'); if(el) openDef(el.dataset.term); });
+  document.addEventListener('touchend', function(e){ if(e.target.closest('.def-term')) e.preventDefault(); }, {passive:false});
+})();
+</script>
+
+</body>
+</html>
