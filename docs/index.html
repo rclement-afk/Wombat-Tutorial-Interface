@@ -194,6 +194,66 @@
       .cheat-banner { animation: none; }
     }
 
+    /* More Resources dropdown */
+    .more-wrap {
+      max-width: 900px;
+      width: 100%;
+      margin: 1.75rem auto 0;
+      display: flex;
+      justify-content: center;
+    }
+    .more-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.55);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      padding: 0.5rem 0.25rem;
+      transition: color 0.2s;
+    }
+    .more-toggle:hover { color: rgba(255,255,255,0.85); }
+    .more-toggle .chev {
+      display: inline-block;
+      font-size: 0.7rem;
+      transition: transform 0.2s;
+    }
+    .more-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .more-menu {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+    .more-menu.open { max-height: 400px; }
+    .more-menu-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      padding: 0.75rem 0 0.25rem;
+    }
+    .more-link {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 0.4rem 0.75rem;
+      border-radius: 3px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .more-link:hover { color: var(--white); background: rgba(255,255,255,0.06); }
+
     /* ── Mobile portrait (phones) ── */
     @media (max-width: 640px) {
       /* Nav: allow two rows — brand on top, links wrap below */
@@ -227,6 +287,10 @@
         gap: 1rem;
       }
       .doc-card { padding: 1.5rem; }
+
+      /* More Resources: full-width tap targets */
+      .more-menu-inner { width: 100%; }
+      .more-link { width: 100%; text-align: center; padding: 0.6rem 0.75rem; }
     }
   </style>
 </head>
@@ -299,9 +363,33 @@
           <span class="card-arrow">Open Scoring App →</span>
         </a>
       </div>
+
+      <div class="more-wrap">
+        <button class="more-toggle" id="moreToggle" aria-expanded="false" aria-controls="moreMenu">
+          More Resources <span class="chev">▾</span>
+        </button>
+      </div>
+      <div class="more-menu" id="moreMenu">
+        <div class="more-menu-inner">
+          <a class="more-link" href="state-standards.html">State Standards Correlations</a>
+          <a class="more-link" href="research-literature.html">Research and Literature</a>
+          <a class="more-link" href="kipr-simulator.html">KIPR Simulator</a>
+          <a class="more-link" href="3d-printing-basics.html">3D Printing Basics</a>
+          <a class="more-link" href="botball-strategy-101.html">Botball Strategy 101</a>
+        </div>
+      </div>
     </div>
   </section>
 
   <div class="footer-strip">KIPR Botball © 2026 — All rights reserved</div>
+
+  <script>
+    const moreToggle = document.getElementById('moreToggle');
+    const moreMenu = document.getElementById('moreMenu');
+    moreToggle.addEventListener('click', () => {
+      const isOpen = moreMenu.classList.toggle('open');
+      moreToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  </script>
 </body>
 </html>
