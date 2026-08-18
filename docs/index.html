@@ -198,7 +198,8 @@
     .more-wrap {
       max-width: 900px;
       width: 100%;
-      margin: 1.75rem auto 0;
+      margin: 0 auto;
+      padding: 0 2rem 1.5rem;
       display: flex;
       justify-content: center;
     }
@@ -228,13 +229,14 @@
       max-width: 900px;
       width: 100%;
       margin: 0 auto;
+      padding: 0 2rem;
       display: grid;
       grid-template-columns: 1fr;
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.25s ease;
     }
-    .more-menu.open { max-height: 400px; }
+    .more-menu.open { max-height: 400px; padding-bottom: 1.5rem; }
     .more-menu-inner {
       display: flex;
       flex-direction: column;
@@ -363,23 +365,23 @@
           <span class="card-arrow">Open Scoring App →</span>
         </a>
       </div>
-
-      <div class="more-wrap">
-        <button class="more-toggle" id="moreToggle" aria-expanded="false" aria-controls="moreMenu">
-          More Resources <span class="chev">▾</span>
-        </button>
-      </div>
-      <div class="more-menu" id="moreMenu">
-        <div class="more-menu-inner">
-          <a class="more-link" href="state-standards.html">State Standards Correlations</a>
-          <a class="more-link" href="research-literature.html">Research and Literature</a>
-          <a class="more-link" href="kipr-simulator.html">KIPR Simulator</a>
-          <a class="more-link" href="3d-printing-basics.html">3D Printing Basics</a>
-          <a class="more-link" href="botball-strategy-101.html">Botball Strategy 101</a>
-        </div>
-      </div>
     </div>
   </section>
+
+  <div class="more-wrap">
+    <button class="more-toggle" id="moreToggle" aria-expanded="false" aria-controls="moreMenu">
+      More Resources <span class="chev">▾</span>
+    </button>
+  </div>
+  <div class="more-menu" id="moreMenu">
+    <div class="more-menu-inner">
+      <a class="more-link" href="state-standards.html">State Standards Correlations</a>
+      <a class="more-link" href="research-literature.html">Research and Literature</a>
+      <a class="more-link" href="kipr-simulator.html">KIPR Simulator</a>
+      <a class="more-link" href="3d-printing-basics.html">3D Printing Basics</a>
+      <a class="more-link" href="botball-strategy-101.html">Botball Strategy 101</a>
+    </div>
+  </div>
 
   <div class="footer-strip">KIPR Botball © 2026 — All rights reserved</div>
 
