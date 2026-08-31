@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mechanical · Challenge 3 — The Pincer</title>
+<title>Mechanical · Design Project A — The Pom Sort</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 <style id="labsheet-inline">
 /* ===== lab-sheet.css — inlined so this file previews standalone.
-   At packaging time this whole block is swapped back to
+   At packaging time this whole block is swapped back to:
    a stylesheet link to ../lab-sheet.css
    Do not hand-edit rules in here; edit lab-sheet.css. ===== */
 /* KIPR Botball 2026 — Lab sheet shared styles
@@ -1023,6 +1023,22 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
     margin: 0 0 4px;
   }
 
+  /* ---------- Mechanical: video ---------- */
+  .mech-video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a1a;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 12px 0 6px;
+  }
+  .mech-video iframe,
+  .mech-video video { width: 100%; height: 100%; border: 0; display: block; }
+  .mech-video video { object-fit: contain; }
+  .video-cap { font-size: 13.5px; color: var(--grey); margin: 0 0 6px; }
+
   /* ---------- Mechanical: constraints ---------- */
   .constraints { list-style: none; counter-reset: c; margin: 10px 0 0; padding: 0; }
   .constraints li {
@@ -1132,6 +1148,7 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
       color: #000 !important;
     }
     .answer { min-height: auto; }
+    .mech-video { display: none; }
     .constraints li::before {
       background: var(--navy) !important;
       -webkit-print-color-adjust: exact;
@@ -1163,9 +1180,9 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
 
   <!-- ===== Hero ===== -->
   <div class="hero">
-    <p class="eyebrow">Mechanical Design · Challenge 3</p>
-    <h1>The Pincer</h1>
-    <p class="sub">Student Challenge · Building a Claw Where Both Sides Move</p>
+    <p class="eyebrow">Mechanical Design · Design Project A</p>
+    <h1>The Pom Sort</h1>
+    <p class="sub">Open Design Project · Effector Design #1</p>
   </div>
 
   <!-- PIN echo for printed copy -->
@@ -1174,12 +1191,12 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   <!-- ===== Meta ===== -->
   <div class="meta">
     <dl>
-      <div class="row"><dt>Module Guiding Question</dt><dd>How do we make two parts move in coordination from one motor?</dd></div>
-      <div class="row"><dt>Big Idea</dt><dd>Meshed gears lock two motions together in a predictable relationship.</dd></div>
-      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="PINCER">Pincer</span> · <span class="def-term" data-term="MESH">Mesh</span> · <span class="def-term" data-term="IDLER GEAR">Idler gear</span> · <span class="def-term" data-term="BACKLASH">Backlash</span> · <span class="def-term" data-term="STABILITY">Stability</span></dd></div>
-      <div class="row"><dt>Materials</dt><dd>Kit parts only. No metal pieces other than screws, bolts, and nuts.</dd></div>
-      <div class="row"><dt>What You Need</dt><dd>LEGO kit · gears · one servo or motor · Wombat controller · at least 3 poms · ruler</dd></div>
-      <div class="row"><dt>Prerequisite</dt><dd>Challenge 1 — you attempted a pincer there without instruction. This is where it gets solved.</dd></div>
+      <div class="row"><dt>Module Guiding Question</dt><dd>Can you run the whole design process on a problem with no instructions?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>An open problem is solved by process — define, plan, build, measure, iterate — not by luck.</dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="NEED">Needs</span> · <span class="def-term" data-term="CONSTRAINT">Constraints</span> · <span class="def-term" data-term="ADDED VALUE">Added value</span> · <span class="def-term" data-term="SUCCESS RATE">Success rate</span> · <span class="def-term" data-term="ITERATION">Iteration</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>LEGO structure and KIPR electronics only</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>LEGO kit · up to 2 motors or servos · Wombat controller · 4 poms in two colors · this project sheet</dd></div>
+      <div class="row"><dt>Prerequisites</dt><dd>Challenge 1 (the design process) and Challenge 2 (gears). Challenge 3&rsquo;s pincer strongly recommended — the added value asks for one. Best attempted after Challenge 5.</dd></div>
     </dl>
   </div>
 
@@ -1190,238 +1207,77 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   <!-- ===== Overview ===== -->
   <section>
     <h2 class="phase-head">Overview</h2>
-    <p>Back in Challenge 1 you were asked to build a pincer with no instruction at all, and told to keep notes on what fought you. This is the challenge where that gets answered.</p>
-    <p>The problem you almost certainly hit: making <em>both</em> arms move, in coordination, from a single motor. One arm is easy. Two arms that mirror each other is a different problem — and the solution is gears.</p>
+    <p>Every numbered challenge in this module hands you a mechanism and shows you how it works. This project hands you a task and nothing else. There is no build to copy and no mechanism named in the constraints — choosing the mechanism <em>is</em> the work.</p>
+    <p>That is what makes this an open design project, and it is why it lives at the end of the module rather than the beginning. The process comes from Challenge 1. The parts language comes from Challenge 2. The mechanisms come from everything since. Here you put them in service of a job.</p>
     <div class="callout">
       <p class="ctitle">Core Insight</p>
-      <p>Two meshed gears cannot move independently. Turn one and the other must turn, in the opposite direction, by an amount you can predict exactly.</p>
-      <p>That is not a limitation. It is the whole point — it is how you get coordination without a second motor.</p>
+      <p>Engineers do not start by building. They start by defining. On an open problem, the definition — the problem, the need, the constraints — is the only ground you have to stand on.</p>
     </div>
-    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <h3 class="sub">By the end of this project you will be able to:</h3>
     <ul class="obj">
-      <li>Explain why a claw with one fixed side pushes objects sideways, and a <span class="def-term" data-term="PINCER">pincer</span> does not.</li>
-      <li>Predict the direction a meshed gear will turn.</li>
-      <li>Use an <span class="def-term" data-term="IDLER GEAR">idler gear</span> to make two arms turn the same way instead of opposite ways.</li>
-      <li>Build a stable pincer that grabs and lifts poms reliably.</li>
+      <li>Run the full five-step design process on an open problem, unprompted.</li>
+      <li>Design, build, and refine an <span class="def-term" data-term="EFFECTOR">effector</span> that performs a sorting task.</li>
+      <li>Prove your design works with a measured success rate, not an impression.</li>
     </ul>
-    <p class="muted">Look back at your Challenge 1 notes before you start. What you wrote there is about to be useful.</p>
-  </section>
-
-  <!-- ===== Phase 1 ===== -->
-  <section>
-    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Two Kinds of Claw</h2>
-    <p>A demo bot claw usually has one jaw fixed in place and one jaw that swings. It works, and it is simple to build. But it does something to the object that you may not want.</p>
-
-    <figure class="diagram">
-      <svg viewBox="0 0 620 240" role="img" aria-label="Two claw types compared. In a fixed claw, one jaw is stationary and the moving jaw shoves the object sideways until it is pinned against the fixed jaw. In a pincer, both jaws close inward and the object stays where it started.">
-        <defs>
-          <marker id="mA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
-          </marker>
-          <marker id="mG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
-          </marker>
-        </defs>
-
-        <!-- Panel A: fixed -->
-        <rect x="8" y="8" width="296" height="224" rx="8" fill="#fff" stroke="#CCC"/>
-        <text x="22" y="32" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1C1C1C">FIXED CLAW &mdash; one side moves</text>
-        <!-- fixed jaw -->
-        <rect x="70" y="70" width="14" height="96" fill="#444"/>
-        <text x="77" y="188" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#444">fixed</text>
-        <!-- moving jaw -->
-        <rect x="240" y="70" width="14" height="96" fill="#C0392B"/>
-        <line x1="232" y1="118" x2="196" y2="118" stroke="#C0392B" stroke-width="2.5" marker-end="url(#mA)"/>
-        <text x="247" y="188" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#C0392B">moves</text>
-        <!-- object start and end -->
-        <circle cx="160" cy="118" r="19" fill="#fff" stroke="#888" stroke-width="2" stroke-dasharray="5 4"/>
-        <circle cx="105" cy="118" r="19" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
-        <line x1="138" y1="86" x2="124" y2="86" stroke="#888" stroke-width="2" marker-end="url(#mG)"/>
-        <text x="156" y="62" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#888">object gets shoved</text>
-
-        <!-- Panel B: pincer -->
-        <rect x="316" y="8" width="296" height="224" rx="8" fill="#fff" stroke="#CCC"/>
-        <text x="330" y="32" font-family="'Barlow Condensed',sans-serif" font-size="17" font-weight="700" fill="#1C1C1C">PINCER &mdash; both sides move</text>
-        <rect x="378" y="70" width="14" height="96" fill="#C0392B"/>
-        <line x1="400" y1="118" x2="432" y2="118" stroke="#C0392B" stroke-width="2.5" marker-end="url(#mA)"/>
-        <rect x="548" y="70" width="14" height="96" fill="#C0392B"/>
-        <line x1="540" y1="118" x2="508" y2="118" stroke="#C0392B" stroke-width="2.5" marker-end="url(#mA)"/>
-        <circle cx="470" cy="118" r="19" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
-        <text x="470" y="62" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#1E8449">object stays put</text>
-        <text x="385" y="188" font-family="'Barlow',sans-serif" font-size="12.5" fill="#C0392B">moves</text>
-        <text x="520" y="188" font-family="'Barlow',sans-serif" font-size="12.5" fill="#C0392B">also moves</text>
-      </svg>
-      <figcaption>The fixed claw drags the object to itself. The pincer closes around whatever is already there.</figcaption>
-    </figure>
-
-    <p class="q">Why would shoving the object sideways be a problem on a game field? Name a situation where it would cost you.</p>
-    <textarea class="answer" data-key="p1_why_problem" aria-label="Why shoving is a problem"></textarea>
-  </section>
-
-  <!-- ===== Phase 2 ===== -->
-  <section>
-    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Meshed Gears Turn Opposite Ways</h2>
-    <p>Gears have teeth. When two gears are close enough for their teeth to interlock, they <span class="def-term" data-term="MESH">mesh</span> — and from that moment neither can move without the other.</p>
-
-    <div class="callout">
-      <p class="ctitle">The Direction Rule</p>
-      <p>Two meshed gears always turn in <strong>opposite</strong> directions. If one goes clockwise, the other goes counterclockwise. There is no exception.</p>
-    </div>
-
-    <p>That rule is exactly what a pincer needs. Put a gear at the base of each arm, mesh the two gears together, and drive just one of them. The other is forced to turn the opposite way — which swings the second arm inward as the first swings inward.</p>
-
-    <figure class="diagram">
-      <svg viewBox="0 0 620 280" role="img" aria-label="Two meshed gears, each carrying an arm. When the left gear turns clockwise, the right gear is forced counterclockwise, and the two arms swing toward each other to close on a pom.">
-        <defs>
-          <marker id="rot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
-          </marker>
-        </defs>
-
-        <!-- arms: open (solid grey) and closed (red dashed) -->
-        <line x1="214" y1="186" x2="181" y2="97" stroke="#888" stroke-width="7" stroke-linecap="round"/>
-        <line x1="306" y1="186" x2="339" y2="97" stroke="#888" stroke-width="7" stroke-linecap="round"/>
-        <line x1="214" y1="186" x2="230" y2="92" stroke="#C0392B" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 7"/>
-        <line x1="306" y1="186" x2="290" y2="92" stroke="#C0392B" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 7"/>
-
-        <!-- pom -->
-        <circle cx="260" cy="86" r="18" fill="#F2F2F2" stroke="#444" stroke-width="2"/>
-        <text x="260" y="52" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#444">pom</text>
-
-        <!-- gears: dashed circles approximate teeth -->
-        <circle cx="214" cy="186" r="46" fill="#fff" stroke="#1C1C1C" stroke-width="6" stroke-dasharray="14.4 14.4"/>
-        <circle cx="214" cy="186" r="38" fill="#fff" stroke="#CCC" stroke-width="1.5"/>
-        <circle cx="214" cy="186" r="6" fill="#444"/>
-        <circle cx="306" cy="186" r="46" fill="#fff" stroke="#1C1C1C" stroke-width="6" stroke-dasharray="14.4 14.4"/>
-        <circle cx="306" cy="186" r="38" fill="#fff" stroke="#CCC" stroke-width="1.5"/>
-        <circle cx="306" cy="186" r="6" fill="#444"/>
-
-        <!-- rotation arrows -->
-        <path d="M186,232 A34,34 0 1 1 242,232" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rot)"/>
-        <text x="214" y="262" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#C0392B">CLOCKWISE</text>
-        <path d="M334,232 A34,34 0 1 0 278,232" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rot)"/>
-        <text x="306" y="262" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#C0392B">COUNTER-CW</text>
-
-        <!-- labels -->
-        <text x="120" y="120" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#888">open</text>
-        <text x="410" y="120" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#C0392B">closed</text>
-        <text x="460" y="186" font-family="'Barlow',sans-serif" font-size="13" fill="#444">drive only</text>
-        <text x="460" y="204" font-family="'Barlow',sans-serif" font-size="13" fill="#444">one gear</text>
-      </svg>
-      <figcaption>One motor, one driven gear, two coordinated arms. A 10-tooth gear at the base of each arm is a good starting point.</figcaption>
-    </figure>
-
-    <h3 class="sub">Answer These Before You Build</h3>
-    <p class="q">If the gear on the left turns clockwise, what happens to its own arm?</p>
-    <textarea class="answer" data-key="p2_left_arm" aria-label="Left arm direction"></textarea>
-    <p class="q">What direction does that cause the other arm to move?</p>
-    <textarea class="answer" data-key="p2_right_arm" aria-label="Right arm direction"></textarea>
-    <p class="q">Does that meet the need — do both arms close on the pom together?</p>
-    <textarea class="answer" data-key="p2_meets_need" aria-label="Does it meet the need"></textarea>
-  </section>
-
-  <!-- ===== Phase 3 ===== -->
-  <section>
-    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Concept: The Idler Gear</h2>
-    <p>Sometimes you want the opposite of a pincer — two arms moving the <em>same</em> direction together, like a pair of sweepers or a conveyor. Two meshed gears cannot do that. But three can.</p>
-
-    <div class="callout navy">
-      <p class="ctitle">The Trick</p>
-      <p>Put a third gear <em>between</em> the two. It reverses the direction once, and then reverses it again — so the two outer gears end up turning the same way.</p>
-      <p>That middle gear is called an <span class="def-term" data-term="IDLER GEAR">idler gear</span>. It changes direction without changing speed at all.</p>
-    </div>
-
-    <figure class="diagram">
-      <svg viewBox="0 0 620 260" role="img" aria-label="Three gears in a row. The left gear turns clockwise, the middle idler gear turns counterclockwise, and the right gear turns clockwise again. The two outer gears turn the same direction as each other.">
-        <defs>
-          <marker id="rot2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
-          </marker>
-        </defs>
-
-        <!-- gears -->
-        <circle cx="170" cy="132" r="46" fill="#fff" stroke="#1C1C1C" stroke-width="6" stroke-dasharray="14.4 14.4"/>
-        <circle cx="170" cy="132" r="38" fill="#fff" stroke="#CCC" stroke-width="1.5"/>
-        <circle cx="170" cy="132" r="6" fill="#444"/>
-
-        <circle cx="262" cy="132" r="46" fill="#FDF2F2" stroke="#C0392B" stroke-width="6" stroke-dasharray="14.4 14.4"/>
-        <circle cx="262" cy="132" r="38" fill="#FDF2F2" stroke="#E8B4AE" stroke-width="1.5"/>
-        <circle cx="262" cy="132" r="6" fill="#C0392B"/>
-
-        <circle cx="354" cy="132" r="46" fill="#fff" stroke="#1C1C1C" stroke-width="6" stroke-dasharray="14.4 14.4"/>
-        <circle cx="354" cy="132" r="38" fill="#fff" stroke="#CCC" stroke-width="1.5"/>
-        <circle cx="354" cy="132" r="6" fill="#444"/>
-
-        <!-- rotation arrows -->
-        <path d="M144,180 A30,30 0 1 1 196,180" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rot2)"/>
-        <text x="170" y="212" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#C0392B">CW</text>
-        <path d="M288,180 A30,30 0 1 0 236,180" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rot2)"/>
-        <text x="262" y="212" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#C0392B">CCW</text>
-        <path d="M328,180 A30,30 0 1 1 380,180" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#rot2)"/>
-        <text x="354" y="212" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="15" font-weight="700" fill="#C0392B">CW</text>
-
-        <!-- labels -->
-        <text x="170" y="62" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#444">driven by motor</text>
-        <text x="262" y="62" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="16" font-weight="700" fill="#C0392B">IDLER</text>
-        <text x="354" y="62" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#444">same way as the first</text>
-
-        <!-- bracket -->
-        <path d="M170,238 L170,246 L354,246 L354,238" fill="none" stroke="#1E8449" stroke-width="2"/>
-        <text x="262" y="238" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" font-weight="600" fill="#1E8449">these two now match</text>
-      </svg>
-      <figcaption>The idler gear can sit staggered or in a straight line — its position does not matter, only that it sits between the other two.</figcaption>
-    </figure>
-
-    <p class="muted">You will not need an idler for this challenge — a pincer wants opposite directions. But remember it exists. It is one of the most reusable tricks in this module.</p>
-
-    <p class="q">Name a robot job that would need two arms turning the same direction rather than closing on each other.</p>
-    <textarea class="answer" data-key="p3_idler_use" aria-label="Idler use case"></textarea>
   </section>
 
   <!-- ===== Phase 4 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Engineering to Meet a Need</h2>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — The Problem</h2>
+    <p>Now you run the process with no instructions. Everything from here is yours.</p>
 
     <div class="callout">
-      <p class="ctitle">Project Overview</p>
-      <p>Using your kit, design, create, and modify a pincer that is stable, can effectively grab 3 poms or more, and lift them with a success rate greater than 90%.</p>
+      <p class="ctitle">The Problem</p>
+      <p>A pile of 4 poms will be in a set location. Within this stack, the bottom 3 are all the same color, and the top one is a different color.</p>
     </div>
 
-    <h3 class="sub">Needs</h3>
-    <ul>
-      <li>Pick up multiple poms with a great degree of confidence.</li>
-      <li>The pincer must be attached to a servo or motor.</li>
-      <li>The mounting system must be low enough to let the robot pick poms up from the surface, and must be easily detachable from the robot with 2 screws or nuts or fewer.</li>
-    </ul>
+    <div class="callout navy">
+      <p class="ctitle">Read This Carefully</p>
+      <p>Your machine does not need to <em>see</em> color. The odd pom is always the one on top, and it is always in the same place. That means this is a <strong>position</strong> problem, not a sensing problem — you already know where the different pom is before the run starts.</p>
+    </div>
+
+    <h3 class="sub">The Need</h3>
+    <p>Perform a mechanical sort on the poms so that one color ends up on the left and the other color ends up on the right.</p>
 
     <h3 class="sub">Constraints</h3>
     <p class="muted">Every one of these must be true for your design to count as finished.</p>
     <ol class="constraints">
-      <li>Use no metal pieces other than screws, bolts, and nuts.</li>
-      <li>The claw needs a 5&Prime; minimum width when open.</li>
-      <li>The claw must reach to within 1&Prime; of the surface to grab and hold poms sitting on it.</li>
-      <li>No non-kit parts can be used.</li>
+      <li>You may use only 2 motors, servos, or micro servos — total.</li>
+      <li>Your device must separate the poms consistently: a success rate greater than 90%.</li>
+      <li>LEGO structure and KIPR electronics only. No other materials on this challenge.</li>
     </ol>
 
-    <div class="callout navy">
-      <p class="ctitle">Why This One Is Strict</p>
-      <p>This is the tightest materials rule in the whole module — kit parts only, and no metal beyond fasteners. That is deliberate. Without a metal bar to make a rigid linkage, the only way to coordinate two arms is to solve it with gears, which is the thing this challenge is teaching.</p>
-      <p>Later challenges open up. This one does not.</p>
+    <h3 class="sub">Added Value</h3>
+    <ul>
+      <li>Your &ldquo;claw&rdquo; is a <span class="def-term" data-term="PINCER">pincer</span> — a grabber where <em>both</em> sides move, not just one.</li>
+      <li>You use fewer than 35 LEGO pieces.</li>
+    </ul>
+
+    <div class="callout">
+      <p class="ctitle">About That Pincer</p>
+      <p>You own this one now. Challenge 2 gave you the gear language, and Challenge 3 taught the arrangement that makes a pincer work properly. This added value asks you to put that knowledge in service of a task — which is a different skill from building it on a worksheet.</p>
     </div>
+  </section>
 
-    <h3 class="sub">Your Plan — Before You Build</h3>
-    <p>Run the five steps from Challenge 1 on paper first.</p>
+  <!-- ===== Phase 2 ===== -->
+  <section>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Your Plan: Run the Process on Paper</h2>
+    <p>Run the five steps of the <span class="def-term" data-term="ENGINEERING DESIGN PROCESS">engineering design process</span> on paper first. Do not pick up parts yet.</p>
 
-    <p class="group-label">What went wrong with your Challenge 1 pincer attempt? Be specific.</p>
-    <textarea class="answer" data-key="p4_c1_lookback" aria-label="Challenge 1 look back"></textarea>
+    <p class="group-label">In your own words, what is the problem you are solving?</p>
+    <textarea class="answer" data-key="p4_problem" aria-label="Problem statement"></textarea>
 
-    <p class="group-label">Write the need as one testable sentence.</p>
+    <p class="group-label">What must your device do? Write the need as one sentence.</p>
     <textarea class="answer" data-key="p4_need" aria-label="Need statement"></textarea>
 
-    <p class="group-label">How many teeth are on the gears you plan to use, and where does the motor connect?</p>
-    <textarea class="answer" data-key="p4_gear_plan" aria-label="Gear plan"></textarea>
+    <p class="group-label">List the constraints in your own words. Mark each one as a minimum, a maximum, or an approximation.</p>
+    <ul class="steps">
+      <li><input type="text" data-key="p4_constraint_1" aria-label="Constraint 1" /></li>
+      <li><input type="text" data-key="p4_constraint_2" aria-label="Constraint 2" /></li>
+      <li><input type="text" data-key="p4_constraint_3" aria-label="Constraint 3" /></li>
+    </ul>
 
-    <p class="group-label">Break the build into manageable steps.</p>
+    <p class="group-label">Break the build into manageable steps. What will you make first, second, third?</p>
     <ul class="steps">
       <li><input type="text" data-key="p4_step_1" aria-label="Build step 1" /></li>
       <li><input type="text" data-key="p4_step_2" aria-label="Build step 2" /></li>
@@ -1430,19 +1286,32 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
       <li><input type="text" data-key="p4_step_5" aria-label="Build step 5" /></li>
     </ul>
 
-    <p class="q">Predict: what will be harder — getting the arms to close together, or getting them to hold on once closed?</p>
+    <p class="q">Predict: which step do you think will give you the most trouble, and why?</p>
     <textarea class="answer" data-key="p4_predict" aria-label="Prediction"></textarea>
   </section>
 
   <!-- ===== Phase 5 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Test &amp; Iterate</h2>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Build, Test &amp; Iterate</h2>
 
     <div class="callout">
-      <p class="ctitle">Expect Slop</p>
-      <p>Meshed gears never fit perfectly. There is always a little play between the teeth, so an arm can wiggle a small amount before the gear actually catches. That play is called <span class="def-term" data-term="BACKLASH">backlash</span>.</p>
-      <p>Backlash is why your pincer may not close to exactly the same spot every time. Some is unavoidable. Too much means your gears are mounted too far apart, or something is flexing.</p>
+      <p class="ctitle">Reminder — Measure, Don&rsquo;t Guess</p>
+      <p>You learned this in Challenge 1: a success rate is a count, not an impression. To beat 90%, you need at least 10 successes out of 10, or 19 out of 20. Run it, count it, write it down.</p>
     </div>
+
+    <h3 class="sub">Trial Log</h3>
+    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
+    <table class="grid">
+      <thead>
+        <tr>
+          <th style="width:7%">Trial</th>
+          <th style="width:22%">What you changed</th>
+          <th style="width:16%">Sorted correctly?</th>
+          <th>What you observed</th>
+        </tr>
+      </thead>
+      <tbody id="trialBody"><!-- rows injected --></tbody>
+    </table>
 
     <h3 class="sub">Your Numbers</h3>
     <table class="grid">
@@ -1450,31 +1319,6 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
         <tr><th style="width:58%">Measurement</th><th style="width:27%">Your Value</th><th style="width:15%">Unit</th></tr>
       </thead>
       <tbody>
-        <tr>
-          <td class="has-label"><div class="label">Claw width when fully open</div></td>
-          <td><input type="text" data-key="p5_open_width" aria-label="Open width" /></td>
-          <td><input type="text" data-key="p5_open_width_unit" aria-label="Unit" value="in" /></td>
-        </tr>
-        <tr>
-          <td class="has-label"><div class="label">Lowest the grabbing surface reaches above the floor</div></td>
-          <td><input type="text" data-key="p5_reach_low" aria-label="Lowest reach" /></td>
-          <td><input type="text" data-key="p5_reach_low_unit" aria-label="Unit" value="in" /></td>
-        </tr>
-        <tr>
-          <td class="has-label"><div class="label">Teeth on the gear at each arm base</div></td>
-          <td><input type="text" data-key="p5_teeth" aria-label="Tooth count" /></td>
-          <td><input type="text" data-key="p5_teeth_unit" aria-label="Unit" value="teeth" /></td>
-        </tr>
-        <tr>
-          <td class="has-label"><div class="label">Most poms grabbed and lifted at once</div></td>
-          <td><input type="text" data-key="p5_poms" aria-label="Poms lifted" /></td>
-          <td><input type="text" data-key="p5_poms_unit" aria-label="Unit" value="poms" /></td>
-        </tr>
-        <tr>
-          <td class="has-label"><div class="label">Fasteners needed to detach it from the robot</div></td>
-          <td><input type="text" data-key="p5_fasteners" aria-label="Fastener count" /></td>
-          <td><input type="text" data-key="p5_fasteners_unit" aria-label="Unit" value="screws/nuts" /></td>
-        </tr>
         <tr>
           <td class="has-label"><div class="label">Runs attempted</div></td>
           <td><input type="text" data-key="p5_runs" aria-label="Runs attempted" /></td>
@@ -1490,100 +1334,79 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
           <td><input type="text" data-key="p5_rate" aria-label="Success rate" /></td>
           <td><input type="text" data-key="p5_rate_unit" aria-label="Unit" value="%" /></td>
         </tr>
-      </tbody>
-    </table>
-
-    <h3 class="sub">Trial Log</h3>
-    <p>Complete one row for every run. Never skip a row — failed runs contain the most information.</p>
-    <table class="grid">
-      <thead>
         <tr>
-          <th style="width:7%">Trial</th>
-          <th style="width:20%">What you changed</th>
-          <th style="width:13%">Poms held</th>
-          <th style="width:14%">Lifted clear?</th>
-          <th>Where it went wrong</th>
+          <td class="has-label"><div class="label">Number of LEGO pieces used</div></td>
+          <td><input type="text" data-key="p5_pieces" aria-label="Piece count" /></td>
+          <td><input type="text" data-key="p5_pieces_unit" aria-label="Unit" value="pieces" /></td>
         </tr>
-      </thead>
-      <tbody id="trialBody"><!-- rows injected --></tbody>
+        <tr>
+          <td class="has-label"><div class="label">Motors and servos used</div></td>
+          <td><input type="text" data-key="p5_actuators" aria-label="Actuator count" /></td>
+          <td><input type="text" data-key="p5_actuators_unit" aria-label="Unit" value="total" /></td>
+        </tr>
+      </tbody>
     </table>
 
     <h3 class="sub">Check Against the Constraints</h3>
     <p class="muted">Check a box only after you have actually observed it — not because you think it should be true.</p>
     <div class="speccheck">
       <div class="ck">
-        <input type="checkbox" id="s1" data-key="p5_check_bothsides">
-        <label for="s1">Both sides of the claw move. It is a true pincer.</label>
+        <input type="checkbox" id="s1" data-key="p5_check_actuators">
+        <label for="s1">The device uses 2 or fewer motors, servos, or micro servos in total.</label>
       </div>
       <div class="ck">
-        <input type="checkbox" id="s2" data-key="p5_check_width">
-        <label for="s2">Measured at least 5&Prime; wide when fully open.</label>
+        <input type="checkbox" id="s2" data-key="p5_check_rate">
+        <label for="s2">The device sorted correctly on more than 90% of runs, counted over at least 10 runs.</label>
       </div>
       <div class="ck">
-        <input type="checkbox" id="s3" data-key="p5_check_low">
-        <label for="s3">Reaches to within 1&Prime; of the surface and can grab poms sitting on it.</label>
+        <input type="checkbox" id="s3" data-key="p5_check_materials">
+        <label for="s3">The device uses LEGO and KIPR electronics only.</label>
       </div>
       <div class="ck">
-        <input type="checkbox" id="s4" data-key="p5_check_three">
-        <label for="s4">Grabbed and lifted 3 or more poms at once.</label>
+        <input type="checkbox" id="s4" data-key="p5_check_pincer">
+        <label for="s4">Added value: both sides of the claw move.</label>
       </div>
       <div class="ck">
-        <input type="checkbox" id="s5" data-key="p5_check_rate">
-        <label for="s5">Worked on more than 90% of runs, counted over at least 10 runs.</label>
-      </div>
-      <div class="ck">
-        <input type="checkbox" id="s6" data-key="p5_check_motor">
-        <label for="s6">Driven by a servo or motor, not by hand.</label>
-      </div>
-      <div class="ck">
-        <input type="checkbox" id="s7" data-key="p5_check_detach">
-        <label for="s7">Detaches from the robot with 2 screws or nuts or fewer.</label>
-      </div>
-      <div class="ck">
-        <input type="checkbox" id="s8" data-key="p5_check_materials">
-        <label for="s8">Kit parts only. No metal except screws, bolts, and nuts.</label>
-      </div>
-      <div class="ck">
-        <input type="checkbox" id="s9" data-key="p5_check_stable">
-        <label for="s9">Stable — it did not flex, sag, or need a hand on it while lifting.</label>
+        <input type="checkbox" id="s5" data-key="p5_check_pieces">
+        <label for="s5">Added value: fewer than 35 LEGO pieces.</label>
       </div>
     </div>
 
-    <p class="q">Wiggle one arm gently without running the motor. How far does it move before the gear catches? That is your backlash. Is it enough to cause a miss?</p>
-    <textarea class="answer" data-key="p5_backlash" aria-label="Backlash observation"></textarea>
-    <p class="q">Describe one specific failure. What was the symptom? What was the cause? How did you fix it?</p>
+    <p class="q">Describe one specific thing that failed. What was the symptom? What was the cause? How did you fix it?</p>
     <textarea class="answer" data-key="p5_failure" aria-label="Failure description" style="min-height:100px"></textarea>
+    <p class="q">You just ran step 5 of the design process and looped back — that loop is <span class="def-term" data-term="ITERATION">iteration</span> doing its job. What did you change on the second pass, and which earlier step did the change actually come from — the problem, the need, or the constraints?</p>
+    <textarea class="answer" data-key="p5_loop" aria-label="Loop back reflection"></textarea>
   </section>
 
   <!-- ===== Phase 6 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Helps in Botball</h2>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Connect: Where This Helps in Botball</h2>
     <div class="callout">
       <p class="ctitle">Transfer</p>
-      <p>The detachability constraint is not busywork. Effectors get swapped between games, and sometimes between rounds.</p>
+      <p>Sorting is not a made-up classroom task. Nearly every Botball game asks a robot to tell one thing from another and put them in different places.</p>
     </div>
-    <p>You built a grabber that mounts and dismounts in seconds and works from one motor. That combination — coordinated, cheap in motors, quick to change — is why pincers show up on competition robots year after year.</p>
-    <p class="q">Name a Botball task where a pincer beats a scoop or a pusher. What is it about the object that makes grabbing the right answer?</p>
-    <textarea class="answer" data-key="p6_botball_pincer" aria-label="Botball pincer application"></textarea>
-    <p class="q">Your pincer uses one motor for two arms. If you had used two motors instead — one per arm — what would you have gained, and what new problem would you have created?</p>
-    <textarea class="answer" data-key="p6_two_motors" aria-label="Two motor tradeoff"></textarea>
+    <p>Your machine solved the problem without sensing anything, using position alone. That is worth noticing: knowing <em>where</em> something will be is often cheaper and far more reliable than building a machine that can figure out <em>what</em> it is.</p>
+    <p class="q">Name a Botball task where your robot needs to separate one kind of object from another. Could position alone solve it, or would the robot genuinely need to sense something? Explain.</p>
+    <textarea class="answer" data-key="p6_botball_sort" aria-label="Botball sorting application"></textarea>
+    <p class="q">Your constraint was 2 motors. If you had been given 4, would your design have been better — or just bigger? What does that suggest about why engineers set constraints on purpose?</p>
+    <textarea class="answer" data-key="p6_constraints_value" aria-label="Value of constraints"></textarea>
   </section>
 
   <!-- ===== Phase 7 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Individual Reflection</h2>
     <p class="muted">Complete this section on your own.</p>
     <div class="namebar">
       <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
       <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
     </div>
-    <p class="q"><span class="n">1.</span> Explain in your own words why two meshed gears cannot turn the same direction. Do not use the word &ldquo;opposite.&rdquo;</p>
-    <textarea class="answer" data-key="p7_q1_direction" aria-label="Reflection 1"></textarea>
-    <p class="q"><span class="n">2.</span> In Challenge 1 you tried to build a pincer with no help. Compare what you tried then to what you built now. What did you not know at the time?</p>
-    <textarea class="answer" data-key="p7_q2_compare" aria-label="Reflection 2"></textarea>
-    <p class="q"><span class="n">3.</span> The constraint banned metal parts other than fasteners. Now that you have finished, what do you think that constraint was really for?</p>
-    <textarea class="answer" data-key="p7_q3_constraint" aria-label="Reflection 3"></textarea>
-    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;Two meshed gears cannot move independently. This means that when I want two parts to work together, I should...&rdquo;</p>
+    <p class="q"><span class="n">1.</span> List the five steps of the engineering design process from memory. Then say which one you spent the most time on today.</p>
+    <textarea class="answer" data-key="p7_q1_five_steps" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain the difference between a need and a constraint using your own device as the example.</p>
+    <textarea class="answer" data-key="p7_q2_need_constraint" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> Challenge 3 taught you the pincer arrangement on a worksheet. Using it here, in service of a task, was different. What changed when the pincer had a job to do?</p>
+    <textarea class="answer" data-key="p7_q3_pincer_attempt" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2–3 sentences: &ldquo;A design that solves the wrong problem beautifully is still a failure. This means that before I build anything, I should...&rdquo;</p>
     <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
   </section>
 
@@ -1592,35 +1415,35 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
     <h2 class="phase-head">Extension Challenges</h2>
     <p class="muted">Finished early? Try one or more of these.</p>
 
-    <h3 class="sub">Extension A — Raise the Count</h3>
+    <h3 class="sub">Extension A — One Motor</h3>
     <ul>
-      <li>Grab 6 poms at once, then 9. Record the point where the design stops working.</li>
-      <li>What failed first — grip strength, claw width, or the motor?</li>
-      <li>What single change bought you the most poms?</li>
+      <li>Rebuild your sorter using only <strong>one</strong> motor or servo instead of two.</li>
+      <li>What did you have to give up? Did the success rate change?</li>
+      <li>Tighter constraints often force better designs. Did that happen here, or not?</li>
     </ul>
     <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
 
-    <h3 class="sub">Extension B — Build the Idler</h3>
+    <h3 class="sub">Extension B — Piece Golf</h3>
     <ul>
-      <li>Rebuild with a third gear between the two, so both arms turn the same direction.</li>
-      <li>What is this version good at that the pincer is not?</li>
-      <li>Invent a task it would win at, and test whether it actually does.</li>
+      <li>Count your pieces. Now rebuild the same function using as few as you can.</li>
+      <li>Record your lowest working count.</li>
+      <li>Why would a real engineering team care about part count, beyond cost?</li>
     </ul>
     <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
 
-    <h3 class="sub">Extension C — Hunt the Backlash</h3>
+    <h3 class="sub">Extension C — Break the Assumption</h3>
     <ul>
-      <li>Close your pincer on a pom ten times and mark where the arm tips land each time.</li>
-      <li>How much do the landing spots vary? Try moving the gears closer together and repeat.</li>
-      <li>Can you get the variation to zero? If not, why not?</li>
+      <li>Your design assumes the odd pom is on top. What if it were on the bottom?</li>
+      <li>Test it. Does your device still work, or does it fail completely?</li>
+      <li>A design that only works under one exact setup is called <em>brittle</em>. How would you make yours less brittle?</li>
     </ul>
     <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
 
-    <h3 class="sub">Extension D — One Fastener</h3>
+    <h3 class="sub">Extension D — Write the Challenge</h3>
     <ul>
-      <li>The constraint allows 2 screws or nuts to detach. Get it down to 1.</li>
-      <li>Does it still hold rigidly under load, or does it twist?</li>
-      <li>What did you have to add elsewhere to make one fastener enough?</li>
+      <li>Invent a new sorting problem for a classmate. Write it as a Problem, a Need, and three Constraints.</li>
+      <li>Trade with someone and build each other's challenge.</li>
+      <li>What was hard about writing constraints that were demanding but still possible?</li>
     </ul>
     <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
   </section>
@@ -1633,16 +1456,16 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   </div>
 
   <nav class="botnav no-print" aria-label="Page navigation">
-    <a href="mech02_gears.html">&larr; Challenge 2</a>
+    <a href="index.html">&larr; All Challenges</a>
     <a class="gloss" href="../glossary.html">Glossary</a>
-    <a class="next" href="mech04_modified_pincer.html">Challenge 4 &rarr;</a>
+    <a class="next" href="projectB_lift.html">Design Project B &rarr;</a>
   </nav>
 
-  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 3 — Student Sheet</p>
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design Project A — Student Sheet</p>
 </main>
 
 <script>
-  const MISSION_ID = "mech03_pincer";
+  const MISSION_ID = "projectA_pom_sort";
 
   (function buildTrials() {
     const body = document.getElementById("trialBody");
@@ -1651,9 +1474,8 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
       tr.innerHTML =
         '<td style="text-align:center;font-weight:600">' + i + '</td>' +
         '<td><input type="text" data-key="trial' + i + '_changed" aria-label="Trial ' + i + ' changed"></td>' +
-        '<td><input type="text" data-key="trial' + i + '_poms" aria-label="Trial ' + i + ' poms held"></td>' +
-        '<td><input type="text" data-key="trial' + i + '_lifted" aria-label="Trial ' + i + ' lifted clear"></td>' +
-        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' where it went wrong"></td>';
+        '<td><input type="text" data-key="trial' + i + '_sorted" aria-label="Trial ' + i + ' sorted correctly"></td>' +
+        '<td><input type="text" data-key="trial' + i + '_observed" aria-label="Trial ' + i + ' observed"></td>';
       body.appendChild(tr);
     }
   })();
@@ -1714,7 +1536,7 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   function buildPayload() {
     return {
       mission: MISSION_ID,
-      missionTitle: "Mechanical Design · Challenge 3 — The Pincer",
+      missionTitle: "Mechanical Design · Design Project A — The Pom Sort",
       pin: pinInput.value.trim(),
       submittedAt: new Date().toISOString(),
       answers: collectAnswers()
@@ -1770,11 +1592,14 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
 <script>
 (function(){
   var DEFS = {
-    'PINCER': ['Pincer', 'A grabber in which both sides of the claw move toward each other. In a simpler claw, one side is fixed and only the other moves \u2014 which shoves the object sideways as it closes.'],
-    'MESH': ['Mesh', 'The place where the teeth of two gears interlock. Once two gears mesh, neither can turn without turning the other.'],
-    'IDLER GEAR': ['Idler Gear', 'A gear placed between two others. It reverses the direction of rotation twice, so the two outer gears end up turning the same way. It changes direction without changing speed.'],
-    'BACKLASH': ['Backlash', 'The small amount of free play between meshed gear teeth. It lets a part wiggle slightly before the gear catches, which is why a mechanism may not stop in exactly the same spot every time.'],
-    'STABILITY': ['Stability', 'How well a machine resists tipping, flexing, or wobbling while it works. A stable machine does not need a hand on it.']
+    'ENGINEERING DESIGN PROCESS': ['Engineering Design Process', 'A repeatable way of working through a design problem: define the problem, determine the needs, determine the constraints, break it into steps, then check whether the result meets the needs. If it does not, go back and refine.'],
+    'EFFECTOR': ['Effector', 'The part of a robot that does the actual work on the world — a claw, a scoop, a pusher, an arm. Everything else on the robot exists to get the effector where it needs to be.'],
+    'NEED': ['Need', 'What a design has to accomplish, written plainly enough that you can tell whether it happened. "Lift four poms into a container" is a need. "Be good at lifting" is not.'],
+    'CONSTRAINT': ['Constraint', 'A limit your design has to stay inside. Not a suggestion. Constraints come as minimums, maximums, or approximations. If your solution breaks a constraint, it does not count as a solution, even if it works well otherwise.'],
+    'ADDED VALUE': ['Added Value', 'Something beyond the minimum requirement that makes a design genuinely better. Meeting the need gets you a working machine. Added value gets you a good one.'],
+    'ITERATION': ['Iteration', 'Building a version, testing it, learning something, and building a better version. Engineers expect the first version to be wrong. That is what it is for.'],
+    'SUCCESS RATE': ['Success Rate', 'How often a machine actually works, measured by running it a set number of times and counting the successes. Nine successes out of ten runs is a 90% success rate. It is a count, not an impression.'],
+    'PINCER': ['Pincer', 'A grabber in which both sides of the claw move toward each other. In a simpler claw, one side is fixed and only the other moves — which means the object gets pushed sideways as it is grabbed.']
   };
   function openDef(t){
     var e = DEFS[t]; if(!e) return;
