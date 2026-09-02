@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mechanical · Challenge 2 — How Gears Work</title>
+<title>Mechanical · PreLab — Mounting a Gear</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
@@ -1163,9 +1163,9 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
 
   <!-- ===== Hero ===== -->
   <div class="hero">
-    <p class="eyebrow">Mechanical Design · Challenge 2</p>
-    <h1>How Gears Work</h1>
-    <p class="sub">Foundation · The Language of Mechanisms</p>
+    <p class="eyebrow">Mechanical Design · PreLab</p>
+    <h1>Mounting a Gear</h1>
+    <p class="sub">Guided Build · Concentricity, the Servo Horn, and Four Small Screws</p>
   </div>
 
   <!-- PIN echo for printed copy -->
@@ -1174,12 +1174,12 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   <!-- ===== Meta ===== -->
   <div class="meta">
     <dl>
-      <div class="row"><dt>Module Guiding Question</dt><dd>How does one motor&rsquo;s motion become exactly the motion a mechanism needs?</dd></div>
-      <div class="row"><dt>Big Idea</dt><dd>Two meshed gears trade speed, torque, and direction in exact, countable ways — and never for free.</dd></div>
-      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="MESH">Mesh</span> · <span class="def-term" data-term="GEAR RATIO">Gear ratio</span> · <span class="def-term" data-term="TORQUE">Torque</span> · <span class="def-term" data-term="IDLER GEAR">Idler gear</span> · <span class="def-term" data-term="COMPOUND GEARING">Compound gearing</span></dd></div>
-      <div class="row"><dt>Materials</dt><dd>None required. A few gears from your kit are helpful but optional.</dd></div>
-      <div class="row"><dt>What You Need</dt><dd>This challenge sheet · optionally two or three gears from your LEGO kit · about one session</dd></div>
-      <div class="row"><dt>Prerequisite</dt><dd>Challenge 1 — the design process. This sheet is the other foundation: the component language.</dd></div>
+      <div class="row"><dt>Module Guiding Question</dt><dd>How do you attach a LEGO gear to a shaft it was never designed for?</dd></div>
+      <div class="row"><dt>Big Idea</dt><dd>A gear only works if its center sits exactly on the axis it spins around. Everything in this PreLab serves that one requirement.</dd></div>
+      <div class="row"><dt>Design Concepts</dt><dd><span class="def-term" data-term="CONCENTRICITY">Concentricity</span> · <span class="def-term" data-term="ECCENTRIC">Eccentric</span> · <span class="def-term" data-term="SERVO HORN">Servo horn</span> · <span class="def-term" data-term="AXIS OF ROTATION">Axis of rotation</span> · <span class="def-term" data-term="MESH">Mesh</span></dd></div>
+      <div class="row"><dt>Materials</dt><dd>LEGO structure and KIPR electronics only</dd></div>
+      <div class="row"><dt>What You Need</dt><dd>One 24-tooth or 40-tooth LEGO gear · one black plastic servo horn (round or cross) · 4 small servo screws · small screwdriver · a servo or motor to mount to</dd></div>
+      <div class="row"><dt>Position in Module</dt><dd>Between Challenges 2 and 3. This is not numbered because it is not a design challenge &mdash; it is a shop skill. Every powered mechanism from Challenge 3 onward begins with this mounting.</dd></div>
     </dl>
   </div>
 
@@ -1190,249 +1190,239 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   <!-- ===== Overview ===== -->
   <section>
     <h2 class="phase-head">Overview</h2>
-    <p>Challenge 1 gave you the process. This sheet gives you the component that nearly every mechanism in this module is built from: the gear. Like Challenge 1, there is nothing to build today — this is knowledge you will spend from Challenge 3 onward.</p>
-    <p>Gears look like magic the first time you watch a small motor lift something heavy through them. They are not magic. Everything a gear pair does — reversing direction, trading speed for strength, holding a load — comes down to counting teeth. By the end of this sheet you will be able to do that counting yourself.</p>
+    <p>Challenge 2 taught you what gears do. There is one practical problem standing between that knowledge and Challenge 3: <strong>LEGO gears do not directly match up to KIPR motors and servos.</strong> The center of a LEGO gear is a cross-shaped axle hole. The output shaft of a servo or motor is nothing like a LEGO axle. Push them together and nothing connects.</p>
+    <p>The bridge is a part you will use hundreds of times in this program: the black plastic <span class="def-term" data-term="SERVO HORN">servo horn</span>. The horn fits the shaft; the gear screws to the horn. This PreLab walks you through that mounting step by step — and teaches the one idea that separates a mounting that works from one that wobbles, binds, and strips.</p>
     <div class="callout">
       <p class="ctitle">Core Insight</p>
-      <p>Gears aren&rsquo;t magic. For everything we gain, we give something else up.</p>
+      <p>The gear does not just need to be <em>attached</em>. It needs to be attached with its center exactly on the axis it spins around. Off by a millimeter, and the gear is a different size on every side of its rotation.</p>
     </div>
-    <h3 class="sub">By the end of this challenge you will be able to:</h3>
+    <h3 class="sub">By the end of this PreLab you will be able to:</h3>
     <ul class="obj">
-      <li>Explain why meshed gears must turn in opposite directions, and how an <span class="def-term" data-term="IDLER GEAR">idler gear</span> changes that.</li>
-      <li>Predict how far one gear turns when another turns, by counting teeth.</li>
-      <li>Calculate a <span class="def-term" data-term="GEAR RATIO">gear ratio</span>, and say which way it trades speed against <span class="def-term" data-term="TORQUE">torque</span>.</li>
-      <li>Multiply ratios through <span class="def-term" data-term="COMPOUND GEARING">compound gearing</span> — and name the price you pay for the gain.</li>
+      <li>Explain why LEGO gears cannot mount directly to a servo or motor shaft.</li>
+      <li>Define <span class="def-term" data-term="CONCENTRICITY">concentricity</span> and explain what goes wrong when a gear is mounted <span class="def-term" data-term="ECCENTRIC">eccentric</span>.</li>
+      <li>Mount a 24- or 40-tooth gear to a servo horn with four screws, centered, in a cross pattern.</li>
+      <li>Run a spin test and read what a wobble is telling you.</li>
     </ul>
   </section>
 
   <!-- ===== Phase 1 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Why Gears? A Claw With a Problem</h2>
-    <p>Here is where the need comes from. A simple demo-bot claw has one <em>fixed</em> side and one moving side. It works — but as the moving jaw closes, it shoves the object sideways against the fixed jaw. For some tasks that is fine. For many, it is not.</p>
-    <p>Suppose the task needs <em>both</em> sides of the claw to move in and out, in coordination with each other — a <span class="def-term" data-term="PINCER">pincer</span>. Presumably we want each arm to mirror its counterpart exactly. But how is this accomplished?</p>
-    <div class="callout navy">
-      <p class="ctitle">The Answer, and the Whole Point of This Sheet</p>
-      <p>One way to make both arms move in predictable patterns compared to one another is with gears at the base of each arm. Put a gear on each arm, mesh the two gears together, and turning one arm <em>must</em> turn the other. From that moment on, the arms cannot disagree.</p>
-    </div>
+    <h2 class="phase-head"><span class="pnum">Phase 1</span> — Observe: Two Parts That Do Not Match</h2>
+    <p>Hold a LEGO gear in one hand and look at a servo or motor shaft next to it. Look closely at both centers.</p>
+    <ul>
+      <li>The gear&rsquo;s center is a <strong>cross-shaped hole</strong>, made for a LEGO axle.</li>
+      <li>The shaft is a short <strong>splined cylinder</strong> — ringed with fine ridges, made to grip a servo horn pressed onto it.</li>
+    </ul>
+    <p>Neither was designed with the other in mind. The horn was: its center is splined to match the shaft, it comes with a center screw to lock it on, and its body is soft black plastic — soft on purpose, as you are about to use.</p>
 
     <figure class="diagram">
-      <svg viewBox="0 0 620 300" role="img" aria-label="Two pincer arms, each mounted on a gear at its base. The two gears mesh at the center. The left gear turns clockwise and its arm swings inward; the meshed right gear is forced to turn counterclockwise, so its arm swings inward too, and the jaws close together.">
-        <defs>
-          <marker id="garr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/>
-          </marker>
-        </defs>
-        <!-- left gear -->
-        <circle cx="240" cy="200" r="58" fill="#fbeef0" stroke="#C0392B" stroke-width="2.5"/>
-        <circle cx="240" cy="200" r="6" fill="#1C1C1C"/>
-        <!-- right gear -->
-        <circle cx="380" cy="200" r="58" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
-        <circle cx="380" cy="200" r="6" fill="#1C1C1C"/>
-        <!-- mesh mark -->
-        <line x1="310" y1="160" x2="310" y2="240" stroke="#888" stroke-width="1.5" stroke-dasharray="5 4"/>
-        <text x="310" y="266" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#888">the mesh — teeth interlock here</text>
-        <!-- arms -->
-        <line x1="240" y1="200" x2="180" y2="52" stroke="#C0392B" stroke-width="7" stroke-linecap="round"/>
-        <line x1="380" y1="200" x2="440" y2="52" stroke="#444" stroke-width="7" stroke-linecap="round"/>
-        <!-- rotation arrows -->
-        <path d="M196,166 A56,56 0 0 1 250,144" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#garr)"/>
-        <text x="150" y="150" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#C0392B">clockwise</text>
-        <path d="M424,166 A56,56 0 0 0 370,144" fill="none" stroke="#444" stroke-width="2.5" marker-end="url(#garr)"/>
-        <text x="430" y="128" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#444">forced the other way</text>
+      <svg viewBox="0 0 620 260" role="img" aria-label="Three parts side by side. A LEGO gear with a cross-shaped axle hole at its center. A servo output shaft, a short splined cylinder. Between them, a black servo horn: its center matches the shaft, and its body gives the gear something to screw onto.">
+        <!-- gear -->
+        <circle cx="120" cy="120" r="76" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
+        <path d="M112,104 h16 v8 h8 v16 h-8 v8 h-16 v-8 h-8 v-16 h8 z" fill="#fff" stroke="#1C1C1C" stroke-width="2"/>
+        <text x="120" y="228" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#1C1C1C">LEGO gear</text>
+        <text x="120" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">center: cross axle hole</text>
+        <!-- horn -->
+        <circle cx="310" cy="120" r="52" fill="#1C1C1C" stroke="#000" stroke-width="2"/>
+        <circle cx="310" cy="120" r="10" fill="#fff"/>
+        <circle cx="310" cy="88" r="4.5" fill="#888"/>
+        <circle cx="310" cy="152" r="4.5" fill="#888"/>
+        <circle cx="278" cy="120" r="4.5" fill="#888"/>
+        <circle cx="342" cy="120" r="4.5" fill="#888"/>
+        <text x="310" y="228" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#1C1C1C">servo horn</text>
+        <text x="310" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">the bridge — soft black plastic</text>
+        <!-- shaft -->
+        <rect x="452" y="60" width="90" height="120" rx="8" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
+        <circle cx="497" cy="120" r="16" fill="#fff" stroke="#1C1C1C" stroke-width="2.5" stroke-dasharray="2.5 2.5"/>
+        <circle cx="497" cy="120" r="4" fill="#1C1C1C"/>
+        <text x="497" y="228" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#1C1C1C">servo / motor shaft</text>
+        <text x="497" y="245" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="12.5" fill="#666">splined cylinder — grips the horn</text>
       </svg>
-      <figcaption>A gear at the base of each arm, meshed at the center. The arms can be connected on the side of the gear or through its middle.</figcaption>
+      <figcaption>The mismatch, and the part that bridges it. Gear screws to horn; horn presses onto shaft.</figcaption>
     </figure>
 
-    <p class="q">If the gear on the left turns clockwise, what happens to its arm?</p>
-    <textarea class="answer" data-key="p1_left_arm" aria-label="Left arm motion"></textarea>
-    <p class="q">What direction does this force the other arm to move? Does this meet the need — both jaws closing together?</p>
-    <textarea class="answer" data-key="p1_right_arm" aria-label="Right arm motion"></textarea>
+    <p class="q">In your own words: why can&rsquo;t the gear go straight onto the shaft, and what two jobs does the horn do at once?</p>
+    <textarea class="answer" data-key="p1_mismatch" aria-label="The mismatch"></textarea>
   </section>
 
   <!-- ===== Phase 2 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Teeth and the Mesh</h2>
-    <p>Gears, or sprockets, have a set number of teeth. For a pair of gears to work together, their teeth must share a <span class="def-term" data-term="MESH">mesh</span> location — a spot where the teeth of one interlock with the teeth of the other. Once two gears mesh, neither can turn without turning the other.</p>
-    <p>Here is the model that makes everything on this sheet countable. Every tooth that passes through the mesh is one <strong>click</strong>. Both gears feel every click — the mesh guarantees it.</p>
+    <h2 class="phase-head"><span class="pnum">Phase 2</span> — Concept: Concentricity</h2>
+    <p>Two circles are <span class="def-term" data-term="CONCENTRICITY">concentric</span> when they share the same center. For your mounting, three things must all share one center: the gear, the horn, and the shaft&rsquo;s <span class="def-term" data-term="AXIS OF ROTATION">axis of rotation</span> — the invisible line the shaft spins around.</p>
+    <p>Mount the gear even slightly off that center and it is <span class="def-term" data-term="ECCENTRIC">eccentric</span>. The gear is still round — but it no longer spins around its own middle. One side of the gear now sweeps a wider circle than the other, once every revolution.</p>
 
     <figure class="diagram">
-      <svg viewBox="0 0 620 280" role="img" aria-label="A 10-tooth gear meshed with an 8-tooth gear. For the 10-tooth gear to make one full rotation, ten teeth must pass through the mesh. Those same ten clicks pass through the 8-tooth gear, which only needs eight clicks per rotation.">
-        <circle cx="220" cy="150" r="80" fill="#fbeef0" stroke="#C0392B" stroke-width="2.5"/>
-        <circle cx="220" cy="150" r="6" fill="#1C1C1C"/>
-        <text x="220" y="120" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="19" font-weight="700" fill="#C0392B">10 teeth</text>
-        <text x="220" y="192" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#C0392B">one full rotation</text>
-        <text x="220" y="209" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#C0392B">= 10 clicks through the mesh</text>
-        <circle cx="366" cy="150" r="66" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
-        <circle cx="366" cy="150" r="6" fill="#1C1C1C"/>
-        <text x="366" y="124" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="19" font-weight="700" fill="#444">8 teeth</text>
-        <text x="366" y="188" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#444">one full rotation</text>
-        <text x="366" y="205" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#444">= 8 clicks</text>
-        <line x1="298" y1="96" x2="298" y2="204" stroke="#888" stroke-width="1.5" stroke-dasharray="5 4"/>
-        <text x="298" y="232" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#888">every click passes through both gears</text>
+      <svg viewBox="0 0 620 300" role="img" aria-label="Two mountings compared. Left, concentric: the gear&#39;s center sits on the axis of rotation and the rim sweeps one clean circle. Right, eccentric: the gear&#39;s center sits beside the axis, so the rim sweeps a wobbling ring — too far from the meshing gear on one side of the revolution and too close on the other.">
+        <!-- concentric -->
+        <circle cx="160" cy="130" r="72" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
+        <circle cx="160" cy="130" r="72" fill="none" stroke="#1E8449" stroke-width="1.8" stroke-dasharray="6 5"/>
+        <circle cx="160" cy="130" r="5" fill="#1E8449"/>
+        <text x="160" y="240" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="700" fill="#1E8449">CONCENTRIC</text>
+        <text x="160" y="260" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#1E8449">gear center on the axis</text>
+        <text x="160" y="277" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#1E8449">rim sweeps one clean circle</text>
+        <!-- eccentric -->
+        <circle cx="452" cy="130" r="72" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
+        <circle cx="440" cy="118" r="5" fill="#C0392B"/>
+        <circle cx="440" cy="118" r="89" fill="none" stroke="#C0392B" stroke-width="1.8" stroke-dasharray="6 5"/>
+        <circle cx="440" cy="118" r="55" fill="none" stroke="#C0392B" stroke-width="1.2" stroke-dasharray="3 4"/>
+        <text x="452" y="240" text-anchor="middle" font-family="'Barlow Condensed',sans-serif" font-size="18" font-weight="700" fill="#C0392B">ECCENTRIC</text>
+        <text x="452" y="260" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#C0392B">axis misses the gear center</text>
+        <text x="452" y="277" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13" fill="#C0392B">rim sweeps far on one side, near on the other</text>
       </svg>
-      <figcaption>The click model. This gear has 10 teeth, so one full rotation must click 10 times. Its 8-tooth partner needs only 8 clicks per rotation.</figcaption>
+      <figcaption>Same gear, two mountings. The dashed line is the path the rim actually sweeps around the axis.</figcaption>
     </figure>
 
-    <p>So turn the 10-tooth gear one full rotation: 10 clicks pass through the mesh. The 8-tooth gear receives those same 10 clicks — but it only needs 8 for a full turn. It turns a full rotation <em>and then some</em>. The smaller gear always spins farther than the larger one it meshes with.</p>
-
-    <div class="callout navy">
-      <p class="ctitle">If Your Kit Is Nearby (Optional)</p>
-      <p>Everything on this sheet can be answered without parts. But if your kit is in reach, mesh a small gear with a large one, mark one tooth on each with a bit of tape, and turn the small gear exactly one rotation. Watch what the large one does. The click model is not a metaphor — you can hear it.</p>
+    <p>Now remember the <span class="def-term" data-term="MESH">mesh</span> from Challenge 2. Two meshed gears are spaced so their teeth interlock properly. An eccentric gear breaks that spacing once per turn:</p>
+    <ul>
+      <li>On the <strong>far side</strong> of its wobble, the teeth pull away from the mesh — they skip or barely touch.</li>
+      <li>On the <strong>near side</strong>, the teeth jam into the mesh — the train binds tight.</li>
+    </ul>
+    <div class="callout">
+      <p class="ctitle">What Eccentricity Sounds and Feels Like</p>
+      <p>A rhythmic click or grind, once per revolution. A tight spot you can feel when turning by hand. A servo that stalls or chatters at the same point every turn. Teeth that strip in one place on the gear. If a mechanism does any of these on a steady beat, check the mounting before you blame anything else.</p>
     </div>
 
-    <p class="q">A 16-tooth gear makes one full rotation. How many clicks pass through the mesh? If it is meshed with an 8-tooth gear, how many rotations does the 8-tooth gear make from those clicks?</p>
-    <textarea class="answer" data-key="p2_click_count" aria-label="Click counting"></textarea>
+    <p class="q">A gear mounted 1&nbsp;mm off-center is only wrong by 1&nbsp;mm — yet the mechanism binds. Using the two bullet points above, explain why such a small error causes so much trouble.</p>
+    <textarea class="answer" data-key="p2_why_small_error" aria-label="Why small errors matter"></textarea>
   </section>
 
   <!-- ===== Phase 3 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 3</span> — Direction: The Rule and the Trick</h2>
-    <p>Look back at the pincer diagram in Phase 1 and notice what the mesh did to direction.</p>
-    <div class="callout">
-      <p class="ctitle">The Direction Rule</p>
-      <p>Two meshed gears always turn in opposite directions. Always. The teeth leave them no choice.</p>
+    <h2 class="phase-head"><span class="pnum">Phase 3</span> — The Build: Gear to Horn to Shaft</h2>
+    <p>Follow the steps in order. The order is doing real work — it is what keeps the gear centered.</p>
+
+    <ol class="constraints">
+      <li><strong>Pick the gear and the horn.</strong> Use a <strong>24-tooth or 40-tooth</strong> LEGO gear — both have holes around the center that screws can pass through. Use either horn: <strong>round</strong> or <strong>cross</strong>. Hold the horn against the gear and pick the one whose body sits behind the gear&rsquo;s holes best.</li>
+      <li><strong>Center the horn on the gear.</strong> Line up the horn&rsquo;s center hole with the gear&rsquo;s cross axle hole and sight straight through both. Look from directly above — viewing at an angle will fool you. This is the step where concentricity is won or lost.</li>
+      <li><strong>Drive the four screws in a cross pattern.</strong> Push the 4 small servo screws through the gear&rsquo;s holes and drive them into the black plastic of the horn — there are no threaded holes waiting for them; the screws <em>dig their own threads</em> into the soft plastic. Start all four loosely first. Then snug them in a cross pattern — one, then the one across from it, then the third, then across again — a little at a time, checking center as you go.</li>
+      <li><strong>Mount the horn on the shaft.</strong> Press the finished gear-and-horn onto the servo or motor shaft and drive the center screw in to lock it. The technique is identical for a motor.</li>
+      <li><strong>Spin test.</strong> Rotate the shaft slowly — command the servo through its range, or turn the motor gently by hand. Fix your eye on one point of the gear&rsquo;s rim against something stationary behind it. A concentric gear holds its distance. An eccentric one visibly breathes in and out, once per revolution.</li>
+    </ol>
+
+    <div class="callout navy">
+      <p class="ctitle">Why a Cross Pattern, and Why Only Snug</p>
+      <p>Tighten one screw fully first and it drags the gear toward its own corner — perfectly tight, and perfectly off-center. Alternating across the circle pulls the gear down evenly, the way lug nuts go onto a car wheel. And stop at snug: these screws hold by biting into plastic, and plastic that is crushed or stripped never grips again.</p>
     </div>
-    <p>For the pincer that rule was exactly what we wanted — opposite rotations close the two jaws together. But suppose a task needs two arms to move in the <em>same</em> direction. Are gears useless then?</p>
-    <p>No — place a third gear <em>between</em> them. Direction now reverses twice: the left gear reverses the middle one, and the middle one reverses the right one. The two outer gears end up turning the same way. A gear used like this — in the middle, only to manage direction — is called an <span class="def-term" data-term="IDLER GEAR">idler gear</span>. It changes direction without changing the ratio between the outer gears.</p>
-    <p class="muted">The three gears can be drawn staggered or sit in a straight line — the geometry does not change the rule.</p>
 
-    <figure class="diagram">
-      <svg viewBox="0 0 620 240" role="img" aria-label="Three gears in a row. The left gear turns clockwise, the middle idler gear is forced counterclockwise, and the right gear is forced clockwise again — the two outer gears turn the same way.">
-        <defs>
-          <marker id="darr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="#1C1C1C"/>
-          </marker>
-        </defs>
-        <circle cx="150" cy="120" r="62" fill="#fbeef0" stroke="#C0392B" stroke-width="2.5"/>
-        <circle cx="150" cy="120" r="6" fill="#1C1C1C"/>
-        <path d="M104,84 A58,58 0 0 1 162,60" fill="none" stroke="#C0392B" stroke-width="2.5" marker-end="url(#darr)"/>
-        <text x="150" y="212" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#C0392B">clockwise</text>
-        <circle cx="310" cy="120" r="52" fill="#fff" stroke="#888" stroke-width="2.5" stroke-dasharray="6 4"/>
-        <circle cx="310" cy="120" r="6" fill="#1C1C1C"/>
-        <path d="M350,88 A48,48 0 0 0 300,70" fill="none" stroke="#888" stroke-width="2.5" marker-end="url(#darr)"/>
-        <text x="310" y="202" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#888">idler — counterclockwise</text>
-        <circle cx="466" cy="120" r="62" fill="#F2F2F2" stroke="#444" stroke-width="2.5"/>
-        <circle cx="466" cy="120" r="6" fill="#1C1C1C"/>
-        <path d="M420,84 A58,58 0 0 1 478,60" fill="none" stroke="#444" stroke-width="2.5" marker-end="url(#darr)"/>
-        <text x="466" y="212" text-anchor="middle" font-family="'Barlow',sans-serif" font-size="13.5" font-weight="600" fill="#444">clockwise again</text>
-      </svg>
-      <figcaption>The idler trick. Two reversals put the outer gears back in agreement.</figcaption>
-    </figure>
-
-    <p class="q">Four gears sit in a straight line, all meshed neighbor-to-neighbor. The leftmost turns clockwise. Work along the line: what direction does each of the other three turn? State the pattern for any number of gears.</p>
-    <textarea class="answer" data-key="p3_four_gears" aria-label="Four gear directions"></textarea>
+    <p class="q">Which gear and which horn did you use, and why did that pairing line up best?</p>
+    <textarea class="answer" data-key="p3_parts_choice" aria-label="Parts chosen"></textarea>
+    <p class="q">Describe your first spin test honestly. Clean circle, or breathing rim? If it wobbled, what did you loosen and re-center?</p>
+    <textarea class="answer" data-key="p3_first_spin" aria-label="First spin test"></textarea>
   </section>
 
   <!-- ===== Phase 4 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Gear Ratio: Trading Speed for Strength</h2>
-    <p>Now use the click model on gears of different sizes — this is where gears earn their keep. Mesh an 8-tooth gear with a 16-tooth gear and turn the 8-tooth gear one full rotation clockwise. Eight clicks pass through the mesh. The 16-tooth gear needs sixteen clicks for a full turn, so it turns exactly <strong>half a rotation</strong> — counterclockwise, by the direction rule.</p>
-    <p>That pair has a <span class="def-term" data-term="GEAR RATIO">gear ratio</span> of 16:8, which reduces to <strong>2:1</strong> — the <span class="def-term" data-term="DRIVE GEAR">drive gear</span> (the one the motor turns) must turn twice for every one turn of the <span class="def-term" data-term="DRIVEN GEAR">driven gear</span> (the one being turned).</p>
+    <h2 class="phase-head"><span class="pnum">Phase 4</span> — Test: Prove the Mounting</h2>
+    <p>A mounting is not done when the screws are in. It is done when it passes two tests.</p>
 
-    <div class="callout">
-      <p class="ctitle">Torque</p>
-      <p>Just as a linear force is a push or a pull, a <span class="def-term" data-term="TORQUE">torque</span> can be thought of as a twist to an object.</p>
+    <h3 class="sub">Test 1 — The Spin Test</h3>
+    <table class="grid">
+      <thead>
+        <tr><th style="width:58%">Observation</th><th style="width:27%">Your Result</th><th style="width:15%">&nbsp;</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="has-label"><div class="label">Rim wobble, watched over 3 slow revolutions</div></td>
+          <td><input type="text" data-key="p4_wobble" aria-label="Wobble observed" /></td>
+          <td><input type="text" data-key="p4_wobble_unit" aria-label="Unit" value="none / slight / obvious" /></td>
+        </tr>
+        <tr>
+          <td class="has-label"><div class="label">Sound during rotation</div></td>
+          <td><input type="text" data-key="p4_sound" aria-label="Sound observed" /></td>
+          <td><input type="text" data-key="p4_sound_unit" aria-label="Unit" value="describe" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="sub">Test 2 — The Mesh Test</h3>
+    <p>Hold or mount a second gear so it meshes with your mounted one. Turn through at least three full revolutions.</p>
+    <div class="speccheck">
+      <div class="ck">
+        <input type="checkbox" id="s1" data-key="p4_check_smooth">
+        <label for="s1">The mesh runs smoothly through three full revolutions — no tight spot, no skipping.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s2" data-key="p4_check_centered">
+        <label for="s2">The spin test shows no visible wobble at the rim.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s3" data-key="p4_check_snug">
+        <label for="s3">All four screws are snug, driven in a cross pattern, none stripped.</label>
+      </div>
+      <div class="ck">
+        <input type="checkbox" id="s4" data-key="p4_check_locked">
+        <label for="s4">The horn&rsquo;s center screw is in and the gear does not slip on the shaft.</label>
+      </div>
     </div>
 
-    <p>Using meshed gears with different tooth counts gives us an advantage, and it runs both ways:</p>
-    <ul>
-      <li><strong>Turn the smaller gear</strong> in the pair, and the larger one turns slower but with <em>more torque</em> — a stronger twist.</li>
-      <li><strong>Turn the larger gear</strong>, and the smaller one turns faster but with <em>less torque</em> — more speed.</li>
-    </ul>
-    <p>If you want a very large amount of torque, turn a gear with a low number of teeth against a gear with a high number of teeth. An 8-tooth gear driving a 30-tooth gear gives a 30:8 ratio — <strong>3.75:1</strong>.</p>
-
-    <p class="q">A 12-tooth drive gear meshes with a 36-tooth driven gear. Write the ratio in both forms (teeth and reduced). If the drive gear turns 6 full rotations clockwise, how many rotations does the driven gear make, and in which direction?</p>
-    <textarea class="answer" data-key="p4_ratio_calc" aria-label="Ratio calculation"></textarea>
-    <p class="q">You are choosing gears for a claw that must squeeze hard but can close slowly. Which gear does the servo turn — the smaller or the larger of the pair? Explain using the click model, not just the rule.</p>
-    <textarea class="answer" data-key="p4_torque_choice" aria-label="Torque choice"></textarea>
+    <p class="q">If your mesh test caught a tight spot the spin test missed — or the other way around — what does each test measure that the other does not?</p>
+    <textarea class="answer" data-key="p4_two_tests" aria-label="What each test measures"></textarea>
   </section>
 
   <!-- ===== Phase 5 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Compound Gearing: Multiplying the Trade</h2>
-    <p>A 3.75:1 ratio is good. What if you need far more? You could hunt for a giant gear — or you could stack the trick.</p>
-    <p>Put two gears of different sizes on the <em>same axle</em>, connected so they must turn at the same rate. Now drive the large one of the pair from one stage, and let the small one drive the next stage. Each stage keeps its own ratio — and the ratios <strong>multiply</strong>. This is <span class="def-term" data-term="COMPOUND GEARING">compound gearing</span>.</p>
-
-    <table class="grid">
-      <tr><td class="has-label"><div class="label">Stage 1</div></td><td style="padding:9px 10px">8-tooth driving 30-tooth &mdash; 30:8, or 3.75:1</td></tr>
-      <tr><td class="has-label"><div class="label">Stage 2</div></td><td style="padding:9px 10px">8-tooth driving 30-tooth &mdash; 30:8, or 3.75:1</td></tr>
-      <tr><td class="has-label"><div class="label">Combined</div></td><td style="padding:9px 10px"><strong>30/8 &times; 30/8 = 900/64 = 14.06:1</strong> &nbsp;&mdash;&nbsp; 3.75 &times; 3.75 = 14.06</td></tr>
-    </table>
-    <p>That could be a lot of torque!</p>
-
+    <h2 class="phase-head"><span class="pnum">Phase 5</span> — Connect: Where This Shows Up in Botball</h2>
     <div class="callout">
-      <p class="ctitle">Remember — Gears Aren&rsquo;t Magic</p>
-      <p>For everything we gain we give something else up. In the 14.06:1 train above, if a motor turns the gear on the far left, it must make <strong>14 complete revolutions</strong> before the gear on the far right completes one. You bought a fourteen-fold stronger twist and paid for it with fourteen-fold slower output. The trade is exact, every time.</p>
+      <p class="ctitle">Transfer</p>
+      <p>Challenge 3&rsquo;s pincer is driven through exactly the mounting you just made. So is nearly every powered mechanism in the rest of this module, and most of the ones on a competition robot.</p>
     </div>
-
-    <p class="q">Build a compound train on paper from two stages, each an 8-tooth gear driving a 24-tooth gear. What is each stage&rsquo;s ratio, what is the combined ratio, and how many motor revolutions does one output revolution cost?</p>
-    <textarea class="answer" data-key="p5_compound_calc" aria-label="Compound calculation"></textarea>
+    <p>Competition adds one more enemy: vibration. A robot that drives, bumps, and lifts all match long will slowly work screws loose — and screws that bite into plastic loosen quietly. Good teams put the spin test in their pre-match routine, because a mounting that was concentric last week is a claim, not a fact.</p>
+    <p class="q">Your robot&rsquo;s claw starts clicking once per revolution during a practice run. Walk through what you would check, in order, and why in that order.</p>
+    <textarea class="answer" data-key="p5_diagnose" aria-label="Diagnosis order"></textarea>
   </section>
 
   <!-- ===== Phase 6 ===== -->
   <section>
-    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Connect: Where This Shows Up in Botball</h2>
-    <div class="callout">
-      <p class="ctitle">Transfer</p>
-      <p>You now hold the language of the next dozen challenge sheets. Challenge 3 builds the pincer from Phase 1 for real. Challenge 4 changes its ratio on purpose. Challenge 5 pushes torque until it has to be measured. Challenges 9 through 14 are gears doing stranger and stranger jobs.</p>
-    </div>
-    <p>On a competition robot, every <span class="def-term" data-term="EFFECTOR">effector</span> faces the same trade you learned in Phase 4. A claw wants torque and can accept slow. A launcher wants speed and can accept weak. Drive wheels want a compromise. The team that can <em>count</em> the trade builds the ratio it needs; the team that cannot swaps gears at random until something sort of works.</p>
-    <p class="q">Name one job on a Botball robot where you would gear for torque, and one where you would gear for speed. For each, say what you are giving up and why that cost is acceptable there.</p>
-    <textarea class="answer" data-key="p6_botball_gearing" aria-label="Botball gearing choices"></textarea>
-  </section>
-
-  <!-- ===== Phase 7 ===== -->
-  <section>
-    <h2 class="phase-head"><span class="pnum">Phase 7</span> — Individual Reflection</h2>
+    <h2 class="phase-head"><span class="pnum">Phase 6</span> — Individual Reflection</h2>
     <p class="muted">Complete this section on your own.</p>
     <div class="namebar">
       <div class="nb"><label for="r_name">Name</label><input id="r_name" type="text" data-key="reflect_name" autocomplete="off" /></div>
       <div class="nb"><label for="r_date">Date</label><input id="r_date" type="text" data-key="reflect_date" autocomplete="off" /></div>
     </div>
-    <p class="q"><span class="n">1.</span> Explain the click model in your own words, and use it to show why a small gear driving a big gear produces a slower, stronger output.</p>
-    <textarea class="answer" data-key="p7_q1_click_model" aria-label="Reflection 1"></textarea>
-    <p class="q"><span class="n">2.</span> Two meshed gears must turn opposite ways, yet a pincer needs its jaws to close <em>together</em>, and some mechanisms need two parts turning the <em>same</em> way. Explain how gears serve both needs.</p>
-    <textarea class="answer" data-key="p7_q2_direction" aria-label="Reflection 2"></textarea>
-    <p class="q"><span class="n">3.</span> &ldquo;Gears aren&rsquo;t magic.&rdquo; State the trade precisely for a 5:1 gear train — what exactly is gained, and what exactly is paid?</p>
-    <textarea class="answer" data-key="p7_q3_trade" aria-label="Reflection 3"></textarea>
-    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;When I watch any geared machine now, the first two things I will look for are...&rdquo;</p>
-    <textarea class="answer" data-key="p7_q4_complete" aria-label="Reflection 4"></textarea>
+    <p class="q"><span class="n">1.</span> Define concentricity in your own words, without using the word &ldquo;center.&rdquo;</p>
+    <textarea class="answer" data-key="p6_q1_define" aria-label="Reflection 1"></textarea>
+    <p class="q"><span class="n">2.</span> Explain why the screws go in a cross pattern, a little at a time — and what would likely happen if you fully tightened them one by one around the circle instead.</p>
+    <textarea class="answer" data-key="p6_q2_cross" aria-label="Reflection 2"></textarea>
+    <p class="q"><span class="n">3.</span> The horn is soft plastic and the screws cut their own threads into it. What does that make easy, and what risk does it create?</p>
+    <textarea class="answer" data-key="p6_q3_plastic" aria-label="Reflection 3"></textarea>
+    <p class="q"><span class="n">4.</span> Complete this in 2&ndash;3 sentences: &ldquo;Attached is not the same as mounted. Before I power any gear from now on, I will...&rdquo;</p>
+    <textarea class="answer" data-key="p6_q4_complete" aria-label="Reflection 4"></textarea>
   </section>
 
   <!-- ===== Extensions ===== -->
   <section>
     <h2 class="phase-head">Extension Challenges</h2>
-    <p class="muted">Finished early? Try one or more of these. Extensions C and D use parts if you have them.</p>
+    <p class="muted">Finished early? Try one or more of these.</p>
 
-    <h3 class="sub">Extension A — The Ratio Table</h3>
+    <h3 class="sub">Extension A — Break It on Purpose</h3>
     <ul>
-      <li>List the tooth counts of every gear size in your kit.</li>
-      <li>Build a table of every two-gear pairing and its reduced ratio.</li>
-      <li>Circle the largest single-pair ratio your kit can make. Keep this table — you will use it for the rest of the module.</li>
+      <li>Remount your gear deliberately off-center by a small amount.</li>
+      <li>Run the spin test and the mesh test. Record every symptom — sight, sound, feel.</li>
+      <li>You now know what eccentricity looks like from experience. Why is breaking something on purpose a legitimate engineering technique?</li>
     </ul>
     <textarea class="answer" data-key="ext_a" aria-label="Extension A"></textarea>
 
-    <h3 class="sub">Extension B — Design a Ratio on Paper</h3>
+    <h3 class="sub">Extension B — The Other Gear</h3>
     <ul>
-      <li>A mechanism needs its output to turn once for every 9 turns of the motor.</li>
-      <li>Using only the gear sizes from Extension A, design a train that gets as close to 9:1 as possible. Compound stages are allowed.</li>
-      <li>Show the multiplication, and state how close you got.</li>
+      <li>Mount the gear size you did not use the first time (24-tooth or 40-tooth) on a second horn.</li>
+      <li>Which was easier to center, and why? Which would you rather diagnose a wobble on?</li>
+      <li>Keep both mountings — Challenge 3 and Challenge 4 will use them.</li>
     </ul>
     <textarea class="answer" data-key="ext_b" aria-label="Extension B"></textarea>
 
-    <h3 class="sub">Extension C — Hear the Clicks</h3>
+    <h3 class="sub">Extension C — Why Four Screws?</h3>
     <ul>
-      <li>Mesh two different-sized gears from your kit and mark one tooth on each with tape.</li>
-      <li>Turn the small gear exactly five rotations. Predict first, then count, how many rotations the large gear makes.</li>
-      <li>Did the count match the tooth math exactly? If it was off, what happened?</li>
+      <li>Thought experiment: mount the gear with only one screw, dead center of one hole. It is attached. What happens when the servo applies torque?</li>
+      <li>Now two screws, opposite each other. Better? What load does each screw carry?</li>
+      <li>Write one sentence on what the four-screw pattern is really for, beyond just &ldquo;holding it on.&rdquo;</li>
     </ul>
     <textarea class="answer" data-key="ext_c" aria-label="Extension C"></textarea>
 
-    <h3 class="sub">Extension D — Gear Hunt</h3>
+    <h3 class="sub">Extension D — Concentricity Hunt</h3>
     <ul>
-      <li>Find a geared machine outside robotics — a bicycle, a hand whisk, a wind-up toy, a pepper grinder.</li>
-      <li>Work out whether it gears for speed or for torque, and how you can tell.</li>
-      <li>Where is its drive gear, and where is its driven gear?</li>
+      <li>Find two machines outside robotics that depend on concentric mounting — a car wheel on its lug pattern, a bicycle sprocket, a fan blade, a drill bit in a chuck.</li>
+      <li>For each: how does its design force the part onto center? What is its version of the cross pattern?</li>
+      <li>What happens to each machine when concentricity fails?</li>
     </ul>
     <textarea class="answer" data-key="ext_d" aria-label="Extension D"></textarea>
   </section>
@@ -1445,16 +1435,16 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   </div>
 
   <nav class="botnav no-print" aria-label="Page navigation">
-    <a href="mech01_design_foundations.html">&larr; Challenge 1</a>
+    <a href="mech02_gears.html">&larr; Challenge 2</a>
     <a class="gloss" href="../glossary.html">Glossary</a>
-    <a class="next" href="prelab_gear_mounting.html">PreLab: Mounting a Gear &rarr;</a>
+    <a class="next" href="mech03_pincer.html">Challenge 3 &rarr;</a>
   </nav>
 
-  <p class="credit">KIPR · Botball Explorer · Mechanical Design Challenge 2 — Student Sheet</p>
+  <p class="credit">KIPR · Botball Explorer · Mechanical Design PreLab — Student Sheet</p>
 </main>
 
 <script>
-  const MISSION_ID = "mech02_gears";
+  const MISSION_ID = "prelab_gear_mounting";
 
 
   const $ = (s) => document.querySelector(s);
@@ -1513,7 +1503,7 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
   function buildPayload() {
     return {
       mission: MISSION_ID,
-      missionTitle: "Mechanical Design · Challenge 2 — How Gears Work",
+      missionTitle: "Mechanical Design · PreLab — Mounting a Gear",
       pin: pinInput.value.trim(),
       submittedAt: new Date().toISOString(),
       answers: collectAnswers()
@@ -1569,15 +1559,11 @@ ul.tick li.key{background:#FDF2F2;border-color:rgba(192,57,43,.5)}
 <script>
 (function(){
   var DEFS = {
-    'MESH': ['Mesh', 'The place where the teeth of two gears interlock. Once two gears mesh, neither can turn without turning the other.'],
-    'GEAR RATIO': ['Gear Ratio', 'The comparison of tooth counts between two meshed gears, written driven:drive. A 16-tooth gear driven by an 8-tooth gear is 16:8, or 2:1 — the drive gear turns twice for every one turn of the driven gear.'],
-    'TORQUE': ['Torque', 'Just as a linear force is a push or a pull, a torque can be thought of as a twist to an object. Gearing down trades rotation speed for a stronger twist.'],
-    'IDLER GEAR': ['Idler Gear', 'A gear placed between two others. It reverses the direction of rotation twice, so the two outer gears end up turning the same way. It changes direction without changing speed.'],
-    'COMPOUND GEARING': ['Compound Gearing', 'Two or more gear stages chained by putting two gears on a shared axle so they turn at the same rate. The stage ratios multiply: two 3.75:1 stages make a 14.06:1 train.'],
-    'DRIVE GEAR': ['Drive Gear', 'The gear in a pair that is turned by the motor or by the previous stage. It is where the motion comes in.'],
-    'DRIVEN GEAR': ['Driven Gear', 'The gear in a pair that gets turned by the drive gear. It is where the motion goes out — slower and stronger, or faster and weaker, depending on the ratio.'],
-    'PINCER': ['Pincer', 'A grabber in which both sides of the claw move toward each other. In a simpler claw, one side is fixed and only the other moves — which shoves the object sideways as it closes.'],
-    'EFFECTOR': ['Effector', 'The part of a robot that does the actual work on the world — a claw, a scoop, a pusher, an arm. Everything else on the robot exists to get the effector where it needs to be.']
+    'CONCENTRICITY': ['Concentricity', 'Two or more circular parts sharing exactly the same center. A mounted gear is concentric when its center sits on the axis its shaft spins around — so the rim stays the same distance from the axis all the way around.'],
+    'ECCENTRIC': ['Eccentric', 'Mounted off-center. An eccentric gear still spins, but not around its own middle — its rim sweeps closer and farther once per revolution, so a mesh alternately jams and gaps on a steady beat.'],
+    'SERVO HORN': ['Servo Horn', 'The black plastic fitting that presses onto the splined output shaft of a servo or motor and locks with a center screw. Its soft body lets small screws dig their own threads into it — which is how LEGO gears get mounted.'],
+    'AXIS OF ROTATION': ['Axis of Rotation', 'The invisible straight line a spinning part rotates around. For a servo or motor, it runs straight through the middle of the output shaft.'],
+    'MESH': ['Mesh', 'The place where the teeth of two gears interlock. Once two gears mesh, neither can turn without turning the other.']
   };
   function openDef(t){
     var e = DEFS[t]; if(!e) return;
